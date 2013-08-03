@@ -1,4 +1,4 @@
-geomex
+Proyecto GeoMex
 ======
 
-GeoMex: Ofertas y promociones basadas en geolocalización.
+
