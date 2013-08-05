@@ -8,6 +8,7 @@ echo mysql-server-5.5 mysql-server/root_password password EstaTrivialDb! | debco
 echo mysql-server-5.5 mysql-server/root_password_again password EstaTrivialDb! | debconf-set-selections
 sudo apt-get install -y mysql-server
 sudo apt-get install -y openssh-server
+exit
 gsettings set org.gnome.Vino enabled true
 gsettings set org.gnome.Vino prompt-enabled false
 /usr/lib/vino/vino-server
