@@ -1,147 +1,72 @@
 Proyecto GeoMex
 ======
 
-1.- Instalar Ubuntu Server 12.04.2 LTS X64
+How to Setup Environment
 
-2.- Instalar Interfaz Gráfica
-  
-    a) sudo apt-get update
-  
-    b) sudo apt-get upgrade
-  
-    c) sudo apt-get install ubuntu-desktop
-    
-3.- Instalar Git
+1.- Login al box
 
-    a) sudo apt-get install git-core
+	a) geomex
 
-4.- Instalar Nodejs
-	
-    a) sudo apt-get install python-software-properties
-	
-    b) sudo add-apt-repository ppa:chris-lea/node.js
-	
-    c) sudo apt-get update
-	
-    d) sudo apt-get install nodejs
+2.- Login como root
 
-5.- Instalar RabbitMQ
-	
-    a) sudo apt-get install rabbitmq-server
+	a) sudo su
 
-6.- Instalar Mysql
-	
-    a) sudo apt-get install mysql-server
+3.- Cambiarse al Home Directory
 
-7.- Instalar SSH Server
-	
-    a) sudo apt-get install openssh-server
+	a) cd /
 
-8.- Habilitar Vino-Server
-	
-    a) gsettings set org.gnome.Vino enabled true
-	
-    b) gsettings set org.gnome.Vino prompt-enabled false
-	
-    c) /usr/lib/vino/vino-server
-  
-9.- Instalar Vmware Tools
+4.- Instalar git
 
-    a) sudo apt-get install build-essential
-	
-    b) sudo apt-get install linux-headers-`uname -r`
-	
-    c) Montar Vmware Tools (Reinstall Vmware Tools)
-	
-    d) Copiar VMwareTools tar ball al Desktop
-	
-    e) Extract here
-	
-    f) cd vmware-tools-distrib
-	
-    h) sudo ./vmware-install.pl
+	a) sudo apt-get install -y git-core
 
-	  Directorios Compartidos en:  /mnt/hgfs/ 
+5.- Traer Repositorio Remoto
 
-10.- Instalar Google Chrome
-	
-    a) wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-	
-    b) sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-	
-    c) sudo apt-get update
-	
-    d) sudo apt-get install google-chrome-stable
+	a) git clone https://github.com/rbadillo/geomex.git
 
-11.- Install Mysql Workbench
-	
-    a) sudo apt-get install mysql-workbench
+6.- Cambiarse al setupScripts Directory
+
+	a) cd /geomex/setupScripts
+
+7.- Correr el 01Gui.sh
+
+	a) ./01Gui.sh
 
 
-12.- Instalar Sublime Text 2
-	
-    a) sudo add-apt-repository ppa:webupd8team/sublime-text-2
-	
-    b) sudo apt-get update
-	
-    c) sudo apt-get install sublime-text
-    
-   
-13.- Instalar Redis Server
+After reboot
 
-    a) sudo apt-get install redis-server
-    
-Modulos Nodejs
-======
 
-1.-	Object Relational Mapping (Nodejs) 
+8.- Login al box
 
-	a) sudo npm install orm
-	
-	b) Despues de Instalar orm, hay que instalar sus dependencias para tener el Modulo indicado para Mysql
-	
-	c) cd node_modules
-	
-	d) cd orm
-	
-	c) sudo npm install
+	a) geomex
 
-2.-	Modulos para Unit Testing (Nodejs)
-	
-	a) npm install mocha
+9.- Login como root
 
-3.-	Modulo de Redis (Nodejs) 
-	
-	a) sudo npm install hiredis redis
+	a) sudo su
 
-4.-	Modulo de Express (Nodejs)
-	
-	a) sudo npm install express
+10.- Cambiarse al setupScripts Directory
 
-5.-	Modulo para RabbitMQ (Nodejs)
-	
-	a) sudo npm install amqp
+	a) cd /geomex/setupScripts
 
-6.-	Modulo de Datetime (Nodejs)
-	
-	a) npm install moment
+11.- Correr el 02Technologies.sh
 
-7.-	Modulo de Mysql (Nodejs)
-	
-	a) Este modulo se va instalar indirectamente por medio del modulo de Orm
+	a) ./02Technologies.sh
 
-8.-	Modulo de Apple Push Notification Service (Nodejs)
-	
-	a) sudo npm install apn
+12.- Correr el 03Utils.sh
 
-9.-	Modulo de Seguridad/Criptografía (Nodejs)
-	
-	a) Crypto (Ya viene incluido en Nodejs)
+	a)  ./03Utils.sh
 
-10.-	Modulo para Logs (Nodejs)
-	
-	a) npm install winston
+14.- Dejar de ser root
 
-11.-	Modulo de Forever (Nodejs)
-	
-	a) sudo npm install forever -g
+	a) exit
+
+15.- Cambiarse al setupScripts Directory
+
+	a) cd /geomex/setupScripts
+
+16.- Correr el 04VncServer.sh (User geomex)
+
+	a) ./04VncServer.sh
+
+17.- Reiniciar Server
+
+	a) sudo reboot
