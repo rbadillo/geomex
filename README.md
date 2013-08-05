@@ -91,3 +91,57 @@ Proyecto GeoMex
 
     a) sudo apt-get install redis-server
     
+Modulos Nodejs
+======
+
+1.-	Object Relational Mapping (Nodejs) 
+
+	a) sudo npm install orm
+	
+	b) Despues de Instalar orm, hay que instalar sus dependencias para tener el Modulo indicado para Mysql
+	
+	c) cd node_modules
+	
+	d) cd orm
+	
+	c) sudo npm install
+
+2.-	Modulos para Unit Testing (Nodejs)
+	
+	a) npm install mocha
+
+3.-	Modulo de Redis (Nodejs) 
+	
+	a) sudo npm install hiredis redis
+
+4.-	Modulo de Express (Nodejs)
+	
+	a) sudo npm install express
+
+5.-	Modulo para RabbitMQ (Nodejs)
+	
+	a) sudo npm install amqp
+
+6.-	Modulo de Datetime (Nodejs)
+	
+	a) npm install moment
+
+7.-	Modulo de Mysql (Nodejs)
+	
+	a) Este modulo se va instalar indirectamente por medio del modulo de Orm
+
+8.-	Modulo de Apple Push Notification Service (Nodejs)
+	
+	a) sudo npm install apn
+
+9.-	Modulo de Seguridad/Criptografía (Nodejs)
+	
+	a) Crypto (Ya viene incluido en Nodejs)
+
+10.-	Modulo para Logs (Nodejs)
+	
+	a) npm install winston
+
+11.-	Modulo de Forever (Nodejs)
+	
+	a) sudo npm install forever -g
