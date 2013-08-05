@@ -2,7 +2,7 @@
 sudo apt-get install -y python-software-properties
 sudo add-apt-repository -y ppa:chris-lea/node.js
 sudo apt-get update -y
-sudo apt-get install -y nodejs
+sudo apt-get install -y nodejs=0.10.15-1chl1~precise1
 sudo apt-get install -y rabbitmq-server
 sudo apt-get install -y mysql-server
 sudo apt-get install -y openssh-server
