@@ -1,7 +1,5 @@
-Proyecto GeoMex
+Proyecto GeoMex - How to Setup Environment
 ======
-
-How to Setup Environment
 
 1.- Login al box
 
