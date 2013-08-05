@@ -8,3 +8,4 @@ echo mysql-server-5.5 mysql-server/root_password password EstaTrivialDb! | debco
 echo mysql-server-5.5 mysql-server/root_password_again password EstaTrivialDb! | debconf-set-selections
 sudo apt-get install -y mysql-server
 sudo apt-get install -y openssh-server
+sudo apt-get install -y redis-server
