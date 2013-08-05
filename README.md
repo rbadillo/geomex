@@ -85,3 +85,9 @@ Proyecto GeoMex
     b) sudo apt-get update
 	
     c) sudo apt-get install sublime-text
+    
+   
+13.- Instalar Redis Server
+
+    a) sudo apt-get install redis-server
+    
