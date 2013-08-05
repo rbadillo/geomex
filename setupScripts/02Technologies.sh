@@ -1,5 +1,4 @@
 #!/bin/bash
-sudo apt-get install -y git-core
 sudo apt-get install -y python-software-properties
 sudo add-apt-repository -y ppa:chris-lea/node.js
 sudo apt-get update -y
