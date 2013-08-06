@@ -81,10 +81,30 @@ How to Setup Mysql Database
 
 	a) sudo su
 
-3.- Cambiarse al /Src/Sql Directory
+3.- Cambiarse al geomex/Src/Sql Directory
 
 	a) cd /geomex/Src/Sql
 
 4.- Correr Script SetupDatabase.sh
 
 	a) ./SetupDatabase.sh
+	
+	
+How to Setup Nodejs Modules
+======
+
+1.- Login al box
+
+	a) geomex
+
+2.- Login como root
+
+	a) sudo su
+
+3.- Cambiarse al geomex/Src/Node Directory
+
+	a) cd /geomex/Src/Node
+
+4.- Correr Script SetupNodejs.sh
+
+	a) ./SetupNodejs.sh
