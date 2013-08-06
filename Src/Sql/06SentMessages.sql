@@ -6,12 +6,12 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`SentMessages` (
   INDEX `MessageId_idx` (`MessageId` ASC) ,
   CONSTRAINT `UserId`
     FOREIGN KEY (`UserId` )
-    REFERENCES `geomex`.`users` (`UserId` )
+    REFERENCES `geomex`.`Users` (`UserId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `MessageId`
     FOREIGN KEY (`MessageId` )
-    REFERENCES `geomex`.`messages` (`MessageId` )
+    REFERENCES `geomex`.`Messages` (`MessageId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
