@@ -16,7 +16,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Users` (
   INDEX `LocationId_idx` (`LocationId` ASC) ,
   CONSTRAINT `LocationId`
     FOREIGN KEY (`LocationId` )
-    REFERENCES `geomex`.`locations` (`LocationId` )
+    REFERENCES `geomex`.`Locations` (`LocationId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
