@@ -21,11 +21,11 @@ How to Setup Environment
 
 	a) git clone https://github.com/rbadillo/geomex.git
 
-6.- Cambiarse al setupScripts Directory
+6.- Cambiarse al SetupScripts Directory
 
-	a) cd /geomex/setupScripts
+	a) cd /geomex/SetupScripts
 
-7.- Correr el 01Gui.sh
+7.- Correr el Script 01Gui.sh
 
 	a) ./01Gui.sh
 
@@ -41,15 +41,15 @@ After reboot
 
 	a) sudo su
 
-10.- Cambiarse al setupScripts Directory
+10.- Cambiarse al SetupScripts Directory
 
-	a) cd /geomex/setupScripts
+	a) cd /geomex/SetupScripts
 
-11.- Correr el 02Technologies.sh
+11.- Correr el Script 02Technologies.sh
 
 	a) ./02Technologies.sh
 
-12.- Correr el 03Utils.sh
+12.- Correr el Script 03Utils.sh
 
 	a)  ./03Utils.sh
 
@@ -57,14 +57,34 @@ After reboot
 
 	a) exit
 
-15.- Cambiarse al setupScripts Directory
+15.- Cambiarse al SetupScripts Directory
 
-	a) cd /geomex/setupScripts
+	a) cd /geomex/SetupScripts
 
-16.- Correr el 04VncServer.sh (User geomex)
+16.- Correr el Script 04VncServer.sh (User geomex)
 
 	a) ./04VncServer.sh
 
 17.- Reiniciar Server
 
 	a) sudo reboot
+
+
+How to Mysql Database
+======
+
+1.- Login al box
+
+	a) geomex
+
+2.- Login como root
+
+	a) sudo su
+
+3.- Cambiarse al /Src/Sql Directory
+
+	a) cd /geomex/Src/Sql
+
+4.- Correr Script SetupDatabase.sh
+
+	a) ./SetupDatabase.sh
