@@ -70,7 +70,7 @@ After reboot
 	a) sudo reboot
 
 
-How to Mysql Database
+How to Setup Mysql Database
 ======
 
 1.- Login al box
