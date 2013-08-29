@@ -1,9 +1,11 @@
 CREATE  TABLE IF NOT EXISTS `geomex`.`SentMessages` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
   `UserId` INT NOT NULL ,
   `MessageId` INT NOT NULL ,
   `TimeSent` TIMESTAMP NOT NULL ,
   INDEX `UserId_idx` (`UserId` ASC) ,
   INDEX `MessageId_idx` (`MessageId` ASC) ,
+  PRIMARY KEY (`Id`),
   CONSTRAINT `UserId`
     FOREIGN KEY (`UserId` )
     REFERENCES `geomex`.`Users` (`UserId` )
