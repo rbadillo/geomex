@@ -83,7 +83,7 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId){
         });
 }
 
-exports.AddSentMessage = function AddSentMessage(UserId,MessageId){
+function AddSentMessage(UserId,MessageId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -201,6 +201,52 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
         });
 }
 
+function GetMessageId(UserId,Message,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var Msj = db.models.Messages;
+                    
+                    Msj.find({ Message: Message}, function (err,msj) {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log(msj[0].MessageId);
+                            callback(UserId,msj[0].MessageId);
+                        }
+                    });
+                });
+            });
+    }
+
+function GetUserId(DeviceToken,Message,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var User = db.models.Users;
+                    
+                    User.find({ DeviceToken: DeviceToken}, function (err,usr) {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log(usr[0].UserId);
+                            callback(usr[0].UserId,Message,AddSentMessage);
+                        }
+                    });
+                });
+            });
+    }
+
+
+
 //AddClient("Costenito");
 //AddLocation(3,25.654269,-100.29393,"Garza Sada Sur 2411","Mexico","Nuevo Leon","Monterrey","64700");
 //AddMessage("Hola Mi Cielo",1,3);
@@ -210,3 +256,5 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
 //DeleteAddSentMessage(517218456,1);
 //AddUser("517218456","82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","iOS","1","Roberto","Badillo",24,"01/26/1989","beto_best@hotmail.com","male","Monterrey Institute of Technology and Higher Education","Koupon Media","https://www.facebook.com/beto.badillo");
 //AddUser("762419965","82cf067e17ghdbfueh36485810hyudgj1g3841hfkhgy1e24ajuhi82odkmnhg12","iOS","1","Itzel","Lopez",21,"03/11/1992","itzela911@hotmail.com","female","Monterrey Institute of Technology and Higher Education","ITESM","https://www.facebook.com/itzel.lpz");
+GetUserId("82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","Hola Mi Cielo",GetMessageId);
+//GetMessageId("Hola Mi Cielo");
