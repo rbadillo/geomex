@@ -2,7 +2,7 @@ var orm = require("orm");
 var moment = require('moment');
 
 //exports.AddClient = function AddClient
-function AddClient(Name){
+exports.AddClient = function AddClient(Name){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -26,7 +26,7 @@ function AddClient(Name){
 }
 
 //exports.AddLocation = function AddLocation
-function AddLocation(ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode){
+exports.AddLocation = function AddLocation(ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -57,8 +57,7 @@ function AddLocation(ClientId,Latitude,Longitude,Address,Country,State,City,ZipC
 }
 
 
-
-function AddMessage(Message,LocationId,ClientId){
+exports.AddMessage = function AddMessage(Message,LocationId,ClientId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -84,47 +83,7 @@ function AddMessage(Message,LocationId,ClientId){
         });
 }
 
-
-//exports.AddUser = function AddUser
-/*
-function AddUser(UserId,DeviceToken,PhoneType,LocationId,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var usr = db.models.Users();
-                    usr.UserId=UserId
-                    usr.DeviceToken=DeviceToken
-                    usr.PhoneType=PhoneType
-                    usr.LocationId=LocationId
-                    usr.FbName=FbName
-                    usr.FbLastName=FbLastName
-                    usr.FbAge=FbAge
-                    usr.FbBirthday=FbBirthday
-                    usr.FbEmail=FbEmail
-                    usr.FbGender=FbGender
-                    usr.FbSchool=FbSchool
-                    usr.FbWork=FbWork
-                    usr.FbLink=FbLink
-
-                    
-                    usr.save(function (err) {
-                         if (err){
-                            console.log(err);
-                         }else{
-                         console.log("User Added Sucessfully");
-                         }
-                     });
-            });
-        });
-}
-*/
-
-
-function AddSentMessage(UserId,MessageId){
+exports.AddSentMessage = function AddSentMessage(UserId,MessageId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -149,7 +108,8 @@ function AddSentMessage(UserId,MessageId){
         });
 }
 
-function DeleteAddSentMessage(UserId,MessageId){
+
+exports.DeleteSentMessage = function DeleteSentMessage(UserId,MessageId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;

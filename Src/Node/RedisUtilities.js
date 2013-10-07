@@ -115,7 +115,7 @@ exports.RemoveUserFromLocation = function RemoveUserFromLocation(LocationId,Phon
 		 				}
 
  					}else{
- 						console.log("Can't Remove From Location: "+LocationId +" Because This Location Is Empty");
+ 						console.log("Can't Remove From LocationId: "+LocationId +" Because This Location Is Empty");
  					}
  				}
  		});        

@@ -3,11 +3,11 @@ var moment = require('moment');
 var RedisUtilities=require('./RedisUtilities');
 
 exports.Test = function Test(req,res){
-	res.end('hello world');
+	res.end('User Control Server - OK');
 }
 
 exports.GetUsersByLocationId = function GetUsersByLocationId(req,res){
-    var LocationId=req.body.location_id
+    var LocationId=req.query.location_id
     RedisUtilities.GetUsersByLocationId(LocationId, function(output){
         // do something with output
         //console.log("GetUsersByLocationId");

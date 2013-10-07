@@ -11,7 +11,6 @@ app.configure(function(){
 });
 
 app.get('/',Utilities.Test);
-
 app.post('/Register',Utilities.Register);
 
 app.listen(app.get('port'));

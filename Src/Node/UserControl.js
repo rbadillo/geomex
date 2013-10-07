@@ -11,7 +11,7 @@ app.configure(function(){
 });
 
 app.get('/',Utilities.Test);
-app.post('/GetUsersByLocationId',Utilities.GetUsersByLocationId);
+app.get('/GetUsersByLocationId',Utilities.GetUsersByLocationId);
 app.post('/AddUserToLocation',Utilities.AddUserToLocation);
 app.post('/RemoveUserFromLocation',Utilities.RemoveUserFromLocation);
 

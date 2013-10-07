@@ -1,4 +1,5 @@
 var apn = require ('apn');
+var DAL= require('./Database');
 
 // Create a connection to the service using mostly default parameters.
 var service = new apn.connection({ gateway:'gateway.sandbox.push.apple.com' });

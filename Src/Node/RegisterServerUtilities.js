@@ -3,17 +3,18 @@ var moment = require('moment');
 var http= require('http');
 
 exports.Test = function Test(req,res){
-	res.end('hello world');
+	res.end('Register Server - OK');
 }
 
 exports.Register = function Register(req,res){
-	res.end('Success');
-	//console.log(req.body);
+	  res.end('Success');
+	  //console.log(req.body);
 
-	var UserId= req.body.id;
-	var DeviceToken=req.body.device_token
+	  var UserId= req.body.id;
+	  var DeviceToken=req.body.device_token
     var PhoneType=req.body.phone_type
     var LocationId=req.body.location_id
+    var Event=req.body.event
     var FbName=req.body.first_name
     var FbLastName=req.body.last_name
     var FbBirthday=req.body.birthday
@@ -31,8 +32,6 @@ exports.Register = function Register(req,res){
     FbSchool=FbSchool[FbSchool.length-1].school.name
     var FbWork=req.body.work[0].employer.name
     var FbLink=req.body.link
-
-    var Event=req.body.event
 
     DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink);
     
