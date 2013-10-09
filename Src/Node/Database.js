@@ -83,54 +83,6 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId){
         });
 }
 
-function AddSentMessage(UserId,MessageId){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var SentMessage = db.models.SentMessages();
-                    SentMessage.UserId=UserId
-                    SentMessage.MessageId=MessageId
-                    SentMessage.TimeSent=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                    
-                    SentMessage.save(function (err) {
-                         if (err){
-                            console.log(err);
-                         }else{
-                         console.log("SentMessage Added Sucessfully");
-                         }
-                     });
-
-            });
-        });
-}
-
-
-exports.DeleteSentMessage = function DeleteSentMessage(UserId,MessageId){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var SentMessage = db.models.SentMessages;
-                    
-                    SentMessage.find({ UserId: UserId, MessageId: MessageId }).remove(function (err) {
-                        if(err){
-                            console.log(err);
-                        }else{
-                            console.log("SentMessage Deleted Sucessfully");
-                        }
-                    });
-                });
-            });
-    }
-
-
 exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
@@ -201,7 +153,56 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
         });
 }
 
-function GetMessageId(UserId,Message,callback){
+
+function AddSentMessage(UserId,MessageId){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var SentMessage = db.models.SentMessages();
+                    SentMessage.UserId=UserId
+                    SentMessage.MessageId=MessageId
+                    SentMessage.TimeSent=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                    
+                    SentMessage.save(function (err) {
+                         if (err){
+                            console.log(err);
+                         }else{
+                         console.log("SentMessage Added Sucessfully");
+                         }
+                     });
+
+            });
+        });
+}
+
+
+function DeleteSentMessage(UserId,MessageId){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var SentMessage = db.models.SentMessages;
+                    
+                    SentMessage.find({ UserId: UserId, MessageId: MessageId }).remove(function (err) {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("SentMessage Deleted Sucessfully");
+                        }
+                    });
+                });
+            });
+    }
+
+
+function GetMessageId(UserId,Message,Action){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -215,15 +216,21 @@ function GetMessageId(UserId,Message,callback){
                         if(err){
                             console.log(err);
                         }else{
-                            console.log(msj[0].MessageId);
-                            callback(UserId,msj[0].MessageId);
+                            //console.log(msj[0].MessageId);
+                            if(Action=="Add"){
+                              AddSentMessage(UserId,msj[0].MessageId);
+                            }else if (Action=="Delete"){
+                               DeleteSentMessage(UserId,msj[0].MessageId);
+                            }   
                         }
                     });
                 });
             });
     }
 
-function GetUserId(DeviceToken,Message,callback){
+
+//GetUserId
+exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Action){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -237,8 +244,8 @@ function GetUserId(DeviceToken,Message,callback){
                         if(err){
                             console.log(err);
                         }else{
-                            console.log(usr[0].UserId);
-                            callback(usr[0].UserId,Message,AddSentMessage);
+                            //console.log(usr[0].UserId);
+                            GetMessageId(usr[0].UserId,Message,Action);
                         }
                     });
                 });
@@ -256,5 +263,5 @@ function GetUserId(DeviceToken,Message,callback){
 //DeleteAddSentMessage(517218456,1);
 //AddUser("517218456","82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","iOS","1","Roberto","Badillo",24,"01/26/1989","beto_best@hotmail.com","male","Monterrey Institute of Technology and Higher Education","Koupon Media","https://www.facebook.com/beto.badillo");
 //AddUser("762419965","82cf067e17ghdbfueh36485810hyudgj1g3841hfkhgy1e24ajuhi82odkmnhg12","iOS","1","Itzel","Lopez",21,"03/11/1992","itzela911@hotmail.com","female","Monterrey Institute of Technology and Higher Education","ITESM","https://www.facebook.com/itzel.lpz");
-GetUserId("82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","Hola Mi Cielo",GetMessageId);
+//UpdateSentMessage("82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","Hola Mi Cielo",DeleteSentMessage);
 //GetMessageId("Hola Mi Cielo");

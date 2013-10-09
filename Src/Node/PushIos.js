@@ -13,8 +13,10 @@ service.on('transmitted', function(notification, device) {
 });
 
 service.on('transmissionError', function(errCode, notification, device) {
-    //console.error("Notification caused error: " + errCode + " for device ", device, notification);
     console.error("Notification Transmitted With Error To Device: " +device);
+    var message=notification.alert;
+    var deviceToken= "" +device
+    DAL.UpdateSentMessage(deviceToken,message,"Delete");
 });
 
 service.on('timeout', function () {
@@ -35,5 +37,11 @@ exports.PushMessage=function PushMessage(Message,Devices) {
     note.badge = 1;
     Devices=Devices.split(",");
     //console.log(Devices);
+ 
+    for(var i=0;i<Devices.length;i++){
+        //console.log("Device: " +Devices[i])
+        DAL.UpdateSentMessage(Devices[i],Message,"Add");
+    }
+    
     service.pushNotification(note, Devices);
 }
