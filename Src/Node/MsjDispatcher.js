@@ -1,6 +1,6 @@
 var amqp = require('amqp');
 var Ios= require('./PushIos');
-
+var Android= require('./PushAndroid');
 var connection = amqp.createConnection();
 
 // Wait for connection to become established.
@@ -29,7 +29,7 @@ connection.on('ready', function () {
                     //console.log(AndroidPhones);
 
                     if(AndroidPhones.length > 0){
-                      console.log('Android Push');
+                      Android.PushMessage(message.Message,AndroidPhones);
                     }
               }
 
