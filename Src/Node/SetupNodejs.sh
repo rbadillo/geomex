@@ -10,3 +10,4 @@ sudo npm install mysql@2.0.0-alpha7
 sudo npm install apn@1.3.8
 sudo npm install winston@0.7.2
 sudo npm install forever@0.10.8 -g
+sudo npm install node-gcm@0.9.6
