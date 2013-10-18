@@ -30,9 +30,9 @@ service.on('disconnected', function() {
 service.on('socketError', console.error);
 
 // If you plan on sending identical paylods to many devices you can do something like this.
-exports.PushMessage=function PushMessage(Message,Devices) {
+exports.PushMessage=function PushMessage(Message,Devices,ClientName) {
     var note = new apn.notification();
-    note.alert= Message
+    note.alert= ClientName +": " +Message
     note.sound = "ping.aiff";
     note.badge = 1;
     Devices=Devices.split(",");

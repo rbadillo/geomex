@@ -20,7 +20,7 @@ connection.on('ready', function () {
                     //console.log(iOSPhones);
 
                     if(iOSPhones.length > 0){
-                      Ios.PushMessage(message.Message,iOSPhones);
+                      Ios.PushMessage(message.Message,iOSPhones,message.ClientName);
                     }
                 }
             
@@ -29,7 +29,7 @@ connection.on('ready', function () {
                     //console.log(AndroidPhones);
 
                     if(AndroidPhones.length > 0){
-                      Android.PushMessage(message.Message,AndroidPhones);
+                      Android.PushMessage(message.Message,AndroidPhones,message.ClientName);
                     }
               }
 

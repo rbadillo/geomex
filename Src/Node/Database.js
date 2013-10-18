@@ -56,8 +56,7 @@ exports.AddLocation = function AddLocation(ClientId,Latitude,Longitude,Address,C
         });
 }
 
-
-exports.AddMessage = function AddMessage(Message,LocationId,ClientId){
+exports.AddMessage = function AddMessage(Message,LocationId,ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -65,23 +64,39 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var message = db.models.Messages();
-                    message.Message=Message
-                    message.LocationId=LocationId
-                    message.ClientId=ClientId
-                    message.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                    
-                    message.save(function (err) {
-                         if (err){
-                            console.log(err);
-                         }else{
-                         console.log("Message Added Sucessfully");
-                         }
-                     });
+                    var message = db.models.Messages;
 
+                    message.find({Message: Message, LocationId: LocationId, ClientId: ClientId},function (err, msj) {
+
+                      if(err){
+                          console.log(err);
+                      }else{
+                          if(msj.length){
+                            console.log("Existing Message");
+                            callback();
+                          }else{
+                            var msj = db.models.Messages();
+                            msj.Message=Message
+                            msj.LocationId=LocationId
+                            msj.ClientId=ClientId
+                            msj.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                            
+                            msj.save(function (err) {
+                                     if (err){
+                                        console.log(err);
+                                     }else{
+                                     console.log("Message Added Sucessfully");
+                                     callback();
+                                     }
+                                 });
+                          }
+                      }
+
+                    });
             });
         });
 }
+
 
 exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink){
 

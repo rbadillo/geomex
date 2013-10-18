@@ -4,7 +4,7 @@ var DAL= require('./Database');
 //Server ID
 var sender = new gcm.Sender('AIzaSyBBOTq-W10C642PZv8dClTtxCZULhaOXY0');
 
-exports.PushMessage=function PushMessage(Message,Devices) {
+exports.PushMessage=function PushMessage(Message,Devices,ClientName) {
 
         // Create Payload
         var message = new gcm.Message({
@@ -12,7 +12,7 @@ exports.PushMessage=function PushMessage(Message,Devices) {
             delayWhileIdle: true,
             timeToLive: 259200,  // 3 days alive
             data: {
-                key1: Message,
+                key1: ClientName,
                 key2: Message
             }
         });
