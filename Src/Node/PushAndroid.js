@@ -8,7 +8,7 @@ exports.PushMessage=function PushMessage(Message,Devices,ClientName) {
 
         // Create Payload
         var message = new gcm.Message({
-            collapseKey: 'geomex',
+            collapseKey: CreateCollapseKey(),
             delayWhileIdle: true,
             timeToLive: 259200,  // 3 days alive
             data: {
@@ -43,4 +43,15 @@ exports.PushMessage=function PushMessage(Message,Devices,ClientName) {
                     }
                 });
         }
+}
+
+function CreateCollapseKey()
+{
+    var text = "geomex";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
 }
