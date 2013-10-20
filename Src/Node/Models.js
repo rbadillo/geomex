@@ -7,6 +7,7 @@ module.exports = function (db, cb) {
     });
 
     db.define('Locations', {
+        Name: String,
         ClientId : Number,
         Latitude : Number,
         Longitude : Number,
