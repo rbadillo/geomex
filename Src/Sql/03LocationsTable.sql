@@ -1,5 +1,6 @@
 CREATE  TABLE IF NOT EXISTS `geomex`.`Locations` (
   `LocationId` INT NOT NULL AUTO_INCREMENT ,
+  `Name` VARCHAR(255) NOT NULL ,
   `ClientId` INT NOT NULL ,
   `Latitude` DOUBLE NOT NULL ,
   `Longitude` DOUBLE NOT NULL ,
