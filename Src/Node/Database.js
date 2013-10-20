@@ -1,6 +1,6 @@
 var orm = require("orm");
 var moment = require('moment');
-var http= require('http');
+var https= require('https');
 
 //exports.AddClient = function AddClient
 exports.AddClient = function AddClient(Name){
@@ -73,6 +73,7 @@ exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Addr
                                     console.log(err);
                                  }else{
                                  console.log("Location Added Sucessfully");
+                                 GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode);
                                  }
                              });
                           }
@@ -98,7 +99,8 @@ function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,Ci
                       if(err){
                         console.log(err);
                       }else{
-                        PostGimbal(Name,Address,Latitude,Longitude,loc.LocationId);
+                        console.log("Id: " +loc[0].LocationId);
+                        PostGimbal(Name,Address,Latitude,Longitude,loc[0].LocationId);
                       }
                     });
             });
@@ -332,7 +334,7 @@ function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
         "placeAttributes": {
             "latitude": Latitude,
             "longitude": Longitude,
-            "location_Id": LocationId
+            "locationId": LocationId
         }
     }
 
@@ -341,7 +343,7 @@ function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
   // An object of options to indicate where to post to
   var post_options = {
       host: 'sandbox.gimbal.com',
-      port: '80',
+      port: '443',
       path: '/api/geofences',
       method: 'POST',
       headers: {
@@ -352,7 +354,7 @@ function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
   };
 
   // Set up the request
-  var post_req = http.request(post_options, function(res) {
+  var post_req = https.request(post_options, function(res) {
       var Response="";
       res.setEncoding('utf8');
       res.on('data', function (chunk) {
@@ -392,3 +394,5 @@ function tryParseJson(str) {
 //UpdateSentMessage("82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","Hola Mi Cielo",DeleteSentMessage);
 //GetMessageId("Hola Mi Cielo");
 //PostGimbal("Depa","Mexico","33.12345","-99.23345",5);
+//AddLocation("Costenito - San Pedro",3,33.654269,-99.29393,"Ave. San Pedro","Mexico","Nuevo Leon","San Pedro","64700");
+//GetLocationId("Costenito - Tec",3,25.654269,-100.29393,"Garza Sada Sur 2411","Mexico","Nuevo Leon","Monterrey","64700");
