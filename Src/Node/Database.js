@@ -1,5 +1,6 @@
 var orm = require("orm");
 var moment = require('moment');
+var http= require('http');
 
 //exports.AddClient = function AddClient
 exports.AddClient = function AddClient(Name){
@@ -10,23 +11,34 @@ exports.AddClient = function AddClient(Name){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var cliente = db.models.Clients();
-                    cliente.Name=Name
-                    
-                    cliente.save(function (err) {
-                         if (err){
-                            console.log(err);
-                         }else{
-                         console.log("Client Added Sucessfully");
-                         }
-                     });
+                    var cliente = db.models.Clients;
 
+                    cliente.find({ Name:Name },function (err, clnt) {
+                      if(err){
+                        console.log(err);
+                      }else{
+                        if(clnt.length){
+                            console.log("Existing Client");
+                          }else{
+                            var cliente = db.models.Clients();
+                            cliente.Name=Name
+                            
+                            cliente.save(function (err) {
+                                 if (err){
+                                    console.log(err);
+                                 }else{
+                                 console.log("Client Added Sucessfully");
+                                 }
+                             });
+                          }
+                      }
+                    });
             });
         });
 }
 
 //exports.AddLocation = function AddLocation
-exports.AddLocation = function AddLocation(ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode){
+exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -34,24 +46,61 @@ exports.AddLocation = function AddLocation(ClientId,Latitude,Longitude,Address,C
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var location = db.models.Locations();
-                    location.ClientId=ClientId
-                    location.Latitude=Latitude
-                    location.Longitude=Longitude
-                    location.Address=Address
-                    location.Country=Country
-                    location.State=State
-                    location.City=City
-                    location.ZipCode=ZipCode
-                    
-                    location.save(function (err) {
-                         if (err){
-                            console.log(err);
-                         }else{
-                         console.log("Location Added Sucessfully");
-                         }
-                     });
+                    var location = db.models.Locations;
 
+                    location.find({Name:Name, ClientId: ClientId, Latitude: Latitude, Longitude: Longitude,Address:Address,
+                    Country:Country, State:State, City:City, ZipCode:ZipCode },function (err, loc) {
+
+                      if(err){
+                        console.log(err);
+                      }else{
+                        if(loc.length){
+                            console.log("Existing Location");
+                          }else{
+                            var location = db.models.Locations();
+                            location.Name=Name
+                            location.ClientId=ClientId
+                            location.Latitude=Latitude
+                            location.Longitude=Longitude
+                            location.Address=Address
+                            location.Country=Country
+                            location.State=State
+                            location.City=City
+                            location.ZipCode=ZipCode
+                            
+                            location.save(function (err) {
+                                 if (err){
+                                    console.log(err);
+                                 }else{
+                                 console.log("Location Added Sucessfully");
+                                 }
+                             });
+                          }
+                      }
+                    });
+            });
+        });
+}
+
+function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var location = db.models.Locations;
+
+                    location.find({Name:Name, ClientId:ClientId, Latitude:Latitude, Longitude:Longitude,Address:Address,
+                    Country:Country, State:State, City:City, ZipCode:ZipCode },function (err, loc) {
+
+                      if(err){
+                        console.log(err);
+                      }else{
+                        PostGimbal(Name,Address,Latitude,Longitude,loc.LocationId);
+                      }
+                    });
             });
         });
 }
@@ -268,6 +317,68 @@ exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Actio
     }
 
 
+function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
+  // Build the post string from an object
+  var Place= {
+        "name": Name,
+        "addressLineOne": Address,
+        "geoFenceCircle": {
+            "radius": 50,
+            "location": {
+                "latitude": Latitude,
+                "longitude": Longitude
+            }
+        },
+        "placeAttributes": {
+            "latitude": Latitude,
+            "longitude": Longitude,
+            "location_Id": LocationId
+        }
+    }
+
+  var post_data = tryParseJson(Place);
+
+  // An object of options to indicate where to post to
+  var post_options = {
+      host: 'sandbox.gimbal.com',
+      port: '80',
+      path: '/api/geofences',
+      method: 'POST',
+      headers: {
+          'AUTHORIZATION': 'Token token=7ec5f434d5ac2f91172bb1a396ebd4c1',
+          'Content-Type': 'application/json',
+          'Content-Length': post_data.length
+      }
+  };
+
+  // Set up the request
+  var post_req = http.request(post_options, function(res) {
+      var Response="";
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          Response= Response + chunk;
+      });
+
+      res.on('end', function(){
+          console.log('Gimbal: ' +res.statusCode);
+      });
+
+  });
+
+  // post the data
+  post_req.write(post_data);
+  post_req.end();
+
+}
+
+function tryParseJson(str) {
+    try {
+        return JSON.stringify(str);
+    } catch (ex) {
+        return null;
+    }
+}
+
 
 //AddClient("Costenito");
 //AddLocation(3,25.654269,-100.29393,"Garza Sada Sur 2411","Mexico","Nuevo Leon","Monterrey","64700");
@@ -280,3 +391,4 @@ exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Actio
 //AddUser("762419965","82cf067e17ghdbfueh36485810hyudgj1g3841hfkhgy1e24ajuhi82odkmnhg12","iOS","1","Itzel","Lopez",21,"03/11/1992","itzela911@hotmail.com","female","Monterrey Institute of Technology and Higher Education","ITESM","https://www.facebook.com/itzel.lpz");
 //UpdateSentMessage("82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","Hola Mi Cielo",DeleteSentMessage);
 //GetMessageId("Hola Mi Cielo");
+//PostGimbal("Depa","Mexico","33.12345","-99.23345",5);
