@@ -184,6 +184,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                     console.log(err);
                                  }else{
                                  console.log("User Added Sucessfully");
+                                 UpdateLocationEvents(UserId,LocationId,Event);
                                  }
                              });
                             
@@ -211,10 +212,37 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                     console.log(err);
                                  }else{
                                  console.log("User Updated Sucessfully");
+                                 UpdateLocationEvents(UserId,LocationId,Event);
                                  }
                              });
                           }
                     });
+            });
+        });
+}
+
+function UpdateLocationEvents(UserId,LocationId,Event){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var LocationEventAnalytics = db.models.LocationEvents();
+                    LocationEventAnalytics.UserId=UserId
+                    LocationEventAnalytics.LocationId=LocationId
+                    LocationEventAnalytics.Event=Event
+                    LocationEventAnalytics.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                    
+                    LocationEventAnalytics.save(function (err) {
+                         if (err){
+                            console.log(err);
+                         }else{
+                         console.log("LocationEvents Updated Sucessfully");
+                         }
+                     });
+
             });
         });
 }

@@ -56,6 +56,15 @@ module.exports = function (db, cb) {
         id: ['UserId']  // Primary Key
     });
 
+    db.define('LocationEvents', {
+        UserId : Number,
+        LocationId : Number,
+        Event: String,
+        TimeCreated : Date
+    },{
+        id: ['Id']   // Primary Key
+    });
+
 
     return cb();
 };
