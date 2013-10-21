@@ -29,7 +29,7 @@ exports.GetUsersByLocationId = function GetUsersByLocationId(LocationId,callback
  			if(err){
  				console.log(err)
  			}else{
- 					if(obj[PhoneType]){
+ 					if(obj){
 	 					//console.log(obj);
 	 					//console.log("PhoneType: " +PhoneType)
 	 					//console.log("LocationId: " +LocationId)
@@ -83,7 +83,7 @@ exports.RemoveUserFromLocation = function RemoveUserFromLocation(LocationId,Phon
  			if(err){
  				console.log(err)
  			}else{
- 					if(obj[PhoneType]){
+ 					if(obj){
  						//console.log(obj);
 	 					//console.log("PhoneType: " +PhoneType)
 	 					//console.log("LocationId: " +LocationId)
