@@ -58,6 +58,7 @@ module.exports = function (db, cb) {
 
     db.define('LocationEvents', {
         UserId : Number,
+        ClientId: Number,
         LocationId : Number,
         Event: String,
         TimeCreated : Date

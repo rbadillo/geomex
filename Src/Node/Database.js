@@ -184,7 +184,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                     console.log(err);
                                  }else{
                                  console.log("User Added Sucessfully");
-                                 UpdateLocationEvents(UserId,LocationId,Event);
+                                 GetClientIdByLocationId(UserId,LocationId,Event);
                                  }
                              });
                             
@@ -212,7 +212,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                     console.log(err);
                                  }else{
                                  console.log("User Updated Sucessfully");
-                                 UpdateLocationEvents(UserId,LocationId,Event);
+                                 GetClientIdByLocationId(UserId,LocationId,Event);
                                  }
                              });
                           }
@@ -221,7 +221,30 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
         });
 }
 
-function UpdateLocationEvents(UserId,LocationId,Event){
+function GetClientIdByLocationId(UserId,LocationId,Event){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var Local= db.models.Locations;
+
+                    Local.get(LocationId,function (err, loc) {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Location Exist");
+                            //console.log(loc.ClientId);
+                            UpdateLocationEvents(UserId,loc.ClientId,LocationId,Event);
+                          }
+                    });
+            });
+        });
+}
+
+function UpdateLocationEvents(UserId,ClientId,LocationId,Event){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -231,6 +254,7 @@ function UpdateLocationEvents(UserId,LocationId,Event){
                     // loaded!
                     var LocationEventAnalytics = db.models.LocationEvents();
                     LocationEventAnalytics.UserId=UserId
+                    LocationEventAnalytics.ClientId=ClientId
                     LocationEventAnalytics.LocationId=LocationId
                     LocationEventAnalytics.Event=Event
                     LocationEventAnalytics.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
