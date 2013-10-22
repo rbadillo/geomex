@@ -60,6 +60,7 @@ module.exports = function (db, cb) {
         UserId : Number,
         ClientId: Number,
         LocationId : Number,
+        LocationName: String,
         Event: String,
         TimeCreated : Date
     },{

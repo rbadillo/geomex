@@ -237,14 +237,14 @@ function GetClientIdByLocationId(UserId,LocationId,Event){
                         }else{
                             console.log("Location Exist");
                             //console.log(loc.ClientId);
-                            UpdateLocationEvents(UserId,loc.ClientId,LocationId,Event);
+                            UpdateLocationEvents(UserId,loc.ClientId,LocationId,loc.Name,Event);
                           }
                     });
             });
         });
 }
 
-function UpdateLocationEvents(UserId,ClientId,LocationId,Event){
+function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -256,6 +256,7 @@ function UpdateLocationEvents(UserId,ClientId,LocationId,Event){
                     LocationEventAnalytics.UserId=UserId
                     LocationEventAnalytics.ClientId=ClientId
                     LocationEventAnalytics.LocationId=LocationId
+                    LocationEventAnalytics.LocationName=LocationName
                     LocationEventAnalytics.Event=Event
                     LocationEventAnalytics.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
                     
