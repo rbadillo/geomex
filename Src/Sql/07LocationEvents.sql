@@ -3,17 +3,12 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`LocationEvents` (
   `UserId` INT NOT NULL ,
   `ClientId` INT NOT NULL ,
   `LocationId` INT NOT NULL ,
+  `LocationName` VARCHAR(255) NOT NULL ,
   `Event` VARCHAR(255) NOT NULL ,
   `TimeCreated` TIMESTAMP NOT NULL ,
   PRIMARY KEY (`Id`) ,
-  INDEX `UserId` (`UserId` ASC) ,
   INDEX `ClientId` (`ClientId` ASC) ,
   INDEX `LocationId` (`LocationId` ASC) ,
-  CONSTRAINT `UserId_LocationEvents`
-    FOREIGN KEY (`UserId` )
-    REFERENCES `geomex`.`Users` (`UserId` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `ClientId_LocationEvents`
     FOREIGN KEY (`ClientId` )
     REFERENCES `geomex`.`Clients` (`ClientId` )
