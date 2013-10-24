@@ -5,21 +5,21 @@ CREATE  TABLE `geomex`.`OfferRedemption` (
   `OfferId` INT NOT NULL ,
   `TimeCreated` TIMESTAMP NOT NULL ,
   PRIMARY KEY (`Id`) ,
-  INDEX `ClientIdSingleUse` (`ClientId` ASC) ,
-  INDEX `UserIdSingleUse` (`UserId` ASC) ,
-  INDEX `OfferIdSingleUse` (`Id` ASC) ,
-  CONSTRAINT `ClientIdSingleUse`
+  INDEX `ClientIdOfferRedemption` (`ClientId` ASC) ,
+  INDEX `UserIdOfferRedemption` (`UserId` ASC) ,
+  INDEX `OfferIdOfferRedemption` (`OfferId` ASC) ,
+  CONSTRAINT `ClientIdOfferRedemption`
     FOREIGN KEY (`ClientId` )
-    REFERENCES `geomex`.`ClientId` (`ClientId` )
+    REFERENCES `geomex`.`Offers` (`Id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `UserIdSingleUse`
+  CONSTRAINT `UserIdOfferRedemption`
     FOREIGN KEY (`UserId` )
     REFERENCES `geomex`.`Users` (`UserId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `OfferIdSingleUse`
-    FOREIGN KEY (`Id` )
+  CONSTRAINT `OfferIdOfferRedemption`
+    FOREIGN KEY (`OfferId` )
     REFERENCES `geomex`.`Offers` (`Id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
