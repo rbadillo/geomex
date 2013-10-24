@@ -9,7 +9,7 @@ CREATE  TABLE `geomex`.`Offers` (
   `EndDate` TIMESTAMP NOT NULL ,
   `ActualRedemption` INT NULL ,
   `TotalRedemption` INT NULL ,
-  `MultiUse` BIT NULL DEFAULT 0 ,
+  `MultiUse` TINYINT NULL DEFAULT 0 ,
   `Visibility` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`Id`) ,
   INDEX `ClientIdOffers` (`ClientId` ASC) ,
