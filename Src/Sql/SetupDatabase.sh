@@ -6,3 +6,4 @@ mysql -u root -pEstaTrivialDb! < 04UsersTable.sql;
 mysql -u root -pEstaTrivialDb! < 05MessagesTable.sql;
 mysql -u root -pEstaTrivialDb! < 06SentMessages.sql;
 mysql -u root -pEstaTrivialDb! < 07LocationEvents.sql
+mysql -u root -pEstaTrivialDb! < 08Offers.sql
