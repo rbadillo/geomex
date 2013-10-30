@@ -10,7 +10,7 @@ CREATE  TABLE `geomex`.`OfferRedemption` (
   INDEX `OfferIdOfferRedemption` (`OfferId` ASC) ,
   CONSTRAINT `ClientIdOfferRedemption`
     FOREIGN KEY (`ClientId` )
-    REFERENCES `geomex`.`Clients` (`Clients` )
+    REFERENCES `geomex`.`Clients` (`ClientId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `UserIdOfferRedemption`
