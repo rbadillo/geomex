@@ -22,6 +22,6 @@ CREATE  TABLE `geomex`.`UserPrivateOffers` (
     ON UPDATE NO ACTION,
   CONSTRAINT `OfferIdPrivateOffers`
     FOREIGN KEY (`OfferId` )
-    REFERENCES `geomex`.`Offers` (`Id` )
+    REFERENCES `geomex`.`Offers` (`OfferId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
