@@ -20,6 +20,6 @@ CREATE  TABLE `geomex`.`OfferRedemption` (
     ON UPDATE NO ACTION,
   CONSTRAINT `OfferIdOfferRedemption`
     FOREIGN KEY (`OfferId` )
-    REFERENCES `geomex`.`Offers` (`Id` )
+    REFERENCES `geomex`.`Offers` (`OfferId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
