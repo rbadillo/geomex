@@ -493,7 +493,7 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
         var ofertas=[];
 
         for(var i=0;i<PublicOffers.length;i++){
-          ofertas.push(PublicOffers[i].Id)
+          ofertas.push(PublicOffers[i].OfferId)
         }
 
         var ofertasPrivadas= []
@@ -533,7 +533,7 @@ function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback
 // Remove Offers Already Redeemed
   for(var i=0;i<PublicOffers.length;i++){
       for(var j=0;j<RedemedOffers.length;j++){
-        if(PublicOffers[i].Id==RedemedOffers[j] && PublicOffers[i].MultiUse==0){
+        if(PublicOffers[i].OfferId==RedemedOffers[j] && PublicOffers[i].MultiUse==0){
           PublicOffers.splice(i,1);
         }
       }
@@ -553,7 +553,7 @@ function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback
         var UserPrivateOffer= false;
         if(PublicOffers[i].Visibility=="private"){
           for(var j=0;j<PrivateOffers.length;j++){
-            if(PublicOffers[i].Id==PrivateOffers[j]){
+            if(PublicOffers[i].OfferId==PrivateOffers[j]){
               UserPrivateOffer=true;
             }
           }
@@ -602,7 +602,7 @@ exports.GetSingleOffer = function GetSingleOffer(OfferId,callback){
                     // loaded!
                     var offer = db.models.Offers;
 
-                    offer.find({ Id:OfferId },function (err, off) {
+                    offer.find({ OfferId:OfferId },function (err, off) {
 
                       if(err){
                         console.log(err);

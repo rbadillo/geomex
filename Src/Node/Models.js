@@ -80,7 +80,7 @@ module.exports = function (db, cb) {
         MultiUse: Number,
         Visibility: String
     },{
-        id: ['Id']   // Primary Key
+        id: ['OfferId']   // Primary Key
     });
 
     db.define('UserPrivateOffers', {
