@@ -67,6 +67,42 @@ module.exports = function (db, cb) {
         id: ['Id']   // Primary Key
     });
 
+    db.define('Offers', {
+        ClientId: Number,
+        Name: String,
+        Title: String,
+        Subtitle: String,
+        PublishedDate: Date,
+        StartDate: Date,
+        EndDate: Date,
+        ActualRedemption: Number,
+        TotalRedemption: Number,
+        MultiUse: Number,
+        Visibility: String
+    },{
+        id: ['Id']   // Primary Key
+    });
+
+    db.define('UserPrivateOffers', {
+        ClientId: Number,
+        UserId: Number,
+        OfferId: Number,
+        StartDate: Date,
+        EndDate: Date,
+        TimeCreated : Date
+    },{
+        id: ['Id']   // Primary Key
+    });
+
+    db.define('OfferRedemption', {
+        ClientId: Number,
+        UserId: Number,
+        OfferId: Number,
+        TimeCreated : Date
+    },{
+        id: ['Id']   // Primary Key
+    });
+
 
     return cb();
 };

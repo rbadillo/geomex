@@ -434,7 +434,219 @@ function tryParseJson(str) {
     }
 }
 
+exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,callback){
 
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var offer = db.models.Offers;
+
+                    offer.find({ PublishedDate:orm.lte(UserTime), EndDate:orm.gte(UserTime)  },function (err, off) {
+
+                      if(err){
+                        console.log(err);
+                      }else{
+                        //console.log(off.length);
+                        //for(var i=0;i<off.length;i++){
+                          //  console.log("Oferta: " +off[i].Id +" - Name: " +off[i].Name);
+                        //}
+                        GetPrivateOffers(UserTime,UserId,off,Timezone,callback);
+                      }
+                    });
+            });
+        });
+}
+
+
+function GetPrivateOffers(UserTime,UserId,PublicOffers,Timezone,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var privateOffer = db.models.UserPrivateOffers;
+
+                    privateOffer.find( {StartDate:orm.lte(UserTime), EndDate:orm.gte(UserTime)  },function (err, off) {
+
+                      if(err){
+                        console.log(err);
+                      }else{
+                        //console.log(off.length);
+                        //for(var i=0;i<off.length;i++){
+                          //  console.log("Private OfertaId: " +off[i].OfferId +" - UserId: " +off[i].UserId);
+                        //}
+                        GetUserRedemption(UserId,PublicOffers,off,Timezone,callback);
+                      }
+                    });
+            });
+        });
+}
+
+
+function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
+
+        var ofertas=[];
+
+        for(var i=0;i<PublicOffers.length;i++){
+          ofertas.push(PublicOffers[i].Id)
+        }
+
+        var ofertasPrivadas= []
+
+        for(var i=0;i<PrivateOffers.length;i++){
+          ofertasPrivadas.push(PrivateOffers[i].OfferId)
+        }
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var redemption = db.models.OfferRedemption;
+
+                    redemption.find( {OfferId: ofertas},function (err, off) {
+
+                      if(err){
+                        console.log(err);
+                      }else{
+                        //console.log(off.length);
+                        var ofertasUsadas=[]
+                        for(var i=0;i<off.length;i++){
+                          ofertasUsadas.push(off[i].OfferId);
+                        }
+                        FilterOffers(PublicOffers,ofertasPrivadas,ofertasUsadas,Timezone,callback);
+                      }
+                    });
+            });
+        });
+}
+
+
+function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback){
+
+// Remove Offers Already Redeemed
+  for(var i=0;i<PublicOffers.length;i++){
+      for(var j=0;j<RedemedOffers.length;j++){
+        if(PublicOffers[i].Id==RedemedOffers[j] && PublicOffers[i].MultiUse==0){
+          PublicOffers.splice(i,1);
+        }
+      }
+    }
+
+// Remove PrivateOffers Already Redeemed
+   for(var i=0;i<PrivateOffers.length;i++){
+      for(var j=0;j<RedemedOffers.length;j++){
+        if(PrivateOffers[i]==RedemedOffers[j]){
+          PrivateOffers.splice(i,1);
+        }
+      }
+    }
+
+// Remove PrivateOffers Not added to User
+    for(var i=0;i<PublicOffers.length;i++){
+        var UserPrivateOffer= false;
+        if(PublicOffers[i].Visibility=="private"){
+          for(var j=0;j<PrivateOffers.length;j++){
+            if(PublicOffers[i].Id==PrivateOffers[j]){
+              UserPrivateOffer=true;
+            }
+          }
+          if(!UserPrivateOffer){
+            PublicOffers.splice(i,1);
+          }
+        }
+    }
+
+// Remove Offers Exceding the TotalRedemption 
+    for(var i=0;i<PublicOffers.length;i++){
+      if(PublicOffers[i].TotalRedemption!=null){
+        if(PublicOffers[i].ActualRedemption>=PublicOffers[i].TotalRedemption){
+          PublicOffers.splice(i,1);
+        }
+      }
+    }
+
+// Convert Dates to Local Time
+    for(var i=0;i<PublicOffers.length;i++){
+      var auxMoment=moment(PublicOffers[i].PublishedDate);
+      var PublishedDateLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
+
+      var auxMoment=moment(PublicOffers[i].StartDate);
+      var StartDateLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
+      
+      var auxMoment=moment(PublicOffers[i].EndDate);
+      var EndDateLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
+
+      PublicOffers[i].PublishedDate=PublishedDateLocal;
+      PublicOffers[i].StartDate=StartDateLocal;
+      PublicOffers[i].EndDate=EndDateLocal;
+      }
+
+    // Return JSON Object
+    callback(JSON.stringify(PublicOffers));
+}
+
+exports.GetSingleOffer = function GetSingleOffer(OfferId,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var offer = db.models.Offers;
+
+                    offer.find({ Id:OfferId },function (err, off) {
+
+                      if(err){
+                        console.log(err);
+                      }else{
+                        //console.log(off.length);
+                        //for(var i=0;i<off.length;i++){
+                          //  console.log("Oferta: " +off[i].Id +" - Name: " +off[i].Name);
+                        //}
+                        callback(JSON.stringify(off));
+                      }
+                    });
+            });
+        });
+}
+
+
+exports.Redeem = function Redeem(ClientId,UserId,OfferId){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var offer = db.models.OfferRedemption();
+                    offer.ClientId=ClientId;
+                    offer.UserId=UserId;
+                    offer.OfferId=OfferId;
+                    offer.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+
+                    offer.save(function (err) {
+                         if (err){
+                            console.log(err);
+                         }else{
+                         console.log("User: " +UserId +" Redeemed Offer: " +OfferId);
+                         }
+                     });
+            });
+        });
+}
+
+//GetOffers("2013-10-22 17:00:00","517218456");
+//GetPrivateOffers("2013-10-22 17:00:00","517218456");
+//GetUserRedemption("517218456",[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]);
 //AddClient("Costenito");
 //AddLocation(3,25.654269,-100.29393,"Garza Sada Sur 2411","Mexico","Nuevo Leon","Monterrey","64700");
 //AddMessage("Hola Mi Cielo",1,3);
