@@ -13,6 +13,7 @@ exports.GetUsersByLocationId = function GetUsersByLocationId(req,res){
         //console.log("GetUsersByLocationId");
         //console.log(output);
         //console.log(JSON.parse(Users));
+        res.setHeader('Content-Type', 'application/json');
         res.write(output);
         res.end();
     });
