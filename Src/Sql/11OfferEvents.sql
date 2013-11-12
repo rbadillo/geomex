@@ -1,11 +1,11 @@
 CREATE  TABLE `geomex`.`OfferEvents` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
+  `Id` INT NOT NULL AUTO_INCREMENT ,
   `UserId` INT NOT NULL ,
   `ClientId` INT NOT NULL ,
   `OfferId` INT NOT NULL ,
   `Event` VARCHAR(45) NOT NULL ,
   `TimeCreated` DATETIME NOT NULL ,
-  PRIMARY KEY (`id`) ,
+  PRIMARY KEY (`Id`) ,
   INDEX `UserId_OfferEvents` (`UserId` ASC) ,
   INDEX `ClientId_OfferEvents` (`ClientId` ASC) ,
   INDEX `OfferId_OfferEvents` (`OfferId` ASC) ,
