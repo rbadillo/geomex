@@ -16,9 +16,11 @@ exports.AddClient = function AddClient(Name){
                     cliente.find({ Name:Name },function (err, clnt) {
                       if(err){
                         console.log(err);
+                        db.close();
                       }else{
                         if(clnt.length){
                             console.log("Existing Client");
+                            db.close();
                           }else{
                             var cliente = db.models.Clients();
                             cliente.Name=Name
@@ -26,8 +28,10 @@ exports.AddClient = function AddClient(Name){
                             cliente.save(function (err) {
                                  if (err){
                                     console.log(err);
+                                    db.close();
                                  }else{
                                  console.log("Client Added Sucessfully");
+                                 db.close();
                                  }
                              });
                           }
@@ -53,9 +57,11 @@ exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Addr
 
                       if(err){
                         console.log(err);
+                        db.close();
                       }else{
                         if(loc.length){
                             console.log("Existing Location");
+                            db.close();
                           }else{
                             var location = db.models.Locations();
                             location.Name=Name
@@ -71,8 +77,10 @@ exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Addr
                             location.save(function (err) {
                                  if (err){
                                     console.log(err);
+                                    db.close();
                                  }else{
                                  console.log("Location Added Sucessfully");
+                                 db.close();
                                  GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode);
                                  }
                              });
@@ -98,8 +106,10 @@ function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,Ci
 
                       if(err){
                         console.log(err);
+                        db.close();
                       }else{
                         console.log("Id: " +loc[0].LocationId);
+                        db.close();
                         PostGimbal(Name,Address,Latitude,Longitude,loc[0].LocationId);
                       }
                     });
@@ -121,9 +131,11 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId,callback){
 
                       if(err){
                           console.log(err);
+                          db.close();
                       }else{
                           if(msj.length){
                             console.log("Existing Message");
+                            db.close();
                             callback();
                           }else{
                             var msj = db.models.Messages();
@@ -135,8 +147,10 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId,callback){
                             msj.save(function (err) {
                                      if (err){
                                         console.log(err);
+                                        db.close();
                                      }else{
                                      console.log("Message Added Sucessfully");
+                                     db.close();
                                      callback();
                                      }
                                  });
@@ -182,8 +196,10 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                             usr.save(function (err) {
                                  if (err){
                                     console.log(err);
+                                    db.close();
                                  }else{
                                  console.log("User Added Sucessfully");
+                                 db.close();
                                  GetClientIdByLocationId(UserId,LocationId,Event);
                                  }
                              });
@@ -210,8 +226,10 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                             usr.save(function (err) {
                                  if (err){
                                     console.log(err);
+                                    db.close();
                                  }else{
                                  console.log("User Updated Sucessfully");
+                                 db.close();
                                  GetClientIdByLocationId(UserId,LocationId,Event);
                                  }
                              });
@@ -234,9 +252,11 @@ function GetClientIdByLocationId(UserId,LocationId,Event){
                     Local.get(LocationId,function (err, loc) {
                         if(err){
                             console.log(err);
+                            db.close();
                         }else{
                             console.log("Location Exist");
                             //console.log(loc.ClientId);
+                            db.close();
                             UpdateLocationEvents(UserId,loc.ClientId,LocationId,loc.Name,Event);
                           }
                     });
@@ -263,8 +283,10 @@ function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event){
                     LocationEventAnalytics.save(function (err) {
                          if (err){
                             console.log(err);
+                            db.close();
                          }else{
                          console.log("LocationEvents Updated Sucessfully");
+                         db.close();
                          }
                      });
 
@@ -289,8 +311,10 @@ function AddSentMessage(UserId,MessageId){
                     SentMessage.save(function (err) {
                          if (err){
                             console.log(err);
+                            db.close();
                          }else{
                          console.log("SentMessage Added Sucessfully");
+                         db.close();
                          }
                      });
 
@@ -312,8 +336,10 @@ function DeleteSentMessage(UserId,MessageId){
                     SentMessage.find({ UserId: UserId, MessageId: MessageId }).remove(function (err) {
                         if(err){
                             console.log(err);
+                            db.close();
                         }else{
                             console.log("SentMessage Deleted Sucessfully");
+                            db.close();
                         }
                     });
                 });
@@ -334,13 +360,15 @@ function GetMessageId(UserId,Message,Action){
                     Msj.find({ Message: Message}, function (err,msj) {
                         if(err){
                             console.log(err);
+                            db.close();
                         }else{
                             //console.log(msj[0].MessageId);
                             if(Action=="Add"){
                               AddSentMessage(UserId,msj[0].MessageId);
                             }else if (Action=="Delete"){
                                DeleteSentMessage(UserId,msj[0].MessageId);
-                            }   
+                            }
+                            db.close();   
                         }
                     });
                 });
@@ -362,9 +390,11 @@ exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Actio
                     User.find({ DeviceToken: DeviceToken}, function (err,usr) {
                         if(err){
                             console.log(err);
+                            db.close();
                         }else{
                             //console.log(usr[0].UserId);
                             GetMessageId(usr[0].UserId,Message,Action);
+                            db.close();
                         }
                     });
                 });
@@ -448,11 +478,13 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,callback){
 
                       if(err){
                         console.log(err);
+                        db.close();
                       }else{
                         //console.log(off.length);
                         //for(var i=0;i<off.length;i++){
                           //  console.log("Oferta: " +off[i].Id +" - Name: " +off[i].Name);
                         //}
+                        db.close();
                         GetPrivateOffers(UserTime,UserId,off,Timezone,callback);
                       }
                     });
@@ -475,11 +507,13 @@ function GetPrivateOffers(UserTime,UserId,PublicOffers,Timezone,callback){
 
                       if(err){
                         console.log(err);
+                        db.close();
                       }else{
                         //console.log(off.length);
                         //for(var i=0;i<off.length;i++){
                           //  console.log("Private OfertaId: " +off[i].OfferId +" - UserId: " +off[i].UserId);
                         //}
+                        db.close();
                         GetUserRedemption(UserId,PublicOffers,off,Timezone,callback);
                       }
                     });
@@ -514,8 +548,10 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
 
                       if(err){
                         console.log(err);
+                        db.close();
                       }else{
                         //console.log(off.length);
+                        db.close();
                         var ofertasUsadas=[]
                         for(var i=0;i<off.length;i++){
                           ofertasUsadas.push(off[i].OfferId);
@@ -606,11 +642,13 @@ exports.GetSingleOffer = function GetSingleOffer(OfferId,callback){
 
                       if(err){
                         console.log(err);
+                        db.close();
                       }else{
                         //console.log(off.length);
                         //for(var i=0;i<off.length;i++){
                           //  console.log("Oferta: " +off[i].Id +" - Name: " +off[i].Name);
                         //}
+                        db.close();
                         callback(JSON.stringify(off));
                       }
                     });
@@ -636,8 +674,10 @@ exports.Redeem = function Redeem(ClientId,UserId,OfferId){
                     offer.save(function (err) {
                          if (err){
                             console.log(err);
+                            db.close();
                          }else{
                          console.log("User: " +UserId +" Redeemed Offer: " +OfferId);
+                         db.close();
                          }
                      });
             });
