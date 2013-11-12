@@ -1,7 +1,8 @@
 module.exports = function (db, cb) {
     
     db.define('Clients', {
-        Name : String
+        Name : String,
+        Logo : String
     },{
         id: ['ClientId']   // Primary Key
     });
@@ -52,6 +53,7 @@ module.exports = function (db, cb) {
         FbSchool : String,
         FbWork : String,
         FbLink : String,
+        FbPhoto : String
     },{ 
         id: ['UserId']  // Primary Key
     });
@@ -78,7 +80,9 @@ module.exports = function (db, cb) {
         ActualRedemption: Number,
         TotalRedemption: Number,
         MultiUse: Number,
-        Visibility: String
+        Visibility: String,
+        PrimaryImage: String,
+        SecondaryImage: String
     },{
         id: ['OfferId']   // Primary Key
     });
@@ -98,6 +102,16 @@ module.exports = function (db, cb) {
         ClientId: Number,
         UserId: Number,
         OfferId: Number,
+        TimeCreated : Date
+    },{
+        id: ['Id']   // Primary Key
+    });
+
+    db.define('OfferEvents', {
+        ClientId: Number,
+        UserId: Number,
+        OfferId: Number,
+        Event: String,
         TimeCreated : Date
     },{
         id: ['Id']   // Primary Key

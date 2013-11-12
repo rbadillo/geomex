@@ -32,8 +32,9 @@ exports.Register = function Register(req,res){
     FbSchool=FbSchool[FbSchool.length-1].school.name
     var FbWork=req.body.work[0].employer.name
     var FbLink=req.body.link
+    var FbPhoto="https://graph.facebook.com/"+UserId+"/picture?type=square"
 
-    DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink);
+    DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto);
     
     if(Event=="left"){
         PostUserControl(LocationId,PhoneType,DeviceToken,"/RemoveUserFromLocation")

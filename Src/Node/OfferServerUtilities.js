@@ -12,12 +12,14 @@ exports.Offers = function Offers(req,res){
     var LocalTime= moment.utc().zone(Timezone);
     var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
     var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
+    var ClientId= req.query.client_id
     console.log("Usuario: " +UserId);
     console.log("Timezone: " +Timezone);
     console.log("LocalTimeForUser: " +LocalTime.format("YYYY-MM-DD HH:mm:ss"));
     console.log("UTCTimeForUser: " +LocalToUtc);
+    console.log("ClientId: " +ClientId);
 	  
-    DAL.GetOffers(LocalToUtc,UserId,Timezone, function (output){
+    DAL.GetOffers(LocalToUtc,UserId,Timezone,ClientId, function (output){
       res.setHeader('Content-Type', 'application/json');
       res.write(output);
       res.end();
@@ -42,4 +44,13 @@ exports.Redeem= function Redeem(req,res){
     var UserId=req.params.UserId
     var OfferId=req.body.offerId
     DAL.Redeem(ClientId,UserId,OfferId);
+}
+
+exports.OfferEvents= function Redeem(req,res){
+    res.end("Sucess");
+    var ClientId=req.body.clientId
+    var UserId=req.params.UserId
+    var OfferId=req.body.offerId
+    var Event=req.body.event
+    DAL.UpdateOfferEvents(ClientId,UserId,OfferId,Event);
 }
