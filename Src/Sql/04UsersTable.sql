@@ -13,6 +13,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Users` (
   `FbSchool` VARCHAR(255) NULL ,
   `FbWork` VARCHAR(255) NULL ,
   `FbLink` VARCHAR(255) NULL ,
+  `FbPhoto` VARCHAR(255) NULL ,
   PRIMARY KEY (`UserId`) ,
   INDEX `LocationId_idx` (`LocationId` ASC) ,
   CONSTRAINT `LocationId`

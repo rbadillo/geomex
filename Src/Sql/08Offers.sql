@@ -11,6 +11,8 @@ CREATE  TABLE `geomex`.`Offers` (
   `TotalRedemption` INT NULL ,
   `MultiUse` TINYINT NULL DEFAULT 0 ,
   `Visibility` VARCHAR(45) NOT NULL ,
+  `PrimaryImage` VARCHAR(255) NULL ,
+  `SecondaryImage` VARCHAR(255) NULL ,
   PRIMARY KEY (`OfferId`) ,
   INDEX `ClientIdOffers` (`ClientId` ASC) ,
   CONSTRAINT `ClientIdOffers`
