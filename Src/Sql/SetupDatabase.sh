@@ -9,3 +9,4 @@ mysql -u root -pEstaTrivialDb! < 07LocationEvents.sql
 mysql -u root -pEstaTrivialDb! < 08Offers.sql
 mysql -u root -pEstaTrivialDb! < 09UserPrivateOffers.sql
 mysql -u root -pEstaTrivialDb! < 10OfferRedemption.sql
+mysql -u root -pEstaTrivialDb! < 11OfferEvents.sql
