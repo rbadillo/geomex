@@ -21,7 +21,7 @@ exports.Register = function Register(req,res){
 
 
     var User_Age=FbBirthday.split("/")
-    var User_Birthday=moment.utc([User_Age[2],User_Age[0],User_Age[1]])
+    var User_Birthday=moment.utc([User_Age[2],User_Age[0]-1,User_Age[1]])
     var now= moment.utc()
     var FbAge=now.diff(User_Birthday, 'years')
 
