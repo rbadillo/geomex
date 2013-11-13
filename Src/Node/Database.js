@@ -689,26 +689,65 @@ exports.Redeem = function Redeem(ClientId,UserId,OfferId){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var offer = db.models.OfferRedemption();
-                    offer.ClientId=ClientId;
-                    offer.UserId=UserId;
-                    offer.OfferId=OfferId;
-                    offer.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                    var offerRedeemValidation = db.models.OfferRedemption;
 
-                    offer.save(function (err) {
-                         if (err){
-                            console.log(err);
-                            db.close();
-                         }else{
-                         console.log("User: " +UserId +" Redeemed Offer: " +OfferId);
-                         db.close();
-                         }
-                     });
+                    offerRedeemValidation.find({ OfferId:OfferId, ClientId:ClientId, UserId:UserId },function (err, offval) {
+
+                            if(err){
+                              console.log(err);
+                              db.close();
+                            }else{
+                                if(offval.length){
+                                  db.close();
+                                  console.log("User: " +UserId +" Already Redeemed Offer: " +OfferId);
+                                }else{
+
+                                  var offerRedeem = db.models.OfferRedemption();
+                                  offerRedeem.ClientId=ClientId;
+                                  offerRedeem.UserId=UserId;
+                                  offerRedeem.OfferId=OfferId;
+                                  offerRedeem.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+
+                                  offerRedeem.save(function (err) {
+                                       if (err){
+                                          console.log(err);
+                                          db.close();
+                                       }else{
+                                       console.log("User: " +UserId +" Redeemed Offer: " +OfferId);
+
+                                       var offer = db.models.Offers;
+
+                                        offer.find({ OfferId:OfferId },function (err, off) {
+
+                                          if(err){
+                                            console.log(err);
+                                            db.close();
+                                          }else{
+                                            
+                                            var ActualRedemption=off[0].ActualRedemption + 1;
+                                            off[0].ActualRedemption=ActualRedemption;
+
+                                              off[0].save(function (err) {
+                                                 if (err){
+                                                    console.log(err);
+                                                    db.close();
+                                                 }else{
+                                                    db.close();
+                                                    console.log("Redemption Total: " +ActualRedemption +" has been updated for OfferId: "+OfferId)
+                                                 }
+                                              })
+                                            }
+                                        });
+                                       }
+                                   });
+                           }
+                      }
+                  })
             });
         });
 }
 
-exports.UpdateOfferEvents = function Redeem(ClientId,UserId,OfferId,Event){
+exports.UpdateOfferEvents = function UpdateOfferEvents(ClientId,UserId,OfferId,Event){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -824,7 +863,8 @@ exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
                     if (err) throw err;
                     // loaded!
 
-                    query="SELECT distinct(LocationName) from LocationEvents where UserId=" +UserId +" ORDER BY TimeCreated DESC LIMIT 10;"
+                    query="SELECT distinct(LocationName) from LocationEvents where UserId=" +UserId 
+                    +" and Event='at' ORDER BY TimeCreated DESC LIMIT 10"
 
                     db.driver.execQuery(query, function (err, locations) { 
 
@@ -841,6 +881,41 @@ exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
         });
 }
 
+exports.GetFriendsPlaces = function GetFriendsPlaces(FriendList,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+
+                    query="SELECT distinct Users.FbName,Users.FbLastName,Users.FbPhoto,LocationEvents.UserId, \
+                     LocationEvents.LocationName,LocationEvents.TimeCreated from Users,LocationEvents \
+                     where LocationEvents.UserId in  (" +FriendList +") and LocationEvents.Event='at' \
+                     order by LocationEvents.TimeCreated Desc LIMIT 20"
+
+                    db.driver.execQuery(query, function (err, locations) { 
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                      }else{
+                        db.close();
+
+                        // Convert Dates to Local Time
+                        for(var i=0;i<locations.length;i++){
+                        var auxMoment=moment(locations[i].TimeCreated);
+                        var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
+                        locations[i].TimeCreated=TimeCreatedLocal;
+                        }
+
+                        callback(JSON.stringify(locations));
+                      }
+                    })
+            });
+        });
+}
 
 //GetOffers("2013-10-22 17:00:00","517218456");
 //GetPrivateOffers("2013-10-22 17:00:00","517218456");

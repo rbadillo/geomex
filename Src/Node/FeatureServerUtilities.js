@@ -42,3 +42,13 @@ exports.GetLocationsByUser = function GetLocationsByUser(req,res){
     });    
 }
 
+exports.GetFriendsPlaces = function GetFriendsPlaces(req,res){
+
+    var FriendList=req.body.friend_list
+
+    DAL.GetFriendsPlaces(FriendList, function (output){
+      res.setHeader('Content-Type', 'application/json');
+      res.write(output);
+      res.end();
+    });    
+}
