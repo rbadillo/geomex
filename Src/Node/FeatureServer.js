@@ -16,6 +16,5 @@ app.get('/:UserId/:ClientId/GetMessagesReceivedByUser',Utilities.GetMessagesRece
 app.get('/:UserId/:ClientId/GetLocationsByUser/:UserLocation',Utilities.GetLocationsByUser);
 app.post('/:UserId/GetFriendsPlaces',Utilities.GetFriendsPlaces);
 
-
 app.listen(app.get('port'));
 console.log("Offer Server - Listening Port: " +app.get('port'));

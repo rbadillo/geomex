@@ -118,6 +118,68 @@ function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,Ci
         });
 }
 
+function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
+  // Build the post string from an object
+  var Place= {
+        "name": Name,
+        "addressLineOne": Address,
+        "geoFenceCircle": {
+            "radius": 50,
+            "location": {
+                "latitude": Latitude,
+                "longitude": Longitude
+            }
+        },
+        "placeAttributes": {
+            "latitude": Latitude,
+            "longitude": Longitude,
+            "locationId": LocationId
+        }
+    }
+
+  var post_data = tryParseJson(Place);
+
+  // An object of options to indicate where to post to
+  var post_options = {
+      host: 'sandbox.gimbal.com',
+      port: '443',
+      path: '/api/geofences',
+      method: 'POST',
+      headers: {
+          'AUTHORIZATION': 'Token token=7ec5f434d5ac2f91172bb1a396ebd4c1',
+          'Content-Type': 'application/json',
+          'Content-Length': post_data.length
+      }
+  };
+
+  // Set up the request
+  var post_req = https.request(post_options, function(res) {
+      var Response="";
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          Response= Response + chunk;
+      });
+
+      res.on('end', function(){
+          console.log('Gimbal: ' +res.statusCode);
+      });
+
+  });
+
+  // post the data
+  post_req.write(post_data);
+  post_req.end();
+
+}
+
+function tryParseJson(str) {
+    try {
+        return JSON.stringify(str);
+    } catch (ex) {
+        return null;
+    }
+}
+
 exports.AddMessage = function AddMessage(Message,LocationId,ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
@@ -297,36 +359,8 @@ function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event){
         });
 }
 
-
-function AddSentMessage(UserId,MessageId){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var SentMessage = db.models.SentMessages();
-                    SentMessage.UserId=UserId
-                    SentMessage.MessageId=MessageId
-                    SentMessage.TimeSent=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                    
-                    SentMessage.save(function (err) {
-                         if (err){
-                            console.log(err);
-                            db.close();
-                         }else{
-                         console.log("SentMessage Added Sucessfully");
-                         db.close();
-                         }
-                     });
-
-            });
-        });
-}
-
-
-function DeleteSentMessage(UserId,MessageId){
+//GetUserId
+exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Action){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -334,21 +368,21 @@ function DeleteSentMessage(UserId,MessageId){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var SentMessage = db.models.SentMessages;
+                    var User = db.models.Users;
                     
-                    SentMessage.find({ UserId: UserId, MessageId: MessageId }).remove(function (err) {
+                    User.find({ DeviceToken: DeviceToken}, function (err,usr) {
                         if(err){
                             console.log(err);
                             db.close();
                         }else{
-                            console.log("SentMessage Deleted Sucessfully");
+                            //console.log(usr[0].UserId);
+                            GetMessageId(usr[0].UserId,Message,Action);
                             db.close();
                         }
                     });
                 });
             });
     }
-
 
 function GetMessageId(UserId,Message,Action){
 
@@ -378,9 +412,7 @@ function GetMessageId(UserId,Message,Action){
             });
     }
 
-
-//GetUserId
-exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Action){
+function AddSentMessage(UserId,MessageId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -388,15 +420,41 @@ exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Actio
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var User = db.models.Users;
+                    var SentMessage = db.models.SentMessages();
+                    SentMessage.UserId=UserId
+                    SentMessage.MessageId=MessageId
+                    SentMessage.TimeSent=moment.utc().format("YYYY-MM-DD HH:mm:ss");
                     
-                    User.find({ DeviceToken: DeviceToken}, function (err,usr) {
+                    SentMessage.save(function (err) {
+                         if (err){
+                            console.log(err);
+                            db.close();
+                         }else{
+                         console.log("SentMessage Added Sucessfully");
+                         db.close();
+                         }
+                     });
+            });
+        });
+}
+
+
+function DeleteSentMessage(UserId,MessageId){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var SentMessage = db.models.SentMessages;
+                    
+                    SentMessage.find({ UserId: UserId, MessageId: MessageId }).remove(function (err) {
                         if(err){
                             console.log(err);
                             db.close();
                         }else{
-                            //console.log(usr[0].UserId);
-                            GetMessageId(usr[0].UserId,Message,Action);
+                            console.log("SentMessage Deleted Sucessfully");
                             db.close();
                         }
                     });
@@ -404,68 +462,6 @@ exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Actio
             });
     }
 
-
-function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
-  // Build the post string from an object
-  var Place= {
-        "name": Name,
-        "addressLineOne": Address,
-        "geoFenceCircle": {
-            "radius": 50,
-            "location": {
-                "latitude": Latitude,
-                "longitude": Longitude
-            }
-        },
-        "placeAttributes": {
-            "latitude": Latitude,
-            "longitude": Longitude,
-            "locationId": LocationId
-        }
-    }
-
-  var post_data = tryParseJson(Place);
-
-  // An object of options to indicate where to post to
-  var post_options = {
-      host: 'sandbox.gimbal.com',
-      port: '443',
-      path: '/api/geofences',
-      method: 'POST',
-      headers: {
-          'AUTHORIZATION': 'Token token=7ec5f434d5ac2f91172bb1a396ebd4c1',
-          'Content-Type': 'application/json',
-          'Content-Length': post_data.length
-      }
-  };
-
-  // Set up the request
-  var post_req = https.request(post_options, function(res) {
-      var Response="";
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-          Response= Response + chunk;
-      });
-
-      res.on('end', function(){
-          console.log('Gimbal: ' +res.statusCode);
-      });
-
-  });
-
-  // post the data
-  post_req.write(post_data);
-  post_req.end();
-
-}
-
-function tryParseJson(str) {
-    try {
-        return JSON.stringify(str);
-    } catch (ex) {
-        return null;
-    }
-}
 
 exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callback){
 
@@ -863,7 +859,7 @@ exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
                     if (err) throw err;
                     // loaded!
 
-                    query="SELECT distinct(LocationName) from LocationEvents where UserId=" +UserId 
+                    query="SELECT distinct(LocationName),TimeCreated from LocationEvents where UserId=" +UserId 
                     +" and Event='at' ORDER BY TimeCreated DESC LIMIT 10"
 
                     db.driver.execQuery(query, function (err, locations) { 
