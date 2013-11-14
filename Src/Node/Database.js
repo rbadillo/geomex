@@ -788,6 +788,12 @@ exports.GetMessagesSentByClient = function GetMessagesSentByClient(ClientId,call
                         db.close();
                       }else{
                         db.close();
+                         // Convert Dates to Local Time
+                        for(var i=0;i<messages.length;i++){
+                        var auxMoment=moment(messages[i].TimeCreated);
+                        var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
+                        messages[i].TimeCreated=TimeCreatedLocal;
+                        }
                         callback(JSON.stringify(messages));
                       }
                     });
@@ -842,6 +848,13 @@ function GetMessagesReceivedByUserPrivate(MessagesId,callback){
                         db.close();
                       }else{
                         db.close();
+                        // Convert Dates to Local Time
+                        for(var i=0;i<messages.length;i++){
+                        var auxMoment=moment(messages[i].TimeCreated);
+                        var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
+                        messages[i].TimeCreated=TimeCreatedLocal;
+                        }
+
                         callback(JSON.stringify(messages));
                       }
                     });
@@ -869,6 +882,12 @@ exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
                         db.close();
                       }else{
                         db.close();
+                        // Convert Dates to Local Time
+                        for(var i=0;i<locations.length;i++){
+                        var auxMoment=moment(locations[i].TimeCreated);
+                        var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
+                        locations[i].TimeCreated=TimeCreatedLocal;
+                        }
                         callback(JSON.stringify(locations));
                       }
 
@@ -909,6 +928,54 @@ exports.GetFriendsPlaces = function GetFriendsPlaces(FriendList,callback){
                         callback(JSON.stringify(locations));
                       }
                     })
+            });
+        });
+}
+
+exports.GetAllClients = function GetAllClients(callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var clt = db.models.Clients;
+
+                    clt.find(function (err, Clients) {
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                      }else{
+                        db.close();
+                        callback(JSON.stringify(Clients));
+                      }
+                    });
+            });
+        });
+}
+
+exports.GetClientLocations = function GetClientLocations(ClientId,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var loc = db.models.Locations;
+
+                    loc.find({ClientId:ClientId},function (err, locations) {
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                      }else{
+                        db.close();
+                        callback(JSON.stringify(locations));
+                      }
+                    });
             });
         });
 }

@@ -14,6 +14,8 @@ app.get('/',Utilities.Test);
 app.get('/:UserId/:ClientId/GetMessagesSentByClient',Utilities.GetMessagesSentByClient);
 app.get('/:UserId/:ClientId/GetMessagesReceivedByUser',Utilities.GetMessagesReceivedByUser);
 app.get('/:UserId/:ClientId/GetLocationsByUser/:UserLocation',Utilities.GetLocationsByUser);
+app.get('/:UserId/GetAllClients',Utilities.GetAllClients);
+app.get('/:UserId/:ClientId/GetClientLocations',Utilities.GetClientLocations);
 app.post('/:UserId/GetFriendsPlaces',Utilities.GetFriendsPlaces);
 
 app.listen(app.get('port'));
