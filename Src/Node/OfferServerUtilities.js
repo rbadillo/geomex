@@ -47,10 +47,15 @@ exports.Redeem= function Redeem(req,res){
 }
 
 exports.OfferEvents= function Redeem(req,res){
-    res.end("Sucess");
+    
     var ClientId=req.body.clientId
     var UserId=req.params.UserId
     var OfferId=req.body.offerId
     var Event=req.body.event
-    DAL.UpdateOfferEvents(ClientId,UserId,OfferId,Event);
+    if(Event=="Viewed" || Event == "Presented"){
+        res.end("Sucess");
+        DAL.UpdateOfferEvents(ClientId,UserId,OfferId,Event);
+    }else{
+        res.end("Error");
+    }
 }
