@@ -660,17 +660,6 @@ function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback
       PublicOffers[i].EndDate=EndDateLocal;
       }
 
-      /*
-      PublicOffers.sort(function(a, b){
-          var keyA = a.Priority;
-          var keyB = b.Priority;
-          // Compare the 2 dates
-          if(keyA < keyB) return -1;
-          if(keyA > keyB) return 1;
-          return 0;
-      });
-    */
-
     // Return JSON Object
     callback(JSON.stringify(PublicOffers));
 }
@@ -917,9 +906,6 @@ exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
                     if (err) throw err;
                     // loaded!
 
-                    //query="SELECT distinct(LocationName),TimeCreated from LocationEvents where UserId=" +UserId 
-                    //+" and Event='at' ORDER BY TimeCreated DESC LIMIT 10"
-
                     query="SELECT distinct Clients.Name,Clients.Logo,LocationEvents.LocationName,LocationEvents.TimeCreated \
                     from LocationEvents,Clients \
                     where LocationEvents.UserId= "+UserId 
@@ -1033,20 +1019,3 @@ exports.GetClientLocations = function GetClientLocations(ClientId,callback){
         });
 }
 
-//GetOffers("2013-10-22 17:00:00","517218456");
-//GetPrivateOffers("2013-10-22 17:00:00","517218456");
-//GetUserRedemption("517218456",[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]);
-//AddClient("Costenito");
-//AddLocation(3,25.654269,-100.29393,"Garza Sada Sur 2411","Mexico","Nuevo Leon","Monterrey","64700");
-//AddMessage("Hola Mi Cielo",1,3);
-//AddUser("517218456","82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","iOS","1","Roberto","Badillo",24,"01/26/1989","beto_best@hotmail.com","male","Monterrey Institute of Technology and Higher Education","Koupon Media","https://www.facebook.com/beto.badillo");
-//AddSentMessage(517218456,1);
-//AddSentMessage(517218456,2);
-//DeleteAddSentMessage(517218456,1);
-//AddUser("517218456","82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","iOS","1","Roberto","Badillo",24,"01/26/1989","beto_best@hotmail.com","male","Monterrey Institute of Technology and Higher Education","Koupon Media","https://www.facebook.com/beto.badillo");
-//AddUser("762419965","82cf067e17ghdbfueh36485810hyudgj1g3841hfkhgy1e24ajuhi82odkmnhg12","iOS","1","Itzel","Lopez",21,"03/11/1992","itzela911@hotmail.com","female","Monterrey Institute of Technology and Higher Education","ITESM","https://www.facebook.com/itzel.lpz");
-//UpdateSentMessage("82cf067e172c6babde45e9fb9827a3d025ec797aa00c1e24acaec025cdb5c913","Hola Mi Cielo",DeleteSentMessage);
-//GetMessageId("Hola Mi Cielo");
-//PostGimbal("Depa","Mexico","33.12345","-99.23345",5);
-//AddLocation("Costenito - San Pedro",3,33.654269,-99.29393,"Ave. San Pedro","Mexico","Nuevo Leon","San Pedro","64700");
-//GetLocationId("Costenito - Tec",3,25.654269,-100.29393,"Garza Sada Sur 2411","Mexico","Nuevo Leon","Monterrey","64700");
