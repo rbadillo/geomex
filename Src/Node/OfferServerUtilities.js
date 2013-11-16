@@ -56,6 +56,7 @@ exports.OfferEvents= function Redeem(req,res){
         res.end("Sucess");
         DAL.UpdateOfferEvents(ClientId,UserId,OfferId,Event);
     }else{
+        console.log("UserId: " +UserId +" Sent Wrong OfferEvent: " +Event)
         res.end("Error");
     }
 }

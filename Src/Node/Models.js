@@ -17,6 +17,7 @@ module.exports = function (db, cb) {
         State : String,
         City : String,
         ZipCode : String,
+        LocationPhoto: String
     },{
         id: ['LocationId']  // Primary Key
     });
@@ -80,6 +81,7 @@ module.exports = function (db, cb) {
         PublishedDate: Date,
         StartDate: Date,
         EndDate: Date,
+        Priority: Number,
         ActualRedemption: Number,
         TotalRedemption: Number,
         MultiUse: Number,

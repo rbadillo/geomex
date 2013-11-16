@@ -475,37 +475,53 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
 
                     if(ClientId===undefined){
 
-                        offer.find({ PublishedDate:orm.lte(UserTime), EndDate:orm.gte(UserTime)  },function (err, off) {
+                            query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
+                            Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+                            Offers.Instructions,Offers.Disclaimer, \
+                            Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+                            Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+                            Offers.Visibility,Offers.DynamicRedemptionMinutes, \
+                            Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+                            where Offers.PublishedDate <= '" +UserTime +"' <= Offers.EndDate \
+                            and Clients.ClientId=Offers.ClientId \
+                            Order by Offers.Priority DESC"
 
-                          if(err){
-                            console.log(err);
-                            db.close();
-                          }else{
-                            //console.log(off.length);
-                            //for(var i=0;i<off.length;i++){
-                              //  console.log("Oferta: " +off[i].Id +" - Name: " +off[i].Name);
-                            //}
-                            db.close();
-                            GetPrivateOffers(UserTime,UserId,off,Timezone,callback);
-                          }
-                        });
+                            db.driver.execQuery(query, function (err, offers) { 
+
+                              if(err){
+                                console.log(err);
+                                db.close();
+                              }else{
+                                db.close();
+                                GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
+                              }
+
+                            })
 
                     }else{
 
-                      offer.find({ PublishedDate:orm.lte(UserTime), EndDate:orm.gte(UserTime), ClientId:ClientId },function (err, off) {
+                      query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
+                            Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+                            Offers.Instructions,Offers.Disclaimer, \
+                            Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+                            Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+                            Offers.Visibility,Offers.DynamicRedemptionMinutes, \
+                            Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+                            where Offers.PublishedDate <= '" +UserTime +"' <= Offers.EndDate \
+                            and Clients.ClientId=Offers.ClientId and Offers.ClientId=" +ClientId
+                            +" Order by Offers.Priority DESC"
 
-                          if(err){
-                            console.log(err);
-                            db.close();
-                          }else{
-                            //console.log(off.length);
-                            //for(var i=0;i<off.length;i++){
-                              //  console.log("Oferta: " +off[i].Id +" - Name: " +off[i].Name);
-                            //}
-                            db.close();
-                            GetPrivateOffers(UserTime,UserId,off,Timezone,callback);
-                          }
-                        });
+                            db.driver.execQuery(query, function (err, offers) { 
+
+                              if(err){
+                                console.log(err);
+                                db.close();
+                              }else{
+                                db.close();
+                                GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
+                              }
+
+                            })
 
                     }
             });
@@ -644,6 +660,17 @@ function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback
       PublicOffers[i].EndDate=EndDateLocal;
       }
 
+      /*
+      PublicOffers.sort(function(a, b){
+          var keyA = a.Priority;
+          var keyB = b.Priority;
+          // Compare the 2 dates
+          if(keyA < keyB) return -1;
+          if(keyA > keyB) return 1;
+          return 0;
+      });
+    */
+
     // Return JSON Object
     callback(JSON.stringify(PublicOffers));
 }
@@ -656,22 +683,28 @@ exports.GetSingleOffer = function GetSingleOffer(OfferId,callback){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var offer = db.models.Offers;
 
-                    offer.find({ OfferId:OfferId },function (err, off) {
+                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
+                            Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+                            Offers.Instructions,Offers.Disclaimer, \
+                            Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+                            Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+                            Offers.Visibility,Offers.DynamicRedemptionMinutes, \
+                            Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+                            where Offers.OfferId=" +OfferId
+                            +" and Clients.ClientId=Offers.ClientId"
 
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        //console.log(off.length);
-                        //for(var i=0;i<off.length;i++){
-                          //  console.log("Oferta: " +off[i].Id +" - Name: " +off[i].Name);
-                        //}
-                        db.close();
-                        callback(JSON.stringify(off));
-                      }
-                    });
+                            db.driver.execQuery(query, function (err, offer) { 
+
+                              if(err){
+                                console.log(err);
+                                db.close();
+                              }else{
+                                db.close();
+                                callback(JSON.stringify(offer));
+                              }
+
+                            })
             });
         });
 }
@@ -771,6 +804,7 @@ exports.UpdateOfferEvents = function UpdateOfferEvents(ClientId,UserId,OfferId,E
         });
 }
 
+// LAST 10 Messages Sent By Client
 exports.GetMessagesSentByClient = function GetMessagesSentByClient(ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
@@ -779,24 +813,29 @@ exports.GetMessagesSentByClient = function GetMessagesSentByClient(ClientId,call
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var msj = db.models.Messages;
 
-                    msj.find({ ClientId:ClientId },10, ["TimeCreated","Z"],function (err, messages) {
+                    query="Select Clients.Name as ClientName, Clients.Logo,Messages.Message, Messages.TimeCreated \
+                          from Messages,Clients \
+                          where Messages.ClientId=Clients.ClientId \
+                          and Messages.ClientId="+ClientId
+                          +" ORDER BY Messages.TimeCreated DESC LIMIT 10";
 
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                         // Convert Dates to Local Time
-                        for(var i=0;i<messages.length;i++){
-                        var auxMoment=moment(messages[i].TimeCreated);
-                        var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
-                        messages[i].TimeCreated=TimeCreatedLocal;
-                        }
-                        callback(JSON.stringify(messages));
-                      }
-                    });
+                            db.driver.execQuery(query, function (err, messages) { 
+
+                              if(err){
+                                console.log(err);
+                                db.close();
+                              }else{
+                                db.close();
+                                for(var i=0;i<messages.length;i++){
+                                var auxMoment=moment(messages[i].TimeCreated);
+                                var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
+                                messages[i].TimeCreated=TimeCreatedLocal;
+                                }
+                                callback(JSON.stringify(messages));
+                              }
+
+                            })
             });
         });
 }
@@ -831,6 +870,7 @@ exports.GetMessagesReceivedByUser = function GetMessagesReceivedByUser(UserId,ca
         });
 }
 
+// LAST 10 Messages Received
 function GetMessagesReceivedByUserPrivate(MessagesId,callback){
 
   orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
@@ -839,30 +879,35 @@ function GetMessagesReceivedByUserPrivate(MessagesId,callback){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var msj = db.models.Messages;
-                    console.log(MessagesId)
-                    msj.find({ MessageId:MessagesId },function (err, messages) {
 
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                        // Convert Dates to Local Time
-                        for(var i=0;i<messages.length;i++){
-                        var auxMoment=moment(messages[i].TimeCreated);
-                        var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
-                        messages[i].TimeCreated=TimeCreatedLocal;
-                        }
+                    query="Select Clients.Name as ClientName, Clients.Logo,Messages.Message, Messages.TimeCreated \
+                          from Messages,Clients \
+                          where Messages.ClientId=Clients.ClientId \
+                          and Messages.MessageId in ("+MessagesId
+                          +" ) ORDER BY Messages.TimeCreated DESC LIMIT 10";
 
-                        callback(JSON.stringify(messages));
-                      }
-                    });
+                            db.driver.execQuery(query, function (err, messages) { 
+
+                              if(err){
+                                console.log(err);
+                                db.close();
+                              }else{
+                                db.close();
+                                for(var i=0;i<messages.length;i++){
+                                var auxMoment=moment(messages[i].TimeCreated);
+                                var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
+                                messages[i].TimeCreated=TimeCreatedLocal;
+                                }
+                                callback(JSON.stringify(messages));
+                              }
+
+                            })
             });
         });
 
 }
 
+// LAST 10 Friend Locations By User
 exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
@@ -872,8 +917,15 @@ exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
                     if (err) throw err;
                     // loaded!
 
-                    query="SELECT distinct(LocationName),TimeCreated from LocationEvents where UserId=" +UserId 
-                    +" and Event='at' ORDER BY TimeCreated DESC LIMIT 10"
+                    //query="SELECT distinct(LocationName),TimeCreated from LocationEvents where UserId=" +UserId 
+                    //+" and Event='at' ORDER BY TimeCreated DESC LIMIT 10"
+
+                    query="SELECT distinct Clients.Name,Clients.Logo,LocationEvents.LocationName,LocationEvents.TimeCreated \
+                    from LocationEvents,Clients \
+                    where LocationEvents.UserId= "+UserId 
+                    +" and LocationEvents.Event='at' \
+                    and Clients.ClientId=LocationEvents.ClientId \
+                    ORDER BY LocationEvents.TimeCreated DESC LIMIT 10";
 
                     db.driver.execQuery(query, function (err, locations) { 
 
@@ -896,6 +948,7 @@ exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
         });
 }
 
+// LAST 20 Friend Activities
 exports.GetFriendsPlaces = function GetFriendsPlaces(FriendList,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
