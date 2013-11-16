@@ -9,6 +9,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Locations` (
   `State` VARCHAR(45) NOT NULL ,
   `City` VARCHAR(45) NOT NULL ,
   `ZipCode` VARCHAR(45) NOT NULL ,
+  `LocationPhoto` VARCHAR(255) NULL ,
   PRIMARY KEY (`LocationId`) ,
   INDEX `ClientId_idx` (`ClientId` ASC) ,
   CONSTRAINT `ClientId`
