@@ -539,7 +539,7 @@ function GetPrivateOffers(UserTime,UserId,PublicOffers,Timezone,callback){
                     // loaded!
                     var privateOffer = db.models.UserPrivateOffers;
 
-                    privateOffer.find( {StartDate:orm.lte(UserTime), EndDate:orm.gte(UserTime)  },function (err, off) {
+                    privateOffer.find( {StartDate:orm.lte(UserTime), EndDate:orm.gte(UserTime), UserId:UserId  },function (err, off) {
 
                       if(err){
                         console.log(err);
@@ -580,7 +580,7 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
                     // loaded!
                     var redemption = db.models.OfferRedemption;
 
-                    redemption.find( {OfferId: ofertas},function (err, off) {
+                    redemption.find( {OfferId: ofertas, UserId:UserId},function (err, off) {
 
                       if(err){
                         console.log(err);
@@ -707,7 +707,18 @@ exports.Redeem = function Redeem(ClientId,UserId,OfferId){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
+
+                    query="Select MultiUse from Offers Where OfferId=" +OfferId
+
+                    db.driver.execQuery(query, function (err, offerFlag) { 
+
+                        if(err){
+                            console.log(err);
+                            db.close();
+                        }else{
+
                     var offerRedeemValidation = db.models.OfferRedemption;
+                    var OfferUseType= offerFlag[0].MultiUse
 
                     offerRedeemValidation.find({ OfferId:OfferId, ClientId:ClientId, UserId:UserId },function (err, offval) {
 
@@ -715,7 +726,7 @@ exports.Redeem = function Redeem(ClientId,UserId,OfferId){
                               console.log(err);
                               db.close();
                             }else{
-                                if(offval.length){
+                                if(offval.length && OfferUseType==0){
                                   db.close();
                                   console.log("User: " +UserId +" Already Redeemed Offer: " +OfferId);
                                 }else{
@@ -760,7 +771,10 @@ exports.Redeem = function Redeem(ClientId,UserId,OfferId){
                                    });
                            }
                       }
-                  })
+                  }) // END OF offerRedeemValidation
+                  }
+                  }) // END OF MultiUse Flag
+
             });
         });
 }
