@@ -476,7 +476,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                     if(ClientId===undefined){
 
                             query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
-                            Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+                            Offers.Name,Offers.Title,Offers.Subtitle, \
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
@@ -501,7 +501,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                     }else{
 
                       query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
-                            Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+                            Offers.Name,Offers.Title,Offers.Subtitle, \
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
@@ -665,7 +665,7 @@ function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback
     callback(JSON.stringify(PublicOffers));
 }
 
-exports.GetSingleOffer = function GetSingleOffer(OfferId,callback){
+exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -692,6 +692,7 @@ exports.GetSingleOffer = function GetSingleOffer(OfferId,callback){
                               }else{
                                 db.close();
                                 callback(JSON.stringify(offer));
+                                UpdateOfferEvents(offer[0].ClientId,UserId,OfferId,"Viewed")
                               }
 
                             })
@@ -764,6 +765,7 @@ exports.Redeem = function Redeem(ClientId,UserId,OfferId){
                                                  }else{
                                                     db.close();
                                                     console.log("Redemption Total: " +ActualRedemption +" has been updated for OfferId: "+OfferId)
+                                                    UpdateOfferEvents(ClientId,UserId,OfferId,"Presented")
                                                  }
                                               })
                                             }
@@ -780,7 +782,7 @@ exports.Redeem = function Redeem(ClientId,UserId,OfferId){
         });
 }
 
-exports.UpdateOfferEvents = function UpdateOfferEvents(ClientId,UserId,OfferId,Event){
+function UpdateOfferEvents(ClientId,UserId,OfferId,Event){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;

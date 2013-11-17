@@ -31,7 +31,7 @@ exports.SingleOffer = function SingleOffer(req,res){
     var UserId=req.params.UserId
     var OfferId=req.params.OfferId
 
-    DAL.GetSingleOffer(OfferId,function(output){
+    DAL.GetSingleOffer(UserId,OfferId,function(output){
       res.setHeader('Content-Type', 'application/json');
       res.write(output);
       res.end();
@@ -44,19 +44,4 @@ exports.Redeem= function Redeem(req,res){
     var UserId=req.params.UserId
     var OfferId=req.body.offerId
     DAL.Redeem(ClientId,UserId,OfferId);
-}
-
-exports.OfferEvents= function Redeem(req,res){
-    
-    var ClientId=req.body.clientId
-    var UserId=req.params.UserId
-    var OfferId=req.body.offerId
-    var Event=req.body.event
-    if(Event=="Viewed" || Event == "Presented"){
-        res.end("Sucess");
-        DAL.UpdateOfferEvents(ClientId,UserId,OfferId,Event);
-    }else{
-        console.log("UserId: " +UserId +" Sent Wrong OfferEvent: " +Event)
-        res.end("Error");
-    }
 }
