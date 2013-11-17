@@ -3,7 +3,7 @@ CREATE  TABLE `geomex`.`OfferRedemption` (
   `ClientId` INT NOT NULL ,
   `UserId` INT NOT NULL ,
   `OfferId` INT NOT NULL ,
-  `TimeCreated` TIMESTAMP NOT NULL ,
+  `TimeCreated` TIMESTAMP NULL ,
   PRIMARY KEY (`Id`) ,
   INDEX `ClientIdOfferRedemption` (`ClientId` ASC) ,
   INDEX `UserIdOfferRedemption` (`UserId` ASC) ,
