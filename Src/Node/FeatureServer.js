@@ -11,13 +11,12 @@ app.configure(function(){
 });
 
 app.get('/',Utilities.Test);
+app.get('/:UserId/GetAllClients',Utilities.GetAllClients);
+app.get('/:UserId/GetClientLocations/:ClientId',Utilities.GetClientLocations);
 app.get('/:UserId/GetMessagesSentByClient/:ClientId',Utilities.GetMessagesSentByClient);
 app.get('/:UserId/GetMessagesReceivedByUser',Utilities.GetMessagesReceivedByUser);
 app.get('/:UserId/GetLocationsByUser/:UserLocation',Utilities.GetLocationsByUser);
 app.post('/:UserId/GetFriendsPlaces',Utilities.GetFriendsPlaces);
-app.get('/:UserId/GetAllClients',Utilities.GetAllClients);
-app.get('/:UserId/GetClientLocations/:ClientId',Utilities.GetClientLocations);
-
 
 app.listen(app.get('port'));
 console.log("Offer Server - Listening Port: " +app.get('port'));
