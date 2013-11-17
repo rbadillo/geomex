@@ -6,7 +6,8 @@ var connection = amqp.createConnection();
 // Wait for connection to become established.
 connection.on('ready', function () {
   // Use the default 'amq.topic' exchange
-  var q = connection.queue('PushMessages');
+  var options = { autoDelete: false, durable: true };
+  var q = connection.queue('PushMessages',options);
 
           // Receive messages
           q.subscribe(function (message) {

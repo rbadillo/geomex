@@ -851,7 +851,12 @@ exports.GetMessagesReceivedByUser = function GetMessagesReceivedByUser(UserId,ca
                         for(var i=0;i<messages.length;i++){
                           user_msj.push(messages[i].MessageId);
                         }
+                        if(messages.length){
                         GetMessagesReceivedByUserPrivate(user_msj,callback)
+                        }else{
+                          console.log("UserId: " +UserId +" Has Not Received Any Messages")
+                          callback(JSON.stringify(messages))
+                        }
                       }
 
                     })

@@ -1,5 +1,4 @@
 var DAL= require('./Database');
-var Utilities= require('./UserControlUtilities');
 var http= require('http');
 var MQ= require('./RabbitMqPublisher');
 
@@ -13,7 +12,7 @@ exports.SendMessage = function SendMessage(req,res){
   var Message=req.body.message
   var ClientId=req.body.client_id
   var ClientName=req.body.client_name
-  GetUsersFromUserControl(LocationId,"/GetUsersByLocationId?location_id=",Message,ClientId,ClientName);
+  GetUsersFromUserControl(LocationId,"/GetUsersByLocationId/",Message,ClientId,ClientName);
 }
 
 function GetUsersFromUserControl(LocationId,Path,Message,ClientId,ClientName) {

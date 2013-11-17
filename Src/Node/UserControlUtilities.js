@@ -7,7 +7,7 @@ exports.Test = function Test(req,res){
 }
 
 exports.GetUsersByLocationId = function GetUsersByLocationId(req,res){
-    var LocationId=req.query.location_id
+    var LocationId=req.params.LocationId
     RedisUtilities.GetUsersByLocationId(LocationId, function(output){
         // do something with output
         //console.log("GetUsersByLocationId");
