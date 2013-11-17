@@ -620,6 +620,7 @@ function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback
       }
     }
 
+
 // Remove PrivateOffers Not added to User
     for(var i=0;i<PublicOffers.length;i++){
         var UserPrivateOffer= false;
