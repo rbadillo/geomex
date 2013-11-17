@@ -10,7 +10,7 @@ CREATE  TABLE `geomex`.`Offers` (
   `PublishedDate` TIMESTAMP NULL ,
   `StartDate` TIMESTAMP NULL ,
   `EndDate` TIMESTAMP NULL ,
-  `Priority` INT NOT NULL ,
+  `Priority` INT NULL ,
   `ActualRedemption` INT NULL ,
   `TotalRedemption` INT NULL ,
   `MultiUse` TINYINT NULL DEFAULT 0 ,
