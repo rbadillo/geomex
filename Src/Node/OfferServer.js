@@ -13,7 +13,7 @@ app.configure(function(){
 app.get('/',Utilities.Test);
 app.get('/:UserId/:Timezone/GetOffers',Utilities.Offers);
 app.get('/:UserId/:Timezone/GetOffers/:OfferId',Utilities.SingleOffer);
-app.post('/:UserId/Redeem',Utilities.Redeem);
+app.get('/:UserId/:Timezone/GetOffers/:OfferId/Redeem',Utilities.Redeem);
 
 app.listen(app.get('port'));
 console.log("Offer Server - Listening Port: " +app.get('port'));

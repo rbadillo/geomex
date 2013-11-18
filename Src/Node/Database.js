@@ -675,7 +675,7 @@ exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,callback){
                     // loaded!
 
                     query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
-                            Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+                            Offers.Name,Offers.Title,Offers.Subtitle, \
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
@@ -700,8 +700,43 @@ exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,callback){
         });
 }
 
+exports.RedeemSingleOffer = function RedeemSingleOffer(UserId,OfferId,callback){
 
-exports.Redeem = function Redeem(ClientId,UserId,OfferId){
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+
+                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
+                            Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+                            Offers.Instructions,Offers.Disclaimer, \
+                            Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+                            Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+                            Offers.Visibility,Offers.DynamicRedemptionMinutes, \
+                            Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+                            where Offers.OfferId=" +OfferId
+                            +" and Clients.ClientId=Offers.ClientId"
+
+                            db.driver.execQuery(query, function (err, offer) { 
+
+                              if(err){
+                                console.log(err);
+                                db.close();
+                              }else{
+                                db.close();
+                                callback(JSON.stringify(offer));
+                                Redeem(offer[0].ClientId,UserId,OfferId)
+                              }
+
+                            })
+            });
+        });
+}
+
+
+function Redeem(ClientId,UserId,OfferId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;

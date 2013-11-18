@@ -39,9 +39,12 @@ exports.SingleOffer = function SingleOffer(req,res){
 }
 
 exports.Redeem= function Redeem(req,res){
-    res.end("Sucess");
-    var ClientId=req.body.clientId
     var UserId=req.params.UserId
-    var OfferId=req.body.offerId
-    DAL.Redeem(ClientId,UserId,OfferId);
+    var OfferId=req.params.OfferId
+
+    DAL.RedeemSingleOffer(UserId,OfferId,function(output){
+      res.setHeader('Content-Type', 'application/json');
+      res.write(output);
+      res.end();
+    });
 }
