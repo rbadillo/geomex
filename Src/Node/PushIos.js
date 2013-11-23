@@ -14,7 +14,10 @@ service.on('transmitted', function(notification, device) {
 
 service.on('transmissionError', function(errCode, notification, device) {
     console.error("Notification Transmitted With Error To Device: " +device);
-    var message=notification.alert;
+    var auxMessage=notification.alert;
+    auxMessage=auxMessage.split(":")
+    // We are removing the Customer Name from the Message - Starbucks: Hello World
+    var message=auxMessage[1].trim()
     var deviceToken= "" +device
     DAL.UpdateSentMessage(deviceToken,message,"Delete");
 });
