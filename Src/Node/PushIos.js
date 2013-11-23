@@ -44,4 +44,5 @@ exports.PushMessage=function PushMessage(Message,Devices,ClientName) {
     }
     
     service.pushNotification(note, Devices);
+    service.shutdown();
 }
