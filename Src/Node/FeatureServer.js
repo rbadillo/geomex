@@ -19,4 +19,4 @@ app.get('/:UserId/GetLocationsByUser/:UserLocation',Utilities.GetLocationsByUser
 app.post('/:UserId/GetFriendsPlaces',Utilities.GetFriendsPlaces);
 
 app.listen(app.get('port'));
-console.log("Offer Server - Listening Port: " +app.get('port'));
+console.log("Feature Server - Listening Port: " +app.get('port'));
