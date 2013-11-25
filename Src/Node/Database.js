@@ -482,7 +482,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
                             Offers.Visibility,Offers.DynamicRedemptionMinutes, \
                             Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                            where Offers.PublishedDate <= '" +UserTime +"' <= Offers.EndDate \
+                            where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
                             and Clients.ClientId=Offers.ClientId \
                             Order by Offers.Priority DESC"
 
@@ -507,7 +507,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
                             Offers.Visibility,Offers.DynamicRedemptionMinutes, \
                             Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                            where Offers.PublishedDate <= '" +UserTime +"' <= Offers.EndDate \
+                            where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
                             and Clients.ClientId=Offers.ClientId and Offers.ClientId=" +ClientId
                             +" Order by Offers.Priority DESC"
 
