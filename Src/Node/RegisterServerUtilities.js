@@ -10,29 +10,95 @@ exports.Register = function Register(req,res){
 	  res.end('Success');
 	  //console.log(req.body);
 
+    try{
 	  var UserId= req.body.id;
+    } catch (e){
+    var UserId=""  
+    }
+
+    try{
 	  var DeviceToken=req.body.device_token
+    }catch(e){
+    var DeviceToken=""  
+    }
+
+    try{
     var PhoneType=req.body.phone_type
+    }catch(e){
+    var PhoneType=""  
+    }
+
+    try{
     var LocationId=req.body.location_id
+    }catch(e){
+    var LocationId=""
+    }
+
+    try{
     var Event=req.body.event
+    }catch(e){
+    var Event=""
+    }
+
+    try{
     var FbName=req.body.first_name
+    }catch(e){
+    var FbName=""
+    }
+
+    try{
     var FbLastName=req.body.last_name
+    }catch(e){
+    var FbLastName=""
+    }
+
+    try{
     var FbBirthday=req.body.birthday
-
-
     var User_Age=FbBirthday.split("/")
     var User_Birthday=moment.utc([User_Age[2],User_Age[0]-1,User_Age[1]]) 
     var now= moment.utc()
     var FbAge=now.diff(User_Birthday, 'years')
+    }catch(e){
+    var FbBirthday=""
+    var FbAge=""  
+    }
 
-    
+    try{
     var FbEmail=req.body.email
+    }catch(e){
+    var FbEmail=""
+    }
+
+    try{
     var FbGender=req.body.gender
+    }catch(e){
+    var FbGender=""
+    }
+
+    try{
     var FbSchool=req.body.education
     FbSchool=FbSchool[FbSchool.length-1].school.name
+    }catch(e){
+    var FbSchool=""
+    }
+
+    try{
     var FbWork=req.body.work[0].employer.name
+    }catch(e){
+    var FbWork=""
+    }
+
+    try{
     var FbLink=req.body.link
+    }catch(e){
+    var FbLink=""
+    }
+
+    try{
     var FbPhoto="https://graph.facebook.com/"+UserId+"/picture?type=square"
+    }catch(e){
+    var FbPhoto=""
+    }
 
     DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto);
     
