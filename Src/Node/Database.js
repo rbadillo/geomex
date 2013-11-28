@@ -1004,6 +1004,7 @@ exports.GetFriendsPlaces = function GetFriendsPlaces(FriendList,callback){
                     query="SELECT distinct Users.FbName,Users.FbLastName,Users.FbPhoto,LocationEvents.UserId, \
                      LocationEvents.LocationName,LocationEvents.TimeCreated from Users,LocationEvents \
                      where LocationEvents.UserId in  (" +FriendList +") and LocationEvents.Event='at' \
+                     and Users.UserId=LocationEvents.UserId \
                      order by LocationEvents.TimeCreated Desc LIMIT 20"
 
                     db.driver.execQuery(query, function (err, locations) { 
