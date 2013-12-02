@@ -99,13 +99,13 @@ exports.Register = function Register(req,res){
     }catch(e){
     var FbPhoto=""
     }
-
-    DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto);
     
+    DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto);
+   
     if(Event=="left"){
-        PostUserControl(LocationId,PhoneType,DeviceToken,"/RemoveUserFromLocation")
+          PostUserControl(LocationId,PhoneType,DeviceToken,"/RemoveUserFromLocation")
     }else{
-        PostUserControl(LocationId,PhoneType,DeviceToken,"/AddUserToLocation")
+          PostUserControl(LocationId,PhoneType,DeviceToken,"/AddUserToLocation")
     }
     
 }
@@ -136,8 +136,13 @@ function PostUserControl(LocationId,PhoneType,DeviceToken,Path) {
   var post_req = http.request(post_options, function(res) {
       var Response="";
       res.setEncoding('utf8');
+
       res.on('data', function (chunk) {
           Response= Response + chunk;
+      });
+
+      res.on('error', function(e){
+          console.log(e)
       });
 
       res.on('end', function(){
@@ -149,6 +154,11 @@ function PostUserControl(LocationId,PhoneType,DeviceToken,Path) {
   // post the data
   post_req.write(post_data);
   post_req.end();
+
+  // Handle Error If User Control Server is Down
+  post_req.on('error', function(e){
+          console.log("User Control Server - Not Available - " +Date())
+  });
 
 }
 

@@ -180,7 +180,7 @@ function tryParseJson(str) {
     }
 }
 
-exports.AddMessage = function AddMessage(Message,LocationId,ClientId,callback){
+exports.AddMessage = function AddMessage(Message,LocationId,ClientId,Visibility,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
           if (err) throw err;
@@ -190,7 +190,7 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId,callback){
                     // loaded!
                     var message = db.models.Messages;
 
-                    message.find({Message: Message, LocationId: LocationId, ClientId: ClientId},function (err, msj) {
+    message.find({Message: Message, LocationId: LocationId, ClientId: ClientId, Visibility:Visibility},function (err, msj) {
 
                       if(err){
                           console.log(err);
@@ -205,6 +205,7 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId,callback){
                             msj.Message=Message
                             msj.LocationId=LocationId
                             msj.ClientId=ClientId
+                            msj.Visibility=Visibility
                             msj.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
                             
                             msj.save(function (err) {
@@ -859,6 +860,7 @@ exports.GetMessagesSentByClient = function GetMessagesSentByClient(ClientId,call
                           from Messages,Clients \
                           where Messages.ClientId=Clients.ClientId \
                           and Messages.ClientId="+ClientId
+                          +" and Messages.Visibility='public'"
                           +" ORDER BY Messages.TimeCreated DESC LIMIT 10";
 
                             db.driver.execQuery(query, function (err, messages) { 

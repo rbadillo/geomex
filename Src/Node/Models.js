@@ -26,6 +26,7 @@ module.exports = function (db, cb) {
         Message : String,
         LocationId : Number,
         ClientId : Number,
+        Visibility: String,
         TimeCreated : Date
     },{
         id: ['MessageId']  // Primary Key
