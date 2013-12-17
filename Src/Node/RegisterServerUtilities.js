@@ -95,7 +95,7 @@ exports.Register = function Register(req,res){
     }
 
     try{
-    var FbPhoto="https://graph.facebook.com/"+UserId+"/picture?type=square"
+    var FbPhoto="https://graph.facebook.com/"+UserId+"/picture?width=128&height=128"
     }catch(e){
     var FbPhoto=""
     }
