@@ -2,7 +2,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Users` (
   `UserId` INT NOT NULL ,
   `DeviceToken` VARCHAR(255) NULL ,
   `PhoneType` VARCHAR(50) NULL ,
-  `IsActive` TINYINT NULL DEFAULT 1 
+  `IsActive` TINYINT NOT NULL DEFAULT 1 
   `LocationId` INT NOT NULL ,
   `Event` VARCHAR(10) NULL ,
   `FbName` VARCHAR(100) NULL ,
