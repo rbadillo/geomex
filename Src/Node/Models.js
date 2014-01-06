@@ -44,6 +44,7 @@ module.exports = function (db, cb) {
         UserId : String,
         DeviceToken : String,
         PhoneType : String,
+        IsActive : Number,
         LocationId : Number,
         Event : String,
         FbName : String,

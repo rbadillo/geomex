@@ -1006,7 +1006,7 @@ exports.GetFriendsPlaces = function GetFriendsPlaces(FriendList,callback){
                     query="SELECT distinct Users.FbName,Users.FbLastName,Users.FbPhoto,LocationEvents.UserId, \
                      LocationEvents.LocationName,LocationEvents.TimeCreated from Users,LocationEvents \
                      where LocationEvents.UserId in  (" +FriendList +") and LocationEvents.Event='at' \
-                     and Users.UserId=LocationEvents.UserId \
+                     and Users.IsActive =1 and Users.UserId=LocationEvents.UserId \
                      order by LocationEvents.TimeCreated Desc LIMIT 20"
 
                     db.driver.execQuery(query, function (err, locations) { 
@@ -1079,3 +1079,46 @@ exports.GetClientLocations = function GetClientLocations(ClientId,callback){
         });
 }
 
+exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
+
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var User= db.models.Users;
+
+                    User.get(UserId,function (err, usr) {
+                        if(err){
+                            
+                            callback("Error")
+                            
+                        }else{
+
+                            var ActualState= usr.IsActive
+
+                            if(ActualState==1){
+                              ActualState=0
+                            }else{
+                              ActualState=1
+                            }
+
+                            usr.IsActive= ActualState;
+
+                            usr.save(function (err) {
+                                 if (err){
+                                    console.log(err);
+                                    db.close();
+                                 }else{
+                                 console.log("User IsActive Flag Updated Sucessfully");
+                                 db.close();
+                                 callback("Sucess")
+                                 }
+                             });
+                          }
+                    });
+            });
+        });
+
+}

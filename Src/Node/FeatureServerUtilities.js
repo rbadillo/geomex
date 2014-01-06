@@ -68,3 +68,18 @@ exports.GetClientLocations = function GetClientLocations(req,res){
       res.end();
     });    
 }
+
+exports.UpdateUserActiveState= function UpdateUserActiveState(req,res){
+
+    var UserId=req.params.UserId
+
+    DAL.UpdateUserActiveState(UserId, function (output){
+      //res.setHeader('Content-Type', 'application/json');
+      if(output=="Error"){
+        res.statusCode=404
+      }
+      res.write(output);
+      res.end();
+    });
+
+}
