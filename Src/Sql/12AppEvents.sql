@@ -1,4 +1,4 @@
-CREATE  TABLE `geomex`.`new_table` (
+CREATE  TABLE `geomex`.`AppEvents` (
   `Id` INT NOT NULL AUTO_INCREMENT ,
   `UserId` INT NOT NULL ,
   `Event` VARCHAR(100) NOT NULL ,
