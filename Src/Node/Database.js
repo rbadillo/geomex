@@ -1079,6 +1079,37 @@ exports.GetClientLocations = function GetClientLocations(ClientId,callback){
         });
 }
 
+exports.GetUserActiveState= function GetUserActiveState(UserId,callback){
+
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var User= db.models.Users;
+
+                    var msj= {
+                                "State": ""
+                              }
+
+                    User.get(UserId,function (err, usr) {
+                        if(err){
+                            msj.State="Error";
+                            callback(JSON.stringify(msj))
+                            
+                        }else{
+
+                            msj.State=usr.IsActive;
+                            callback(JSON.stringify(msj))
+                          }
+                    });
+            });
+        });
+
+}
+
+
 exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
 
   orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {

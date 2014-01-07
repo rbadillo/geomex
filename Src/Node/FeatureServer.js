@@ -16,6 +16,7 @@ app.get('/:UserId/GetClientLocations/:ClientId',Utilities.GetClientLocations);
 app.get('/:UserId/GetMessagesSentByClient/:ClientId',Utilities.GetMessagesSentByClient);
 app.get('/:UserId/GetMessagesReceivedByUser',Utilities.GetMessagesReceivedByUser);
 app.get('/:UserId/GetLocationsByUser/:UserLocation',Utilities.GetLocationsByUser);
+app.get('/:UserId/GetUserActiveState',Utilities.GetUserActiveState);
 app.get('/:UserId/UpdateUserActiveState',Utilities.UpdateUserActiveState);
 app.post('/:UserId/GetFriendsPlaces',Utilities.GetFriendsPlaces);
 

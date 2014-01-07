@@ -125,6 +125,14 @@ module.exports = function (db, cb) {
         id: ['Id']   // Primary Key
     });
 
+    db.define('AppEvents', {
+        UserId: Number,
+        Event: String,
+        TimeCreated : Date
+    },{
+        id: ['Id']   // Primary Key
+    });
+
 
     return cb();
 };

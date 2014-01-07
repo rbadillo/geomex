@@ -69,12 +69,30 @@ exports.GetClientLocations = function GetClientLocations(req,res){
     });    
 }
 
+
+exports.GetUserActiveState= function GetUserActiveState(req,res){
+
+    var UserId=req.params.UserId
+
+    DAL.GetUserActiveState(UserId, function (output){
+      var tmp= JSON.parse(output)
+      res.setHeader('Content-Type', 'application/json');
+      if(tmp.State=="Error"){
+        res.statusCode=404
+      }
+      res.write(output);
+      res.end();
+    });
+
+}
+
+
 exports.UpdateUserActiveState= function UpdateUserActiveState(req,res){
 
     var UserId=req.params.UserId
 
     DAL.UpdateUserActiveState(UserId, function (output){
-      //res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Type', 'application/json');
       if(output=="Error"){
         res.statusCode=404
       }
