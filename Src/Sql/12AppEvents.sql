@@ -7,6 +7,6 @@ CREATE  TABLE `geomex`.`AppEvents` (
   INDEX `UserId` (`UserId` ASC) ,
   CONSTRAINT `UserId`
     FOREIGN KEY (`UserId` )
-    REFERENCES `geomex`.`Clients` (`ClientId` )
+    REFERENCES `geomex`.`Users` (`UserId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
