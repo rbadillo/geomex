@@ -104,8 +104,10 @@ exports.Register = function Register(req,res){
    
     if(Event=="left"){
           PostUserControl(LocationId,PhoneType,DeviceToken,"/RemoveUserFromLocation")
-    }else{
+    }else if (Event=="at"){
           PostUserControl(LocationId,PhoneType,DeviceToken,"/AddUserToLocation")
+    }else if(Event=="OpenedApp"){
+          DAL.UpdateAppEvents(UserId,Event);
     }
     
 }

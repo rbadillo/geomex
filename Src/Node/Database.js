@@ -296,8 +296,10 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                  }else{
                                  console.log("User Updated Sucessfully");
                                  db.close();
-                                 GetClientIdByLocationId(UserId,LocationId,Event);
-                                 }
+                                 if(Event=='at' || Event == 'left'){
+                                    GetClientIdByLocationId(UserId,LocationId,Event);
+                                  }
+                                }
                              });
                           }
                     });
@@ -1149,6 +1151,36 @@ exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
                              });
                           }
                     });
+            });
+        });
+
+}
+
+
+exports.UpdateAppEvents= function UpdateAppEvents(UserId,Event){
+
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var AppEvent= db.models.AppEvents();
+                    AppEvent.UserId=UserId
+                    AppEvent.Event=Event
+                    AppEvent.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                    
+                    AppEvent.save(function (err) {
+                         if (err){
+                            console.log(err);
+                            db.close();
+                         }else{
+                         console.log("AppEvent Added Sucessfully For UserId: " +UserId);
+                         db.close();
+                         }
+                     });
+
+
             });
         });
 

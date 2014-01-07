@@ -101,3 +101,13 @@ exports.UpdateUserActiveState= function UpdateUserActiveState(req,res){
     });
 
 }
+
+exports.AppEvents= function AppEvents(req,res){
+
+      res.end('Success');
+
+      var UserId=req.params.UserId
+      var Event=req.body.event
+
+      DAL.UpdateAppEvents(UserId,Event);
+}
