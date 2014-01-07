@@ -4,7 +4,7 @@ CREATE  TABLE `geomex`.`AppEvents` (
   `Event` VARCHAR(100) NOT NULL ,
   `TimeCreated` TIMESTAMP NULL ,
   PRIMARY KEY (`Id`) ,
-  INDEX `UserId` (`UserId` ASC) ,
+  INDEX `UserId_AppEvents` (`UserId` ASC) ,
   CONSTRAINT `UserId`
     FOREIGN KEY (`UserId` )
     REFERENCES `geomex`.`Users` (`UserId` )
