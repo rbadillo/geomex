@@ -5,6 +5,8 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`LocationEvents` (
   `LocationId` INT NOT NULL ,
   `LocationName` VARCHAR(255) NOT NULL ,
   `Event` VARCHAR(255) NOT NULL ,
+  `Latitude` DECIMAL(10,6) NULL DEFAULT NULL,
+  `Longitude` DECIMAL(10,6) NULL DEFAULT NULL, 
   `TimeCreated` TIMESTAMP NULL ,
   PRIMARY KEY (`Id`) ,
   INDEX `ClientId` (`ClientId` ASC) ,
