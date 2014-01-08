@@ -265,7 +265,9 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                  }else{
                                  console.log("User Added Sucessfully");
                                  db.close();
-                                 GetClientIdByLocationId(UserId,LocationId,Event);
+                                 if(Event=='at' || Event == 'left'){
+                                    GetClientIdByLocationId(UserId,LocationId,Event);
+                                    }
                                  }
                              });
                             
