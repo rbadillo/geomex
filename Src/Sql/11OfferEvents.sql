@@ -4,6 +4,8 @@ CREATE  TABLE `geomex`.`OfferEvents` (
   `ClientId` INT NOT NULL ,
   `OfferId` INT NOT NULL ,
   `Event` VARCHAR(45) NOT NULL ,
+  `Latitude` DECIMAL(10,6) NULL DEFAULT NULL,
+  `Longitude` DECIMAL(10,6) NULL DEFAULT NULL,
   `TimeCreated` TIMESTAMP NULL ,
   PRIMARY KEY (`Id`) ,
   INDEX `UserId_OfferEvents` (`UserId` ASC) ,
