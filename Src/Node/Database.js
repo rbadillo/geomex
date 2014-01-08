@@ -266,7 +266,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                  console.log("User Added Sucessfully");
                                  db.close();
                                  if(Event=='at' || Event == 'left'){
-                                    GetClientIdByLocationId(UserId,LocationId,Event);
+                                    GetClientIdByLocationId(UserId,LocationId,Event,Latitude,Longitude);
                                     }
                                  }
                              });
@@ -289,7 +289,6 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                             usr.FbWork=FbWork
                             usr.FbLink=FbLink
                             usr.FbPhoto=FbPhoto
-
                             
                             usr.save(function (err) {
                                  if (err){

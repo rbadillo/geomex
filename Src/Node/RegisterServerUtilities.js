@@ -114,10 +114,10 @@ exports.Register = function Register(req,res){
     
     DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude);
    
-    if(Event=="left"){
-          PostUserControl(LocationId,PhoneType,DeviceToken,"/RemoveUserFromLocation")
-    }else if (Event=="at"){
+    if(Event=="at"){
           PostUserControl(LocationId,PhoneType,DeviceToken,"/AddUserToLocation")
+    }else if (Event=="left"){
+          PostUserControl(LocationId,PhoneType,DeviceToken,"/RemoveUserFromLocation")
     }else if(Event=="OpenedApp"){
           DAL.UpdateAppEvents(UserId,Event,Latitude,Longitude);
     }
