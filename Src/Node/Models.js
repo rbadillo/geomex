@@ -67,6 +67,8 @@ module.exports = function (db, cb) {
         LocationId : Number,
         LocationName: String,
         Event: String,
+        Latitude: Number,
+        Longitude: Number,
         TimeCreated : Date
     },{
         id: ['Id']   // Primary Key
@@ -120,6 +122,8 @@ module.exports = function (db, cb) {
         UserId: Number,
         OfferId: Number,
         Event: String,
+        Latitude: Number,
+        Longitude: Number,
         TimeCreated : Date
     },{
         id: ['Id']   // Primary Key
@@ -128,6 +132,8 @@ module.exports = function (db, cb) {
     db.define('AppEvents', {
         UserId: Number,
         Event: String,
+        Latitude: Number,
+        Longitude: Number,
         TimeCreated : Date
     },{
         id: ['Id']   // Primary Key

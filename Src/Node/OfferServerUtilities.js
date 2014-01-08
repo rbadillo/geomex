@@ -30,8 +30,10 @@ exports.SingleOffer = function SingleOffer(req,res){
 
     var UserId=req.params.UserId
     var OfferId=req.params.OfferId
+    var Latitude= req.query.latitude
+    var Longitude= req.query.longitude  
 
-    DAL.GetSingleOffer(UserId,OfferId,function(output){
+    DAL.GetSingleOffer(UserId,OfferId,Latitude,Longitude,function(output){
       res.setHeader('Content-Type', 'application/json');
       res.write(output);
       res.end();
@@ -41,9 +43,26 @@ exports.SingleOffer = function SingleOffer(req,res){
 exports.Redeem= function Redeem(req,res){
     var UserId=req.params.UserId
     var OfferId=req.params.OfferId
+    var Latitude= req.query.latitude
+    var Longitude= req.query.longitude
 
-    DAL.RedeemSingleOffer(UserId,OfferId,function(output){
+    DAL.RedeemSingleOffer(UserId,OfferId,Latitude,Longitude,function(output){
       res.setHeader('Content-Type', 'application/json');
+      res.write(output);
+      res.end();
+    });
+}
+
+exports.ShowGeoMessage= function ShowGeoMessage(req,res){
+    var UserId=req.params.UserId
+    var OfferId=req.params.OfferId
+
+    DAL.ShowGeoMessage(UserId,OfferId,function(output){
+      var tmp= JSON.parse(output)
+      res.setHeader('Content-Type', 'application/json');
+      if(tmp.State=="Error"){
+        res.statusCode=404
+      }
       res.write(output);
       res.end();
     });

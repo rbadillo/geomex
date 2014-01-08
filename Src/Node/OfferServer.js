@@ -14,6 +14,7 @@ app.get('/',Utilities.Test);
 app.get('/:UserId/:Timezone/GetOffers',Utilities.Offers);
 app.get('/:UserId/:Timezone/GetOffers/:OfferId',Utilities.SingleOffer);
 app.get('/:UserId/:Timezone/GetOffers/:OfferId/Redeem',Utilities.Redeem);
+app.get('/:UserId/:Timezone/GetOffers/:OfferId/ShowGeoMessage',Utilities.ShowGeoMessage);
 
 app.listen(app.get('port'));
 console.log("Offer Server - Listening Port: " +app.get('port'));

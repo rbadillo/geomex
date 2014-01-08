@@ -99,15 +99,27 @@ exports.Register = function Register(req,res){
     }catch(e){
     var FbPhoto=""
     }
+
+    try{
+    var Latitude=req.body.latitude
+    }catch(e){
+    var Latitude=""
+    }
+
+    try{
+    var Longitude=req.body.longitude 
+    }catch(e){
+    var Longitude=""
+    }
     
-    DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto);
+    DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude);
    
     if(Event=="left"){
           PostUserControl(LocationId,PhoneType,DeviceToken,"/RemoveUserFromLocation")
     }else if (Event=="at"){
           PostUserControl(LocationId,PhoneType,DeviceToken,"/AddUserToLocation")
     }else if(Event=="OpenedApp"){
-          DAL.UpdateAppEvents(UserId,Event);
+          DAL.UpdateAppEvents(UserId,Event,Latitude,Longitude);
     }
     
 }

@@ -92,8 +92,9 @@ exports.UpdateUserActiveState= function UpdateUserActiveState(req,res){
     var UserId=req.params.UserId
 
     DAL.UpdateUserActiveState(UserId, function (output){
+      var tmp= JSON.parse(output)
       res.setHeader('Content-Type', 'application/json');
-      if(output=="Error"){
+      if(tmp.State=="Error"){
         res.statusCode=404
       }
       res.write(output);
