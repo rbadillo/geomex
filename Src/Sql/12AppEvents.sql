@@ -5,6 +5,8 @@ CREATE  TABLE `geomex`.`AppEvents` (
   `Latitude` DECIMAL(10,6) NULL DEFAULT NULL,
   `Longitude` DECIMAL(10,6) NULL DEFAULT NULL,
   `TimeCreated` DATETIME NOT NULL ,
+  `_Created` DATETIME NOT NULL ,
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`Id`) ,
   INDEX `UserId_AppEvent` (`UserId` ASC) ,
   CONSTRAINT `UserId_AppEvent`
@@ -12,3 +14,9 @@ CREATE  TABLE `geomex`.`AppEvents` (
     REFERENCES `geomex`.`Users` (`UserId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
+DROP TRIGGER IF EXISTS `geomex`.`AppEvents_Datetime_Created`;
+
+CREATE TRIGGER `geomex`.`AppEvents_Datetime_Created` BEFORE INSERT ON `geomex`.`AppEvents` 
+FOR EACH ROW
+SET NEW._Created = NOW();
