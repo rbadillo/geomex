@@ -3,6 +3,8 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`SentMessages` (
   `UserId` INT NOT NULL ,
   `MessageId` INT NOT NULL ,
   `TimeSent` DATETIME NOT NULL ,
+  `_Created` DATETIME NOT NULL ,
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`Id`),
   INDEX `UserId_idx` (`UserId` ASC) ,
   INDEX `MessageId_idx` (`MessageId` ASC) ,
@@ -17,3 +19,8 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`SentMessages` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
+DROP TRIGGER IF EXISTS `geomex`.`SentMessages_Datetime_Created`;
+
+CREATE TRIGGER `geomex`.`SentMessages_Datetime_Created` BEFORE INSERT ON `geomex`.`SentMessages` 
+FOR EACH ROW
+SET NEW._Created = NOW();
