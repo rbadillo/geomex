@@ -7,9 +7,9 @@ CREATE  TABLE `geomex`.`Offers` (
   `Code` VARCHAR(255) NULL ,
   `Instructions` VARCHAR(1024) NULL ,
   `Disclaimer` VARCHAR(1024) NULL ,
-  `PublishedDate` DATETIME NULL ,
-  `StartDate` DATETIME NULL ,
-  `EndDate` DATETIME NULL ,
+  `PublishedDate` DATETIME NOT NULL ,
+  `StartDate` DATETIME NOT NULL ,
+  `EndDate` DATETIME NOT NULL ,
   `IsActive` TINYINT NOT NULL DEFAULT 1
   `Priority` INT NULL ,
   `ActualRedemption` INT NULL ,
