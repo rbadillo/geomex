@@ -2,7 +2,8 @@ module.exports = function (db, cb) {
     
     db.define('Clients', {
         Name : String,
-        Logo : String
+        Logo : String,
+        IsActive : Number
     },{
         id: ['ClientId']   // Primary Key
     });
@@ -10,6 +11,8 @@ module.exports = function (db, cb) {
     db.define('Locations', {
         Name: String,
         ClientId : Number,
+        IsActive : Number,
+        Visibility: String,
         Latitude : Number,
         Longitude : Number,
         Address : String,
@@ -85,6 +88,7 @@ module.exports = function (db, cb) {
         PublishedDate: Date,
         StartDate: Date,
         EndDate: Date,
+        IsActive : Number,
         Priority: Number,
         ActualRedemption: Number,
         TotalRedemption: Number,

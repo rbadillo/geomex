@@ -489,6 +489,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                             Offers.Visibility,Offers.DynamicRedemptionMinutes, \
                             Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
                             where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
+                            and Clients.IsActive=1 and Offers.IsActive=1 \
                             and Clients.ClientId=Offers.ClientId \
                             Order by Offers.Priority DESC"
 
@@ -514,6 +515,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                             Offers.Visibility,Offers.DynamicRedemptionMinutes, \
                             Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
                             where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
+                            and Clients.IsActive=1 and Offers.IsActive=1 \
                             and Clients.ClientId=Offers.ClientId and Offers.ClientId=" +ClientId
                             +" Order by Offers.Priority DESC"
 
@@ -868,6 +870,7 @@ exports.GetMessagesSentByClient = function GetMessagesSentByClient(ClientId,call
                           where Messages.ClientId=Clients.ClientId \
                           and Messages.ClientId="+ClientId
                           +" and Messages.Visibility='public'"
+                          +" and Clients.IsActive=1"
                           +" ORDER BY Messages.TimeCreated DESC LIMIT 10";
 
                             db.driver.execQuery(query, function (err, messages) { 
@@ -938,6 +941,7 @@ function GetMessagesReceivedByUserPrivate(MessagesId,callback){
                     query="Select Clients.Name as ClientName, Clients.Logo,Messages.Message, Messages.TimeCreated \
                           from Messages,Clients \
                           where Messages.ClientId=Clients.ClientId \
+                          and Clients.IsActive=1 \
                           and Messages.MessageId in ("+MessagesId
                           +" ) ORDER BY Messages.TimeCreated DESC LIMIT 10";
 
@@ -973,10 +977,12 @@ exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
                     // loaded!
 
                     query="SELECT distinct Clients.Name,Clients.Logo,LocationEvents.LocationName,LocationEvents.TimeCreated \
-                    from LocationEvents,Clients \
+                    from LocationEvents,Clients,Locations \
                     where LocationEvents.UserId= "+UserId 
                     +" and LocationEvents.Event='at' \
-                    and Clients.ClientId=LocationEvents.ClientId \
+                    and Clients.ClientId=LocationEvents.ClientId and Clients.IsActive=1 \
+                    and Locations.LocationId=LocationEvents.LocationId and Locations.IsActive=1 \
+                    and Locations.Visibility='public' \
                     ORDER BY LocationEvents.TimeCreated DESC LIMIT 10";
 
                     db.driver.execQuery(query, function (err, locations) { 
@@ -1011,9 +1017,12 @@ exports.GetFriendsPlaces = function GetFriendsPlaces(FriendList,callback){
                     // loaded!
 
                     query="SELECT distinct Users.FbName,Users.FbLastName,Users.FbPhoto,LocationEvents.UserId, \
-                     LocationEvents.LocationName,LocationEvents.TimeCreated from Users,LocationEvents \
+                     LocationEvents.LocationName,LocationEvents.TimeCreated from Users,LocationEvents,Locations,Clients \
                      where LocationEvents.UserId in  (" +FriendList +") and LocationEvents.Event='at' \
                      and Users.IsActive =1 and Users.UserId=LocationEvents.UserId \
+                     and Clients.ClientId=Locations.ClientId and Clients.IsActive=1 \
+                     and Locations.LocationId=LocationEvents.LocationId and Locations.IsActive=1 \
+                     and Locations.Visibility='public' \
                      order by LocationEvents.TimeCreated Desc LIMIT 20"
 
                     db.driver.execQuery(query, function (err, locations) { 
@@ -1048,7 +1057,7 @@ exports.GetAllClients = function GetAllClients(callback){
                     // loaded!
                     var clt = db.models.Clients;
 
-                    clt.find(function (err, Clients) {
+                    clt.find({ IsActive:1 },function (err, Clients) {
 
                       if(err){
                         console.log(err);
@@ -1072,7 +1081,7 @@ exports.GetClientLocations = function GetClientLocations(ClientId,callback){
                     // loaded!
                     var loc = db.models.Locations;
 
-                    loc.find({ClientId:ClientId},function (err, locations) {
+                    loc.find({ClientId:ClientId,IsActive:1,Visibility:'public'},function (err, locations) {
 
                       if(err){
                         console.log(err);
@@ -1262,4 +1271,33 @@ exports.ShowGeoMessage= function ShowGeoMessage(UserId,OfferId,callback){
             });
         });
 
+}
+
+exports.IsLocationActive= function IsLocationActive(LocationId,callback){
+
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var Location= db.models.Locations;
+
+                    var msj= {
+                                "State": ""
+                              }
+
+                    Location.get(LocationId,function (err, loc) {
+                        if(err){
+                            msj.State="Error";
+                            callback(JSON.stringify(msj))
+                            
+                        }else{
+
+                            msj.State=loc.IsActive;
+                            callback(JSON.stringify(msj))
+                          }
+                    });
+            });
+        });
 }

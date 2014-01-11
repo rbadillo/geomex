@@ -112,3 +112,19 @@ exports.AppEvents= function AppEvents(req,res){
 
       DAL.UpdateAppEvents(UserId,Event);
 }
+
+exports.IsLocationActive= function IsLocationActive(req,res){
+
+    var LocationId=req.params.LocationId
+
+    DAL.IsLocationActive(LocationId, function (output){
+      var tmp= JSON.parse(output)
+      res.setHeader('Content-Type', 'application/json');
+      if(tmp.State=="Error"){
+        res.statusCode=404
+      }
+      res.write(output);
+      res.end();
+    });
+
+}
