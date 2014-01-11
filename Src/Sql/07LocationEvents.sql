@@ -8,6 +8,8 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`LocationEvents` (
   `Latitude` DECIMAL(10,6) NULL DEFAULT NULL,
   `Longitude` DECIMAL(10,6) NULL DEFAULT NULL, 
   `TimeCreated` DATETIME NOT NULL ,
+  `_Created` DATETIME NOT NULL ,
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`Id`) ,
   INDEX `ClientId` (`ClientId` ASC) ,
   INDEX `LocationId` (`LocationId` ASC) ,
@@ -21,3 +23,9 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`LocationEvents` (
     REFERENCES `geomex`.`Locations` (`LocationId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+    
+DROP TRIGGER IF EXISTS `geomex`.`LocationEvents_Datetime_Created`;
+
+CREATE TRIGGER `geomex`.`LocationEvents_Datetime_Created` BEFORE INSERT ON `geomex`.`LocationEvents` 
+FOR EACH ROW
+SET NEW._Created = NOW();
