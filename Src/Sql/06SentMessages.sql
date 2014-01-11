@@ -2,7 +2,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`SentMessages` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `UserId` INT NOT NULL ,
   `MessageId` INT NOT NULL ,
-  `TimeSent` DATETIME NULL ,
+  `TimeSent` DATETIME NOT NULL ,
   PRIMARY KEY (`Id`),
   INDEX `UserId_idx` (`UserId` ASC) ,
   INDEX `MessageId_idx` (`MessageId` ASC) ,
