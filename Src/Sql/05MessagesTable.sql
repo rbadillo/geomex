@@ -4,7 +4,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Messages` (
   `LocationId` INT NOT NULL ,
   `ClientId` INT NOT NULL ,
   `Visibility` VARCHAR(100) NOT NULL ,
-  `TimeCreated` DATETIME NULL ,
+  `TimeCreated` DATETIME NOT NULL ,
   PRIMARY KEY (`MessageId`) ,
   INDEX `LocationId_idx` (`LocationId` ASC) ,
   INDEX `ClientId_idx` (`ClientId` ASC) ,
