@@ -12,6 +12,8 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Locations` (
   `City` VARCHAR(45) NOT NULL ,
   `ZipCode` VARCHAR(45) NOT NULL ,
   `LocationPhoto` VARCHAR(255) NULL ,
+  `_Created` DATETIME NOT NULL ,
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`LocationId`) ,
   INDEX `ClientId_idx` (`ClientId` ASC) ,
   CONSTRAINT `ClientId`
@@ -19,3 +21,9 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Locations` (
     REFERENCES `geomex`.`Clients` (`ClientId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
+DROP TRIGGER IF EXISTS `geomex`.`Locations_Datetime_Created`;
+
+CREATE TRIGGER `geomex`.`Locations_Datetime_Created` BEFORE INSERT ON `geomex`.`Locations` 
+FOR EACH ROW
+SET NEW._Created = NOW();
