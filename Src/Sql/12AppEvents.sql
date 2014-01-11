@@ -4,7 +4,7 @@ CREATE  TABLE `geomex`.`AppEvents` (
   `Event` VARCHAR(100) NOT NULL ,
   `Latitude` DECIMAL(10,6) NULL DEFAULT NULL,
   `Longitude` DECIMAL(10,6) NULL DEFAULT NULL,
-  `TimeCreated` TIMESTAMP NULL ,
+  `TimeCreated` DATETIME NULL ,
   PRIMARY KEY (`Id`) ,
   INDEX `UserId_AppEvent` (`UserId` ASC) ,
   CONSTRAINT `UserId_AppEvent`
