@@ -13,5 +13,12 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Users` (
   `FbWork` VARCHAR(255) NULL ,
   `FbLink` VARCHAR(255) NULL ,
   `FbPhoto` VARCHAR(255) NULL ,
+  `_Created` DATETIME NOT NULL ,
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`UserId`) );
 
+DROP TRIGGER IF EXISTS `geomex`.`Users_Datetime_Created`;
+
+CREATE TRIGGER `geomex`.`Users_Datetime_Created` BEFORE INSERT ON `geomex`.`Users` 
+FOR EACH ROW
+SET NEW._Created = NOW();
