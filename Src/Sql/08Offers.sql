@@ -19,6 +19,8 @@ CREATE  TABLE `geomex`.`Offers` (
   `DynamicRedemptionMinutes` INT NULL ,
   `PrimaryImage` VARCHAR(255) NULL ,
   `SecondaryImage` VARCHAR(255) NULL ,
+  `_Created` DATETIME NOT NULL ,
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`OfferId`) ,
   INDEX `ClientIdOffers` (`ClientId` ASC) ,
   CONSTRAINT `ClientIdOffers`
@@ -26,3 +28,9 @@ CREATE  TABLE `geomex`.`Offers` (
     REFERENCES `geomex`.`Clients` (`ClientId` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
+DROP TRIGGER IF EXISTS `geomex`.`Offers_Datetime_Created`;
+
+CREATE TRIGGER `geomex`.`Offers_Datetime_Created` BEFORE INSERT ON `geomex`.`Offers` 
+FOR EACH ROW
+SET NEW._Created = NOW();
