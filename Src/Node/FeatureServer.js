@@ -19,6 +19,7 @@ app.get('/:UserId/GetLocationsByUser/:UserLocation',Utilities.GetLocationsByUser
 app.get('/:UserId/GetUserActiveState',Utilities.GetUserActiveState);
 app.get('/:UserId/UpdateUserActiveState',Utilities.UpdateUserActiveState);
 app.get('/:UserId/IsLocationActive/:LocationId',Utilities.IsLocationActive);
+app.post('/:UserId/AppEvents',Utilities.AppEvents);
 app.post('/:UserId/GetFriendsPlaces',Utilities.GetFriendsPlaces);
 
 app.listen(app.get('port'));
