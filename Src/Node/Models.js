@@ -48,8 +48,6 @@ module.exports = function (db, cb) {
         DeviceToken : String,
         PhoneType : String,
         IsActive : Number,
-        LocationId : Number,
-        Event : String,
         FbName : String,
         FbLastName : String,
         FbAge : Number,
