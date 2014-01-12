@@ -120,4 +120,4 @@ How to Export/Import Mysql Data
 
 2.- Import
 
-	b) mysql -u [USER] -p < [FILE.sql]
+	b) mysql -u [USER] -p [DATABASE] < [FILE.sql]
