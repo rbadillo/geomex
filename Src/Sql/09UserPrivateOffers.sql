@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS `geomex`.`UserPrivateOffers` ;
+
 CREATE  TABLE `geomex`.`UserPrivateOffers` (
   `Id` INT NOT NULL AUTO_INCREMENT ,
   `ClientId` INT NOT NULL ,
@@ -7,7 +9,7 @@ CREATE  TABLE `geomex`.`UserPrivateOffers` (
   `EndDate` DATETIME NOT NULL ,
   `TimeCreated` DATETIME NOT NULL ,
   `_Created` DATETIME NOT NULL ,
-  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`Id`) ,
   INDEX `ClientIdPrivateOffers` (`ClientId` ASC) ,
   INDEX `UserIdPrivateOffers` (`UserId` ASC) ,
