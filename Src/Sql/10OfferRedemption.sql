@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS `geomex`.`OfferRedemption` ;
+
 CREATE  TABLE `geomex`.`OfferRedemption` (
   `Id` INT NOT NULL AUTO_INCREMENT ,
   `ClientId` INT NOT NULL ,
@@ -5,7 +7,7 @@ CREATE  TABLE `geomex`.`OfferRedemption` (
   `OfferId` INT NOT NULL ,
   `TimeCreated` DATETIME NOT NULL ,
   `_Created` DATETIME NOT NULL ,
-  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`Id`) ,
   INDEX `ClientIdOfferRedemption` (`ClientId` ASC) ,
   INDEX `UserIdOfferRedemption` (`UserId` ASC) ,
