@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `geomex`.`LocationEvents`;
 
-CREATE  TABLE IF NOT EXISTS `geomex`.`LocationEvents` (
+CREATE TABLE IF NOT EXISTS `geomex`.`LocationEvents` (
   `Id` INT NOT NULL AUTO_INCREMENT ,
   `UserId` INT NOT NULL ,
   `ClientId` INT NOT NULL ,
