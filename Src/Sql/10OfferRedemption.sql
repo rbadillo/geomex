@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `geomex`.`OfferRedemption` ;
+DROP TABLE IF EXISTS `geomex`.`OfferRedemption`;
 
 CREATE TABLE IF NOT EXISTS `geomex`.`OfferRedemption` (
   `Id` INT NOT NULL AUTO_INCREMENT ,
