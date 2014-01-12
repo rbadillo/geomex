@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `geomex`.`Users`  ;
+DROP TABLE IF EXISTS `geomex`.`Users`;
 
 CREATE  TABLE IF NOT EXISTS `geomex`.`Users` (
   `UserId` INT NOT NULL ,
