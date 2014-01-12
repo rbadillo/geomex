@@ -1,1 +1,3 @@
+DROP DATABASE `geomex` 
+
 CREATE DATABASE IF NOT EXISTS `geomex` ;
