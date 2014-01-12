@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS `geomex`.`Offers`;
+
 CREATE  TABLE `geomex`.`Offers` (
   `OfferId` INT NOT NULL AUTO_INCREMENT ,
   `ClientId` INT NOT NULL ,
@@ -20,7 +22,7 @@ CREATE  TABLE `geomex`.`Offers` (
   `PrimaryImage` VARCHAR(255) NULL ,
   `SecondaryImage` VARCHAR(255) NULL ,
   `_Created` DATETIME NOT NULL ,
-  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`OfferId`) ,
   INDEX `ClientIdOffers` (`ClientId` ASC) ,
   CONSTRAINT `ClientIdOffers`
