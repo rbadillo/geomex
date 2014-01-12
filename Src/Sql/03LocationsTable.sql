@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `geomex`.`Locations` ;
+DROP TABLE IF EXISTS `geomex`.`Locations`;
 
 CREATE  TABLE IF NOT EXISTS `geomex`.`Locations` (
   `LocationId` INT NOT NULL AUTO_INCREMENT ,
