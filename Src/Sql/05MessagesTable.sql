@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS `geomex`.`Messages`;
+
 CREATE  TABLE IF NOT EXISTS `geomex`.`Messages` (
   `MessageId` INT NOT NULL AUTO_INCREMENT ,
   `Message` VARCHAR(255) NOT NULL ,
@@ -6,7 +8,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Messages` (
   `Visibility` VARCHAR(100) NOT NULL ,
   `TimeCreated` DATETIME NOT NULL ,
   `_Created` DATETIME NOT NULL ,
-  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `_Updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`MessageId`) ,
   INDEX `LocationId_idx` (`LocationId` ASC) ,
   INDEX `ClientId_idx` (`ClientId` ASC) ,
