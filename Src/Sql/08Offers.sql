@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `geomex`.`Offers` (
   `PublishedDate` DATETIME NOT NULL ,
   `StartDate` DATETIME NOT NULL ,
   `EndDate` DATETIME NOT NULL ,
-  `IsActive` TINYINT NOT NULL DEFAULT 1
+  `IsActive` TINYINT NOT NULL DEFAULT 1 ,
   `Priority` INT NULL ,
   `ActualRedemption` INT NULL ,
   `TotalRedemption` INT NULL ,
