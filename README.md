@@ -108,3 +108,16 @@ How to Setup Nodejs Modules
 4.- Correr Script SetupNodejs.sh
 
 	a) ./SetupNodejs.sh
+	
+	
+How to Export/Import Mysql Data
+======
+
+1.- Export
+
+	a) mysqldump -u [USER] -p --skip-triggers --compact --complete-insert --no-create-info [DATABASE] > [FILE.sql]
+	
+
+2.- Import
+
+	b) mysql -u [USER] -p < [FILE.sql]
