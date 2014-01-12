@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `geomex`.`UserPrivateOffers` ;
+DROP TABLE IF EXISTS `geomex`.`UserPrivateOffers`;
 
 CREATE  TABLE `geomex`.`UserPrivateOffers` (
   `Id` INT NOT NULL AUTO_INCREMENT ,
