@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `geomex`.`SentMessages`;
 
-CREATE  TABLE IF NOT EXISTS `geomex`.`SentMessages` (
+CREATE TABLE IF NOT EXISTS `geomex`.`SentMessages` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `UserId` INT NOT NULL ,
   `MessageId` INT NOT NULL ,
