@@ -245,6 +245,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                             usr.UserId=UserId
                             usr.DeviceToken=DeviceToken
                             usr.PhoneType=PhoneType
+                            usr.IsActive=1
                             usr.FbName=FbName
                             usr.FbLastName=FbLastName
                             usr.FbAge=FbAge
@@ -275,6 +276,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                             usr.UserId=UserId
                             usr.DeviceToken=DeviceToken
                             usr.PhoneType=PhoneType
+                            usr.IsActive=usr.IsActive
                             usr.FbName=FbName
                             usr.FbLastName=FbLastName
                             usr.FbAge=FbAge
@@ -1229,6 +1231,13 @@ exports.ShowGeoMessage= function ShowGeoMessage(UserId,OfferId,callback){
                                 msj.State="False"
                                 callback(JSON.stringify(msj))
                               }else{
+
+                                if(offer[0]===undefined){
+                                  console.log("Offer Undefined");
+                                  db.close();
+                                  msj.State="False"
+                                  callback(JSON.stringify(msj))
+                                }else{
                                 var OfferUseType=offer[0].MultiUse
 
                                 if(offer.length && OfferUseType==1){
@@ -1236,31 +1245,33 @@ exports.ShowGeoMessage= function ShowGeoMessage(UserId,OfferId,callback){
                                   callback(JSON.stringify(msj))  
                                 }else{
 
-                                  query="Select * from OfferRedemption \
-                                          where OfferId=" +OfferId
-                                          +" LIMIT 1"
+                                      query="Select * from OfferRedemption \
+                                              where OfferId=" +OfferId
+                                              +" and UserId=" +UserId
+                                              +" LIMIT 1"
 
-                                  db.driver.execQuery(query, function (err, offer) { 
+                                      db.driver.execQuery(query, function (err, offer) { 
 
-                                          if(err){
-                                            console.log(err);
-                                            db.close();
-                                            msj.State="False"
-                                            callback(JSON.stringify(msj))
-                                          }else{
-                                            db.close();
-
-                                            if(offer.length){
+                                              if(err){
+                                                console.log(err);
+                                                db.close();
                                                 msj.State="False"
-                                                callback(JSON.stringify(msj)) 
-                                              }else{
-                                                msj.State="True"
                                                 callback(JSON.stringify(msj))
-                                              }
-                                          }
+                                              }else{
+                                                db.close();
 
-                                  })
-                                }
+                                                if(offer.length){
+                                                    msj.State="False"
+                                                    callback(JSON.stringify(msj)) 
+                                                  }else{
+                                                    msj.State="True"
+                                                    callback(JSON.stringify(msj))
+                                                  }
+                                              }
+
+                                      })
+                                    }
+                                 }
                               }
 
                             })
