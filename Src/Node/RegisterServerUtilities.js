@@ -36,6 +36,7 @@ exports.Register = function Register(req,res){
 
     try{
     var Event=req.body.event
+    Event=Event.toLowerCase();
     }catch(e){
     var Event=""
     }
@@ -118,7 +119,7 @@ exports.Register = function Register(req,res){
           PostUserControl(LocationId,PhoneType,DeviceToken,"/AddUserToLocation")
     }else if (Event=="left"){
           PostUserControl(LocationId,PhoneType,DeviceToken,"/RemoveUserFromLocation")
-    }else if(Event=="OpenedApp"){
+    }else if(Event=="openedapp"){
           DAL.UpdateAppEvents(UserId,Event,Latitude,Longitude);
     }
     
@@ -160,7 +161,7 @@ function PostUserControl(LocationId,PhoneType,DeviceToken,Path) {
       });
 
       res.on('end', function(){
-          console.log('User Control: ' +Response);
+          console.log('User Control Response: ' +Response);
       });
 
   });

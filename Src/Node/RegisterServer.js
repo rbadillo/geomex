@@ -10,6 +10,10 @@ app.configure(function(){
   app.use(express.errorHandler());
 });
 
+express.logger.token('date', function(){
+  return new Date();
+});
+
 app.get('/',Utilities.Test);
 app.post('/Register',Utilities.Register);
 

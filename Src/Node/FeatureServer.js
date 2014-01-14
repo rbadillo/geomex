@@ -10,6 +10,10 @@ app.configure(function(){
   app.use(express.errorHandler());
 });
 
+express.logger.token('date', function(){
+  return new Date();
+});
+
 app.get('/',Utilities.Test);
 app.get('/:UserId/GetAllClients',Utilities.GetAllClients);
 app.get('/:UserId/GetClientLocations/:ClientId',Utilities.GetClientLocations);

@@ -54,32 +54,36 @@ exports.GetUsersByLocationId = function GetUsersByLocationId(LocationId,callback
 									         if(err){
 								 				console.log(err)
 								 			}else{
-									            console.log(PhoneType +" Key Has Been Updated with this Device Token: " +DeviceToken);
+									            console.log("Event: Add - Key: " +PhoneType +" - Device Token: " +DeviceToken);
+							    				console.log("");
 							    			}
 				 					});
 				 				}else{
-				 					console.log("User is Already in LocationId: " +LocationId);
+				 					console.log("User is Already in LocationId: " +LocationId +" - Device Token: " +DeviceToken);
+				 					console.log("");
 				 				}
 				 			}else{
-				 				console.log("First User in LocationId: "+LocationId);
+				 				console.log("First User in LocationId: "+LocationId +" - Device Token: " +DeviceToken);
 
 				 				client.hmset(LocationId, PhoneType, DeviceToken, function (err, res) {
 									         if(err){
 								 				console.log(err)
 								 			}else{
-									            console.log(PhoneType +" Key Has Been Updated with this Device Token: " +DeviceToken);
+									            console.log("Event: Add - Key: " +PhoneType +" - Device Token: " +DeviceToken);
+							    				console.log("");
 							    			}
 				 					});
 				 			}
 
 			    	}else{
-			    		console.log("First User in LocationId: "+LocationId);
+			    		console.log("First User in LocationId: "+LocationId +" - Device Token: " +DeviceToken);
 
 		 				client.hmset(LocationId, PhoneType, DeviceToken, function (err, res) {
 							         if(err){
 						 				console.log(err)
 						 			}else{
-							            console.log(PhoneType +" Key Has Been Updated with this Device Token: " +DeviceToken);
+							            console.log("Event: Add - Key: " +PhoneType +" - Device Token: " +DeviceToken);
+					    				console.log("");
 					    			}
 		 					});
 			    	}
@@ -120,18 +124,22 @@ exports.RemoveUserFromLocation = function RemoveUserFromLocation(LocationId,Phon
 									         if(err){
 								 				console.log(err)
 								 			}else{
-									            console.log(PhoneType +" Key Has Been Updated by removing this Device Token: " +DeviceToken);
+									            console.log("Event: Remove - Key: " +PhoneType +" - Device Token: " +DeviceToken);
+							    				console.log("");
 							    			}
 				 					});
 				 				}else{
-				 					console.log("User is not in LocationId: " +LocationId);
+				 					console.log("User is not in LocationId: " +LocationId +" - Device Token: " +DeviceToken);
+				 					console.log("");
 				 				}
 				 			}else{
-				 				console.log("Can't Remove From LocationId: "+LocationId +" Because This Location Is Empty");
+				 				console.log("Can't Remove Device Token: " +DeviceToken +" - From LocationId: "+LocationId +" Because This Location Is Empty");
+				 				console.log("");
 				 			}
 
  					}else{
- 						console.log("Can't Remove From LocationId: "+LocationId +" Because This Location Is Empty");
+ 						console.log("Can't Remove Device Token: " +DeviceToken +" - From LocationId: "+LocationId +" Because This Location Is Empty");
+ 						console.log("");
  					}
  				}
  		});        

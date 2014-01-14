@@ -24,10 +24,12 @@ service.on('transmissionError', function(errCode, notification, device) {
 
 service.on('timeout', function () {
     console.log("Connection Timeout");
+    console.log("");
 });
 
 service.on('disconnected', function() {
     console.log("Disconnected from APNS");
+    console.log("");
 });
 
 service.on('socketError', console.error);

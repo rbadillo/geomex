@@ -12,6 +12,7 @@ connection.on('ready', function () {
 
           // Receive messages
           q.subscribe(function (message) {
+            console.log("Start - " +new Date());
             console.log("MsjDispatcher - Got Message From RabbitMQ")
             // Print messages to stdout
             
@@ -27,6 +28,7 @@ connection.on('ready', function () {
                       Ios.PushMessage(message.Message,iOSPhones,message.ClientName);
                     }else{
                       console.log("MsjDispatcher - Not Active iOS Users To Send Push Notification")
+                      console.log("");
                     }
                 }
             
@@ -39,12 +41,16 @@ connection.on('ready', function () {
                       Android.PushMessage(message.Message,AndroidPhones,message.ClientName);
                     }else{
                       console.log("MsjDispatcher - Not Active Android Users To Send Push Notification")
+                      console.log("");
                     }
               }
 
           }else{
             console.log("MsjDispatcher - Got Message Without Users Property From RabbitMQ")
+            console.log("Message Received: ");
+            console.log("");
             console.log(message)
+            console.log("");
           }
       });
       

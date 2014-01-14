@@ -10,6 +10,10 @@ app.configure(function(){
   app.use(express.errorHandler());
 });
 
+express.logger.token('date', function(){
+  return new Date();
+});
+
 app.get('/',Utilities.Test);
 app.get('/GetUsersByLocationId/:LocationId',Utilities.GetUsersByLocationId);
 app.post('/AddUserToLocation',Utilities.AddUserToLocation);
@@ -17,3 +21,4 @@ app.post('/RemoveUserFromLocation',Utilities.RemoveUserFromLocation);
 
 app.listen(app.get('port'));
 console.log("User Control Server - Listening Port: " +app.get('port'));
+

@@ -5,7 +5,7 @@ var https= require('https');
 //exports.AddClient = function AddClient
 exports.AddClient = function AddClient(Name,Logo){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -45,7 +45,7 @@ exports.AddClient = function AddClient(Name,Logo){
 //exports.AddLocation = function AddLocation
 exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -94,7 +94,7 @@ exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Addr
 
 function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -182,7 +182,7 @@ function tryParseJson(str) {
 
 exports.AddMessage = function AddMessage(Message,LocationId,ClientId,Visibility,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -197,7 +197,7 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId,Visibility,
                           db.close();
                       }else{
                           if(msj.length){
-                            console.log("Existing Message");
+                            console.log("Existing Message - Message: " +Message +" - LocationId: " +LocationId +" - ClientId: " +ClientId);
                             db.close();
                             callback();
                           }else{
@@ -213,7 +213,7 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId,Visibility,
                                         console.log(err);
                                         db.close();
                                      }else{
-                                     console.log("Message Added Sucessfully");
+                                     console.log("New Message Added Sucessfully - Message: " +Message +" - LocationId: " +LocationId +" - ClientId: " +ClientId);
                                      db.close();
                                      callback();
                                      }
@@ -229,7 +229,7 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId,Visibility,
 
 exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -239,7 +239,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
 
                     User.get(UserId,function (err, usr) {
                         if(err){
-                            console.log("New User");
+                            console.log("New User - UserId: "+UserId);
 
                             var usr = db.models.Users();
                             usr.UserId=UserId
@@ -262,7 +262,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                     console.log(err);
                                     db.close();
                                  }else{
-                                 console.log("User Added Sucessfully");
+                                 console.log("User Added Sucessfully - UserId: "+UserId);
                                  db.close();
                                  if(Event=='at' || Event == 'left'){
                                     GetClientIdByLocationId(UserId,LocationId,Event,Latitude,Longitude);
@@ -271,7 +271,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                              });
                             
                         }else{
-                            console.log("User Exist");
+                            console.log("Existing User - UserId: "+UserId);
                             
                             usr.UserId=UserId
                             usr.DeviceToken=DeviceToken
@@ -293,7 +293,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                     console.log(err);
                                     db.close();
                                  }else{
-                                 console.log("User Updated Sucessfully");
+                                 console.log("User Updated Sucessfully - UserId: "+UserId);
                                  db.close();
                                  if(Event=='at' || Event == 'left'){
                                     GetClientIdByLocationId(UserId,LocationId,Event,Latitude,Longitude);
@@ -308,7 +308,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
 
 function GetClientIdByLocationId(UserId,LocationId,Event,Latitude,Longitude){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -318,10 +318,12 @@ function GetClientIdByLocationId(UserId,LocationId,Event,Latitude,Longitude){
 
                     Local.get(LocationId,function (err, loc) {
                         if(err){
+                            console.log("Non Existing Location - LocationId: " +LocationId);
                             console.log(err);
+                            console.log("");
                             db.close();
                         }else{
-                            console.log("Location Exist");
+                            console.log("Existing Location - LocationId: " +LocationId);
                             //console.log(loc.ClientId);
                             db.close();
                             UpdateLocationEvents(UserId,loc.ClientId,LocationId,loc.Name,Event,Latitude,Longitude);
@@ -333,7 +335,7 @@ function GetClientIdByLocationId(UserId,LocationId,Event,Latitude,Longitude){
 
 function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event,Latitude,Longitude){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -354,7 +356,8 @@ function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event,Lati
                             console.log(err);
                             db.close();
                          }else{
-                         console.log("LocationEvents Updated Sucessfully");
+                         console.log("LocationEvents Updated Sucessfully - Location: " +LocationName +" - Event: " +Event +" - UserId: " +UserId);
+                         console.log("")
                          db.close();
                          }
                      });
@@ -366,7 +369,7 @@ function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event,Lati
 //GetUserId
 exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Action){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -390,7 +393,7 @@ exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Actio
 
 function GetMessageId(UserId,Message,Action){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -418,7 +421,7 @@ function GetMessageId(UserId,Message,Action){
 
 function AddSentMessage(UserId,MessageId){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -445,7 +448,7 @@ function AddSentMessage(UserId,MessageId){
 
 function DeleteSentMessage(UserId,MessageId){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -469,7 +472,7 @@ function DeleteSentMessage(UserId,MessageId){
 
 exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -537,7 +540,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
 
 function GetPrivateOffers(UserTime,UserId,PublicOffers,Timezone,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -578,7 +581,7 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
           ofertasPrivadas.push(PrivateOffers[i].OfferId)
         }
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -673,7 +676,7 @@ function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback
 
 exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,Latitude,Longitude,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -708,7 +711,7 @@ exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,Latitude,Longitu
 
 exports.RedeemSingleOffer = function RedeemSingleOffer(UserId,OfferId,Latitude,Longitude,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -744,7 +747,7 @@ exports.RedeemSingleOffer = function RedeemSingleOffer(UserId,OfferId,Latitude,L
 
 function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -825,7 +828,7 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
 
 function UpdateOfferEvents(ClientId,UserId,OfferId,Event,Latitude,Longitude){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -856,7 +859,7 @@ function UpdateOfferEvents(ClientId,UserId,OfferId,Event,Latitude,Longitude){
 // LAST 10 Messages Sent By Client
 exports.GetMessagesSentByClient = function GetMessagesSentByClient(ClientId,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -893,7 +896,7 @@ exports.GetMessagesSentByClient = function GetMessagesSentByClient(ClientId,call
 
 exports.GetMessagesReceivedByUser = function GetMessagesReceivedByUser(UserId,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -929,7 +932,7 @@ exports.GetMessagesReceivedByUser = function GetMessagesReceivedByUser(UserId,ca
 // LAST 10 Messages Received
 function GetMessagesReceivedByUserPrivate(MessagesId,callback){
 
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -967,7 +970,7 @@ function GetMessagesReceivedByUserPrivate(MessagesId,callback){
 // LAST 10 Friend Locations By User
 exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -1007,7 +1010,7 @@ exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
 // LAST 20 Friend Activities
 exports.GetFriendsPlaces = function GetFriendsPlaces(FriendList,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -1047,7 +1050,7 @@ exports.GetFriendsPlaces = function GetFriendsPlaces(FriendList,callback){
 
 exports.GetAllClients = function GetAllClients(callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -1071,7 +1074,7 @@ exports.GetAllClients = function GetAllClients(callback){
 
 exports.GetClientLocations = function GetClientLocations(ClientId,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -1095,7 +1098,7 @@ exports.GetClientLocations = function GetClientLocations(ClientId,callback){
 
 exports.GetUserActiveState= function GetUserActiveState(UserId,callback){
 
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -1126,7 +1129,7 @@ exports.GetUserActiveState= function GetUserActiveState(UserId,callback){
 
 exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
 
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -1177,7 +1180,7 @@ exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
 
 exports.UpdateAppEvents= function UpdateAppEvents(UserId,Event,Latitude,Longitude){
 
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -1193,9 +1196,11 @@ exports.UpdateAppEvents= function UpdateAppEvents(UserId,Event,Latitude,Longitud
                     AppEvent.save(function (err) {
                          if (err){
                             console.log(err);
+                            console.log("");
                             db.close();
                          }else{
-                         console.log("AppEvent Added Sucessfully For UserId: " +UserId);
+                         console.log("AppEvent Added Sucessfully - UserId: " +UserId);
+                         console.log("");
                          db.close();
                          }
                      });
@@ -1209,7 +1214,7 @@ exports.UpdateAppEvents= function UpdateAppEvents(UserId,Event,Latitude,Longitud
 
 exports.ShowGeoMessage= function ShowGeoMessage(UserId,OfferId,callback){
 
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
@@ -1282,7 +1287,7 @@ exports.ShowGeoMessage= function ShowGeoMessage(UserId,OfferId,callback){
 
 exports.IsLocationActive= function IsLocationActive(LocationId,callback){
 
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex?debug=true", function (err, db) {
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {

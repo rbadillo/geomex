@@ -20,8 +20,12 @@ exports.PublishMessage=function PublishMessage(QueueName,LocationId,Devices,Mess
           "ClientName": ClientName
     }
 
+  console.log("Msg Sent to Queue:");
+  console.log("");
   console.log(msj);
+  console.log("");
   connection.publish(QueueName,msj);
   console.log("Message Published to RabbitMQ");
+  console.log("");
 
 }

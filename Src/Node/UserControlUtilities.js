@@ -16,6 +16,8 @@ exports.GetUsersByLocationId = function GetUsersByLocationId(req,res){
         res.setHeader('Content-Type', 'application/json');
         res.write(output);
         res.end();
+        console.log("Getting Users - LocationId: " +LocationId);
+        console.log("");
     });
 }
 
