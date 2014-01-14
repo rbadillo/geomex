@@ -774,7 +774,7 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
                             }else{
                                 if(offval.length && OfferUseType==0){
                                   db.close();
-                                  console.log("User: " +UserId +" Already Redeemed Offer: " +OfferId);
+                                  console.log("UserId: " +UserId +" Already Redeemed OfferId: " +OfferId);
                                 }else{
 
                                   var offerRedeem = db.models.OfferRedemption();
@@ -788,7 +788,7 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
                                           console.log(err);
                                           db.close();
                                        }else{
-                                       console.log("User: " +UserId +" Redeemed Offer: " +OfferId);
+                                       console.log("UserId: " +UserId +" - Redeemed OfferId: " +OfferId);
 
                                        var offer = db.models.Offers;
 
@@ -808,7 +808,7 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
                                                     db.close();
                                                  }else{
                                                     db.close();
-                                                    console.log("Redemption Total: " +ActualRedemption +" has been updated for OfferId: "+OfferId)
+                                                    console.log("OfferId: "+OfferId +" - Actual Redemption: " +ActualRedemption)
                                                     UpdateOfferEvents(ClientId,UserId,OfferId,"Presented",Latitude,Longitude)
                                                  }
                                               })
@@ -848,7 +848,8 @@ function UpdateOfferEvents(ClientId,UserId,OfferId,Event,Latitude,Longitude){
                             console.log(err);
                             db.close();
                          }else{
-                         console.log("User: " +UserId +" - Event: " +Event +" - OfferId: " +OfferId);
+                         console.log("UserId: " +UserId +" - Event: " +Event +" - OfferId: " +OfferId);
+                         console.log("");
                          db.close();
                          }
                      });
@@ -1163,6 +1164,8 @@ exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
                                  if (err){
                                     console.log(err);
                                     db.close();
+                                    msj.State="Error"
+                                    callback(JSON.stringify(msj))
                                  }else{
                                  console.log("User IsActive Flag Updated Sucessfully");
                                  db.close();
@@ -1238,7 +1241,7 @@ exports.ShowGeoMessage= function ShowGeoMessage(UserId,OfferId,callback){
                               }else{
 
                                 if(offer[0]===undefined){
-                                  console.log("Offer Undefined");
+                                  //console.log("Offer Undefined");
                                   db.close();
                                   msj.State="False"
                                   callback(JSON.stringify(msj))

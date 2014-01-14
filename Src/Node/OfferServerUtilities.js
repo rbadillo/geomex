@@ -13,16 +13,18 @@ exports.Offers = function Offers(req,res){
     var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
     var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
     var ClientId= req.query.client_id
-    console.log("Usuario: " +UserId);
-    console.log("Timezone: " +Timezone);
-    console.log("LocalTimeForUser: " +LocalTime.format("YYYY-MM-DD HH:mm:ss"));
-    console.log("UTCTimeForUser: " +LocalToUtc);
-    console.log("ClientId: " +ClientId);
 	  
     DAL.GetOffers(LocalToUtc,UserId,Timezone,ClientId, function (output){
       res.setHeader('Content-Type', 'application/json');
       res.write(output);
       res.end();
+
+      console.log("UserId: " +UserId);
+      console.log("Timezone: " +Timezone);
+      console.log("LocalTimeForUser: " +LocalTime.format("YYYY-MM-DD HH:mm:ss"));
+      console.log("UTCTimeForUser: " +LocalToUtc);
+      console.log("ClientId: " +ClientId);
+      console.log("");
     });    
 }
 
@@ -60,10 +62,12 @@ exports.ShowGeoMessage= function ShowGeoMessage(req,res){
     DAL.ShowGeoMessage(UserId,OfferId,function(output){
       var tmp= JSON.parse(output)
       res.setHeader('Content-Type', 'application/json');
-      if(tmp.State=="Error"){
+      if(tmp.State=="False"){
         res.statusCode=404
       }
       res.write(output);
       res.end();
+      console.log("ShowGeoMessage - UserId: " +UserId +" - OfferId: " +OfferId);
+      console.log("");
     });
 }
