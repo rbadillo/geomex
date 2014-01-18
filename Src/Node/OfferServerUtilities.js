@@ -62,7 +62,7 @@ exports.ShowGeoMessage= function ShowGeoMessage(req,res){
     DAL.ShowGeoMessage(UserId,OfferId,function(output){
       var tmp= JSON.parse(output)
       res.setHeader('Content-Type', 'application/json');
-      if(tmp.State=="False"){
+      if(tmp[0].State=="False"){
         res.statusCode=404
       }
       res.write(output);

@@ -1107,18 +1107,18 @@ exports.GetUserActiveState= function GetUserActiveState(UserId,callback){
                     // loaded!
                     var User= db.models.Users;
 
-                    var msj= {
+                    var msj= [{
                                 "State": ""
-                              }
+                              }]
 
                     User.get(UserId,function (err, usr) {
                         if(err){
-                            msj.State="Error";
+                            msj[0].State="Error";
                             callback(JSON.stringify(msj))
                             
                         }else{
 
-                            msj.State=usr.IsActive;
+                            msj[0].State=usr.IsActive;
                             callback(JSON.stringify(msj))
                           }
                     });
@@ -1138,14 +1138,14 @@ exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
                     // loaded!
                     var User= db.models.Users;
 
-                    var msj= {
+                    var msj= [{
                                 "State": ""
-                              }
+                              }]
 
                     User.get(UserId,function (err, usr) {
                         if(err){
                             
-                            msj.State="Error"
+                            msj[0].State="Error"
                             callback(JSON.stringify(msj))
                             
                         }else{
@@ -1164,12 +1164,12 @@ exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
                                  if (err){
                                     console.log(err);
                                     db.close();
-                                    msj.State="Error"
+                                    msj[0].State="Error"
                                     callback(JSON.stringify(msj))
                                  }else{
                                  console.log("User IsActive Flag Updated Sucessfully");
                                  db.close();
-                                 msj.State="Sucess"
+                                 msj[0].State="Sucess"
                                  callback(JSON.stringify(msj))
                                  }
                              });
@@ -1224,9 +1224,9 @@ exports.ShowGeoMessage= function ShowGeoMessage(UserId,OfferId,callback){
                     if (err) throw err;
                     // loaded!
                     
-                    var msj= {
+                    var msj= [{
                                 "State": ""
-                              }
+                              }]
 
                     query="Select MultiUse from Offers \
                            where OfferId=" +OfferId
@@ -1236,20 +1236,20 @@ exports.ShowGeoMessage= function ShowGeoMessage(UserId,OfferId,callback){
                               if(err){
                                 console.log(err);
                                 db.close();
-                                msj.State="False"
+                                msj[0].State="False"
                                 callback(JSON.stringify(msj))
                               }else{
 
                                 if(offer[0]===undefined){
                                   //console.log("Offer Undefined");
                                   db.close();
-                                  msj.State="False"
+                                  msj[0].State="False"
                                   callback(JSON.stringify(msj))
                                 }else{
                                 var OfferUseType=offer[0].MultiUse
 
                                 if(offer.length && OfferUseType==1){
-                                  msj.State="True"
+                                  msj[0].State="True"
                                   callback(JSON.stringify(msj))  
                                 }else{
 
@@ -1263,16 +1263,16 @@ exports.ShowGeoMessage= function ShowGeoMessage(UserId,OfferId,callback){
                                               if(err){
                                                 console.log(err);
                                                 db.close();
-                                                msj.State="False"
+                                                msj[0].State="False"
                                                 callback(JSON.stringify(msj))
                                               }else{
                                                 db.close();
 
                                                 if(offer.length){
-                                                    msj.State="False"
+                                                    msj[0].State="False"
                                                     callback(JSON.stringify(msj)) 
                                                   }else{
-                                                    msj.State="True"
+                                                    msj[0].State="True"
                                                     callback(JSON.stringify(msj))
                                                   }
                                               }
@@ -1298,18 +1298,18 @@ exports.IsLocationActive= function IsLocationActive(LocationId,callback){
                     // loaded!
                     var Location= db.models.Locations;
 
-                    var msj= {
+                    var msj= [{
                                 "State": ""
-                              }
+                              }]
 
                     Location.get(LocationId,function (err, loc) {
                         if(err){
-                            msj.State="Error";
+                            msj[0].State="Error";
                             callback(JSON.stringify(msj))
                             
                         }else{
 
-                            msj.State=loc.IsActive;
+                            msj[0].State=loc.IsActive;
                             callback(JSON.stringify(msj))
                           }
                     });

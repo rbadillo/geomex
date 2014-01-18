@@ -96,12 +96,12 @@ exports.GetUserActiveState= function GetUserActiveState(req,res){
     DAL.GetUserActiveState(UserId, function (output){
       var tmp= JSON.parse(output)
       res.setHeader('Content-Type', 'application/json');
-      if(tmp.State=="Error"){
+      if(tmp[0].State=="Error"){
         res.statusCode=404
       }
       res.write(output);
       res.end();
-      console.log("GetUserActiveState - UserId: " +UserId +" - Actual State: " +tmp.State)
+      console.log("GetUserActiveState - UserId: " +UserId +" - Actual State: " +tmp[0].State)
       console.log("");
     });
 
@@ -115,12 +115,12 @@ exports.UpdateUserActiveState= function UpdateUserActiveState(req,res){
     DAL.UpdateUserActiveState(UserId, function (output){
       var tmp= JSON.parse(output)
       res.setHeader('Content-Type', 'application/json');
-      if(tmp.State=="Error"){
+      if(tmp[0].State=="Error"){
         res.statusCode=404
       }
       res.write(output);
       res.end();
-      console.log("UpdateUserActiveState - UserId: " +UserId +" - State: " +tmp.State)
+      console.log("UpdateUserActiveState - UserId: " +UserId +" - State: " +tmp[0].State)
       console.log("");
     });
 
@@ -134,12 +134,12 @@ exports.IsLocationActive= function IsLocationActive(req,res){
     DAL.IsLocationActive(LocationId, function (output){
       var tmp= JSON.parse(output)
       res.setHeader('Content-Type', 'application/json');
-      if(tmp.State=="Error"){
+      if(tmp[0].State=="Error"){
         res.statusCode=404
       }
       res.write(output);
       res.end();
-      console.log("IsLocationActive - UserId: " +UserId +" - LocationId: " +LocationId +" - Active State: " +tmp.State)
+      console.log("IsLocationActive - UserId: " +UserId +" - LocationId: " +LocationId +" - Active State: " +tmp[0].State)
       console.log("");
     });
 
