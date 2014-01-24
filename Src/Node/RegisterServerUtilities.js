@@ -9,109 +9,148 @@ exports.Test = function Test(req,res){
 exports.Register = function Register(req,res){
 	  res.end('Success');
 	  //console.log(req.body);
+    var UserId;
+    var DeviceToken;
+    var PhoneType;
+    var LocationId;
+    var Event;
+    var FbName;
+    var FbLastName;
+    var FbBirthday;
+    var FbAge;
+    var FbEmail;
+    var FbGender;
+    var FbSchool;
+    var FbWork;
+    var FbLink;
+    var FbPhoto;
+    var Latitude;
+    var Longitude;
 
     try{
-	  var UserId= req.body.id;
+	  UserId= req.body.id;
     } catch (e){
-    var UserId=""  
+    UserId= null;
     }
 
     try{
-	  var DeviceToken=req.body.device_token
+	  DeviceToken=req.body.device_token
     }catch(e){
-    var DeviceToken=""  
+    DeviceToken=null;
     }
 
     try{
-    var PhoneType=req.body.phone_type
+    PhoneType=req.body.phone_type
     }catch(e){
-    var PhoneType=""  
+    PhoneType=null;
     }
 
     try{
-    var LocationId=req.body.location_id
+    LocationId=req.body.location_id
     }catch(e){
-    var LocationId=""
+    LocationId=null;
     }
 
     try{
-    var Event=req.body.event
+    Event=req.body.event
     Event=Event.toLowerCase();
     }catch(e){
-    var Event=""
+    Event= null;
     }
 
     try{
-    var FbName=req.body.first_name
+    FbName=req.body.first_name
     }catch(e){
-    var FbName=""
+    FbName=null;
     }
 
     try{
-    var FbLastName=req.body.last_name
+    FbLastName=req.body.last_name
     }catch(e){
-    var FbLastName=""
+    FbLastName=null;
     }
 
     try{
-    var FbBirthday=req.body.birthday
+    FbBirthday=req.body.birthday
     var User_Age=FbBirthday.split("/")
     var User_Birthday=moment.utc([User_Age[2],User_Age[0]-1,User_Age[1]]) 
     var now= moment.utc()
-    var FbAge=now.diff(User_Birthday, 'years')
+    FbAge=now.diff(User_Birthday, 'years')
     }catch(e){
-    var FbBirthday=""
-    var FbAge=""  
+    FbBirthday=null;
+    FbAge=null;
     }
 
     try{
-    var FbEmail=req.body.email
+    FbEmail=req.body.email
     }catch(e){
-    var FbEmail=""
+    FbEmail=null;
     }
 
     try{
-    var FbGender=req.body.gender
+    FbGender=req.body.gender
     }catch(e){
-    var FbGender=""
+    FbGender=null;
     }
 
     try{
-    var FbSchool=req.body.education
+    FbSchool=req.body.education
     FbSchool=FbSchool[FbSchool.length-1].school.name
     }catch(e){
-    var FbSchool=""
+    FbSchool=null;
     }
 
     try{
-    var FbWork=req.body.work[0].employer.name
+    FbWork=req.body.work[0].employer.name
     }catch(e){
-    var FbWork=""
+    FbWork=null;
     }
 
     try{
-    var FbLink=req.body.link
+    FbLink=req.body.link
     }catch(e){
-    var FbLink=""
+    FbLink=null;
     }
 
     try{
-    var FbPhoto="https://graph.facebook.com/"+UserId+"/picture?width=128&height=128"
+    FbPhoto="https://graph.facebook.com/"+UserId+"/picture?width=128&height=128"
     }catch(e){
-    var FbPhoto=""
+    FbPhoto=null;
     }
 
     try{
-    var Latitude=req.body.latitude
+    Latitude=req.body.latitude
     }catch(e){
-    var Latitude=""
+    Latitude=null;
     }
 
     try{
-    var Longitude=req.body.longitude 
+    Longitude=req.body.longitude 
     }catch(e){
-    var Longitude=""
+    Longitude=null;
     }
+
+    console.log("");
+    console.log("UserId: " +UserId);
+    console.log("DeviceToken: " +DeviceToken);
+    console.log("PhoneType: " +PhoneType);
+    console.log("LocationId: " +LocationId);
+    console.log("Event: " +Event);
+    console.log("FbName: " +FbName);
+    console.log("FbLastName: " +FbLastName);
+    console.log("FbBirthday: " + FbBirthday);
+    console.log("FbAge: " +FbAge);
+    console.log("FbEmail: " +FbEmail);
+    console.log("FbGender: " +FbGender);
+    console.log("FbSchool: " + FbSchool);
+    console.log("FbWork: " + FbWork);
+    console.log("FbLink: " + FbLink);
+    console.log("FbPhoto: " + FbPhoto);
+    console.log("Latitude: " + Latitude);
+    console.log("Longitude: " + Longitude);
+    console.log("");
+
+
     
     DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude);
    
@@ -161,7 +200,7 @@ function PostUserControl(LocationId,PhoneType,DeviceToken,Path) {
       });
 
       res.on('end', function(){
-          console.log('User Control Response: ' +Response);
+          //console.log('User Control Response: ' +Response);
       });
 
   });

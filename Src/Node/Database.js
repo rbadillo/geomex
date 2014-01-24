@@ -67,6 +67,8 @@ exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Addr
                             var location = db.models.Locations();
                             location.Name=Name
                             location.ClientId=ClientId
+                            location.IsActive=1
+                            location.Visibility="public"
                             location.Latitude=Latitude
                             location.Longitude=Longitude
                             location.Address=Address
@@ -239,7 +241,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
 
                     User.get(UserId,function (err, usr) {
                         if(err){
-                            console.log("New User - UserId: "+UserId);
+                            //console.log("New User - UserId: "+UserId);
 
                             var usr = db.models.Users();
                             usr.UserId=UserId
@@ -262,7 +264,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                     console.log(err);
                                     db.close();
                                  }else{
-                                 console.log("User Added Sucessfully - UserId: "+UserId);
+                                 //console.log("User Added Sucessfully - UserId: "+UserId);
                                  db.close();
                                  if(Event=='at' || Event == 'left'){
                                     GetClientIdByLocationId(UserId,LocationId,Event,Latitude,Longitude);
@@ -271,7 +273,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                              });
                             
                         }else{
-                            console.log("Existing User - UserId: "+UserId);
+                            //console.log("Existing User - UserId: "+UserId);
                             
                             usr.UserId=UserId
                             usr.DeviceToken=DeviceToken
@@ -293,7 +295,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,LocationId,Event
                                     console.log(err);
                                     db.close();
                                  }else{
-                                 console.log("User Updated Sucessfully - UserId: "+UserId);
+                                 //console.log("User Updated Sucessfully - UserId: "+UserId);
                                  db.close();
                                  if(Event=='at' || Event == 'left'){
                                     GetClientIdByLocationId(UserId,LocationId,Event,Latitude,Longitude);
@@ -323,7 +325,7 @@ function GetClientIdByLocationId(UserId,LocationId,Event,Latitude,Longitude){
                             console.log("");
                             db.close();
                         }else{
-                            console.log("Existing Location - LocationId: " +LocationId);
+                            //console.log("Existing Location - LocationId: " +LocationId);
                             //console.log(loc.ClientId);
                             db.close();
                             UpdateLocationEvents(UserId,loc.ClientId,LocationId,loc.Name,Event,Latitude,Longitude);
@@ -356,8 +358,8 @@ function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event,Lati
                             console.log(err);
                             db.close();
                          }else{
-                         console.log("LocationEvents Updated Sucessfully - Location: " +LocationName +" - Event: " +Event +" - UserId: " +UserId);
-                         console.log("")
+                         //console.log("LocationEvents Updated Sucessfully - Location: " +LocationName +" - Event: " +Event +" - UserId: " +UserId);
+                         //console.log("")
                          db.close();
                          }
                      });
@@ -1202,8 +1204,8 @@ exports.UpdateAppEvents= function UpdateAppEvents(UserId,Event,Latitude,Longitud
                             console.log("");
                             db.close();
                          }else{
-                         console.log("AppEvent Added Sucessfully - UserId: " +UserId);
-                         console.log("");
+                         //console.log("AppEvent Added Sucessfully - UserId: " +UserId);
+                         //console.log("");
                          db.close();
                          }
                      });
