@@ -15,10 +15,10 @@ express.logger.token('date', function(){
 });
 
 app.get('/',Utilities.Test);
-app.get('/:UserId/:Timezone/GetOffers',Utilities.Offers);
-app.get('/:UserId/:Timezone/GetOffers/:OfferId',Utilities.SingleOffer);
-app.get('/:UserId/:Timezone/GetOffers/:OfferId/Redeem',Utilities.Redeem);
-app.get('/:UserId/:Timezone/GetOffers/:OfferId/ShowGeoMessage',Utilities.ShowGeoMessage);
+app.get('/:UserId/:Timezone/GetOffers/:ClientId',Utilities.Offers);
+app.get('/:UserId/:Timezone/GetOffers/:ClientId/:OfferId',Utilities.SingleOffer);
+app.get('/:UserId/:Timezone/GetOffers/:ClientId/:OfferId/Redeem',Utilities.Redeem);
+app.get('/:UserId/:Timezone/GetOffers/:ClientId/:OfferId/IsOfferValid',Utilities.IsOfferValid);
 
 app.listen(app.get('port'));
 console.log("Offer Server - Listening Port: " +app.get('port'));

@@ -12,13 +12,14 @@ exports.Offers = function Offers(req,res){
     var LocalTime= moment.utc().zone(Timezone);
     var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
     var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
-    var ClientId= req.query.client_id
+    var ClientId= req.params.ClientId
 	  
     DAL.GetOffers(LocalToUtc,UserId,Timezone,ClientId, function (output){
       res.setHeader('Content-Type', 'application/json');
       res.write(output);
       res.end();
 
+      console.log("");
       console.log("UserId: " +UserId);
       console.log("Timezone: " +Timezone);
       console.log("LocalTimeForUser: " +LocalTime.format("YYYY-MM-DD HH:mm:ss"));
@@ -31,6 +32,7 @@ exports.Offers = function Offers(req,res){
 exports.SingleOffer = function SingleOffer(req,res){
 
     var UserId=req.params.UserId
+    var ClientId= req.params.ClientId
     var OfferId=req.params.OfferId
     var Latitude= req.query.latitude
     var Longitude= req.query.longitude  
@@ -44,6 +46,7 @@ exports.SingleOffer = function SingleOffer(req,res){
 
 exports.Redeem= function Redeem(req,res){
     var UserId=req.params.UserId
+    var ClientId= req.params.ClientId
     var OfferId=req.params.OfferId
     var Latitude= req.query.latitude
     var Longitude= req.query.longitude
@@ -55,19 +58,20 @@ exports.Redeem= function Redeem(req,res){
     });
 }
 
-exports.ShowGeoMessage= function ShowGeoMessage(req,res){
+exports.IsOfferValid= function IsOfferValid(req,res){
     var UserId=req.params.UserId
     var OfferId=req.params.OfferId
 
-    DAL.ShowGeoMessage(UserId,OfferId,function(output){
+    DAL.IsOfferValid(UserId,OfferId,function(output){
       var tmp= JSON.parse(output)
       res.setHeader('Content-Type', 'application/json');
-      if(tmp[0].State=="False"){
+      if(tmp[0].State==0){
         res.statusCode=404
       }
       res.write(output);
       res.end();
-      console.log("ShowGeoMessage - UserId: " +UserId +" - OfferId: " +OfferId);
+      console.log("");
+      console.log("IsOfferValid - UserId: " +UserId +" - OfferId: " +OfferId +" - ValidState: " +tmp[0].State);
       console.log("");
     });
 }

@@ -12,7 +12,6 @@ exports.Register = function Register(req,res){
     var UserId;
     var DeviceToken;
     var PhoneType;
-    var LocationId;
     var Event;
     var FbName;
     var FbLastName;
@@ -43,12 +42,6 @@ exports.Register = function Register(req,res){
     PhoneType=req.body.phone_type
     }catch(e){
     PhoneType=null;
-    }
-
-    try{
-    LocationId=req.body.location_id
-    }catch(e){
-    LocationId=null;
     }
 
     try{
@@ -134,7 +127,6 @@ exports.Register = function Register(req,res){
     console.log("UserId: " +UserId);
     console.log("DeviceToken: " +DeviceToken);
     console.log("PhoneType: " +PhoneType);
-    console.log("LocationId: " +LocationId);
     console.log("Event: " +Event);
     console.log("FbName: " +FbName);
     console.log("FbLastName: " +FbLastName);
@@ -150,76 +142,63 @@ exports.Register = function Register(req,res){
     console.log("Longitude: " + Longitude);
     console.log("");
 
-
-    
-    DAL.AddUser(UserId,DeviceToken,PhoneType,LocationId,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude);
+    DAL.AddUser(UserId,DeviceToken,PhoneType,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude);
    
-    if(Event=="at"){
-          PostUserControl(LocationId,PhoneType,DeviceToken,"/AddUserToLocation")
-    }else if (Event=="left"){
-          PostUserControl(LocationId,PhoneType,DeviceToken,"/RemoveUserFromLocation")
-    }else if(Event=="openedapp"){
-          DAL.UpdateAppEvents(UserId,Event,Latitude,Longitude);
+}
+
+exports.GeoEvent = function Register(req,res){
+    res.end('Success');
+    //console.log(req.body);
+    var UserId;
+    var LocationId;
+    var Event;
+    var Latitude;
+    var Longitude;
+
+    try{
+    UserId= req.body.id;
+    } catch (e){
+    UserId= null;
+    }
+
+    try{
+    LocationId=req.body.location_id
+    }catch(e){
+    LocationId=null;
+    }
+
+    try{
+    Event=req.body.event
+    Event=Event.toLowerCase();
+    }catch(e){
+    Event= null;
+    }
+
+    try{
+    Latitude=req.body.latitude
+    }catch(e){
+    Latitude=null;
+    }
+
+    try{
+    Longitude=req.body.longitude 
+    }catch(e){
+    Longitude=null;
+    }
+
+    console.log("");
+    console.log("UserId: " +UserId);
+    console.log("LocationId: " +LocationId);
+    console.log("Event: " +Event);
+    console.log("Latitude: " + Latitude);
+    console.log("Longitude: " + Longitude);
+    console.log("");
+
+    if(Event=="at" || Event=="left"){
+    DAL.GeoEvent(UserId,LocationId,Event,Latitude,Longitude)
+    }else{
+      console.log("ERROR - Wrong Event: " +Event +" - UserId: " +UserId +" - LocationId: " +LocationId)
+      console.log("")
     }
     
-}
-
-function PostUserControl(LocationId,PhoneType,DeviceToken,Path) {
-  // Build the post string from an object
-  var User={
-    "location_id" : LocationId,
-    "phone_type" : PhoneType,
-    "device_token" : DeviceToken
-  }
-
-  var post_data = tryParseJson(User);
-
-  // An object of options to indicate where to post to
-  var post_options = {
-      host: 'localhost',
-      port: '9000',
-      path: Path,
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': post_data.length
-      }
-  };
-
-  // Set up the request
-  var post_req = http.request(post_options, function(res) {
-      var Response="";
-      res.setEncoding('utf8');
-
-      res.on('data', function (chunk) {
-          Response= Response + chunk;
-      });
-
-      res.on('error', function(e){
-          console.log(e)
-      });
-
-      res.on('end', function(){
-          //console.log('User Control Response: ' +Response);
-      });
-
-  });
-
-  // post the data
-  post_req.write(post_data);
-  post_req.end();
-
-  // Handle Error If User Control Server is Down
-  post_req.on('error', function(e){
-          console.log("User Control Server - Not Available - " +Date())
-  });
-
-}
-
-function tryParseJson(str) {
-    try {
-        return JSON.stringify(str);
-    } catch (ex) {
-        return null;
-    }
 }

@@ -19,8 +19,7 @@ module.exports = function (db, cb) {
         Country : String,
         State : String,
         City : String,
-        ZipCode : String,
-        LocationPhoto: String
+        ZipCode : String
     },{
         id: ['LocationId']  // Primary Key
     });
@@ -44,10 +43,8 @@ module.exports = function (db, cb) {
     });
 
     db.define('Users', {
-        UserId : String,
         DeviceToken : String,
         PhoneType : String,
-        IsActive : Number,
         FbName : String,
         FbLastName : String,
         FbAge : Number,
