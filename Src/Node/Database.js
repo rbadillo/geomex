@@ -1097,6 +1097,76 @@ exports.GetAllClients = function GetAllClients(callback){
         });
 }
 
+exports.GetAllActiveClients = function GetAllActiveClients(callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+
+                    query="Select Name,Logo,IsGold,OfferClosestExpiration from Clients where IsActive=1 and ActiveOffers>0 \
+                    Order by IsGold DESC,OfferClosestExpiration ASC"
+
+                    db.driver.execQuery(query, function (err, clients) { 
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                      }else{
+                        db.close();
+                        callback(JSON.stringify(clients));
+                      }
+                    })
+            });
+        });
+}
+
+
+exports.GetClosestLocations = function GetClosestLocations(Latitude,Longitude,Radius,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+
+                    query="SELECT Name,Latitude, Longitude, \
+                           (6378.10 * ACOS(COS(RADIANS(latpoint)) \
+                                    * COS(RADIANS(latitude)) \
+                                    * COS(RADIANS(longpoint) - RADIANS(longitude)) \
+                                    + SIN(RADIANS(latpoint)) \
+                                    * SIN(RADIANS(latitude)))) AS Distance_In_KM \
+                     FROM Locations \
+                     JOIN ( \
+                           SELECT "  +Latitude   +" AS latpoint, "  +Longitude +" AS longpoint \
+                       ) AS p \
+                     WHERE Latitude \
+                        BETWEEN latpoint  - (" +Radius +" / 111.045) \
+                            AND latpoint  + (" +Radius +" / 111.045) \
+                       AND Longitude \
+                        BETWEEN longpoint - (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
+                            AND longpoint + (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
+                     ORDER BY Distance_In_KM \
+                     LIMIT 15"
+
+                    db.driver.execQuery(query, function (err, locations) { 
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                      }else{
+                        db.close();
+                        callback(JSON.stringify(locations));
+                      }
+                    })
+            });
+        });
+}
+
+
 exports.GetClientLocations = function GetClientLocations(ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {

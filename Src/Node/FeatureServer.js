@@ -15,7 +15,10 @@ express.logger.token('date', function(){
 });
 
 app.get('/',Utilities.Test);
-app.get('/:UserId/GetAllClients',Utilities.GetAllClients);
+app.get('/:UserId/GetAllActiveClients',Utilities.GetAllActiveClients);
+app.get('/:UserId/GetClosestLocations/:Latitude/:Longitude',Utilities.GetClosestLocations);
+
+
 app.get('/:UserId/GetClientLocations/:ClientId',Utilities.GetClientLocations);
 app.get('/:UserId/GetMessagesSentByClient/:ClientId',Utilities.GetMessagesSentByClient);
 app.get('/:UserId/GetMessagesReceivedByUser',Utilities.GetMessagesReceivedByUser);

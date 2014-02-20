@@ -61,18 +61,49 @@ exports.GetFriendsPlaces = function GetFriendsPlaces(req,res){
     });    
 }
 
-exports.GetAllClients = function GetAllClients(req,res){
+exports.GetAllActiveClients = function GetAllActiveClients(req,res){
 
     var UserId=req.params.UserId
 
-    DAL.GetAllClients(function (output){
+    DAL.GetAllActiveClients(function (output){
       res.setHeader('Content-Type', 'application/json');
       res.write(output);
       res.end();
-      console.log("GetAllClients - UserId: " +UserId)
+      console.log("");
+      console.log("GetAllActiveClients - UserId: " +UserId)
       console.log("");
     });    
 }
+
+exports.GetClosestLocations = function GetClosestLocations(req,res){
+
+    var UserId=req.params.UserId
+    var Latitude=req.params.Latitude
+    var Longitude=req.params.Longitude
+    var Radius= req.query.radius
+
+    if(Radius==undefined){
+      Radius=50;
+    }else{
+      
+      Radius=parseInt(Radius)
+
+      if(isNaN(Radius)){
+        Radius=50;
+      }
+    }
+
+    DAL.GetClosestLocations(Latitude,Longitude,Radius,function (output){
+      res.setHeader('Content-Type', 'application/json');
+      res.write(output);
+      res.end();
+      console.log("");
+      console.log("GetClosestLocations - UserId: " +UserId +" - Latitude: " +Latitude +" - Longitude: " +Longitude +" - Radius: " +Radius +" Km")
+      console.log("");
+    });    
+}
+
+
 
 exports.GetClientLocations = function GetClientLocations(req,res){
 
