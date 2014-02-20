@@ -521,7 +521,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                            Offers.Visibility,Offers.DynamicRedemptionMinutes, \
+                            Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
                             Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
                             where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
                             and Clients.IsActive=1 and Offers.IsActive=1 \
@@ -639,7 +639,7 @@ function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback
 // Remove PrivateOffers Not added to User
     for(var i=0;i<PublicOffers.length;i++){
         var UserPrivateOffer= false;
-        if(PublicOffers[i].Visibility=="private"){
+        if(PublicOffers[i].IsPrivate==1){
           for(var j=0;j<PrivateOffers.length;j++){
             if(PublicOffers[i].OfferId==PrivateOffers[j]){
               UserPrivateOffer=true;
@@ -694,7 +694,7 @@ exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,Latitude,Longitu
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                            Offers.Visibility,Offers.DynamicRedemptionMinutes, \
+                            Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
                             Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
                             where Offers.OfferId=" +OfferId
                             +" and Clients.ClientId=Offers.ClientId"
@@ -730,7 +730,7 @@ exports.RedeemSingleOffer = function RedeemSingleOffer(UserId,OfferId,Latitude,L
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                            Offers.Visibility,Offers.DynamicRedemptionMinutes, \
+                            Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
                             Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
                             where Offers.OfferId=" +OfferId
                             +" and Clients.ClientId=Offers.ClientId"

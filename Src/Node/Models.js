@@ -88,7 +88,7 @@ module.exports = function (db, cb) {
         ActualRedemption: Number,
         TotalRedemption: Number,
         MultiUse: Number,
-        Visibility: String,
+        IsPrivate: Number,
         DynamicRedemptionMinutes: Number,
         PrimaryImage: String,
         SecondaryImage: String
