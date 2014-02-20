@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `geomex`.`Offers` (
   `ActualRedemption` INT NULL ,
   `TotalRedemption` INT NULL ,
   `MultiUse` TINYINT NOT NULL DEFAULT 0 ,
-  `Visibility` VARCHAR(45) NOT NULL ,
+  `IsPrivate` TINYINT NOT NULL DEFAULT 0 ,
   `DynamicRedemptionMinutes` INT NULL ,
   `PrimaryImage` VARCHAR(255) NULL ,
   `SecondaryImage` VARCHAR(255) NULL ,
