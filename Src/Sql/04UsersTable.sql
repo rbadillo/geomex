@@ -7,7 +7,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Users` (
   `FbName` VARCHAR(100) NULL ,
   `FbLastName` VARCHAR(100) NULL ,
   `FbAge` INT NULL ,
-  `FbBirthday` DATETIME NULL ,
+  `FbBirthday` VARCHAR(50) NULL ,
   `FbEmail` VARCHAR(100) NULL ,
   `FbGender` VARCHAR(50) NULL ,
   `FbSchool` VARCHAR(255) NULL ,
