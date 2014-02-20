@@ -3,7 +3,10 @@ module.exports = function (db, cb) {
     db.define('Clients', {
         Name : String,
         Logo : String,
-        IsActive : Number
+        IsActive : Number,
+        IsGold : Number,
+        ActiveOffers : Number,
+        OfferClosestExpiration : Date
     },{
         id: ['ClientId']   // Primary Key
     });
@@ -12,7 +15,7 @@ module.exports = function (db, cb) {
         Name: String,
         ClientId : Number,
         IsActive : Number,
-        Visibility: String,
+        IsPrivate: Number,
         Latitude : Number,
         Longitude : Number,
         Address : String,
@@ -26,9 +29,9 @@ module.exports = function (db, cb) {
 
     db.define('Messages', {
         Message : String,
-        LocationId : Number,
+        OfferId : Number,
         ClientId : Number,
-        Visibility: String,
+        IsPrivate: Number,
         TimeCreated : Date
     },{
         id: ['MessageId']  // Primary Key
@@ -37,6 +40,7 @@ module.exports = function (db, cb) {
     db.define('SentMessages', {
         UserId : Number,
         MessageId : Number,
+        MessageRead : Number,
         TimeSent : Date
     },{
         id: ['Id']   // Primary Key

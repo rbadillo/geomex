@@ -27,13 +27,13 @@ exports.Register = function Register(req,res){
     var Longitude;
 
     try{
-	  UserId= req.body.id;
+	UserId= req.body.id;
     } catch (e){
     UserId= null;
     }
 
     try{
-	  DeviceToken=req.body.device_token
+	DeviceToken=req.body.device_token
     }catch(e){
     DeviceToken=null;
     }

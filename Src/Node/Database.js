@@ -526,7 +526,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                             where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
                             and Clients.IsActive=1 and Offers.IsActive=1 \
                             and Clients.ClientId=Offers.ClientId and Offers.ClientId=" +ClientId
-                            +" Order by Offers.Priority DESC"
+                            +" Order by Offers.IsPrivate DESC,Offers.Priority DESC,Offers.EndDate DESC"
 
                             db.driver.execQuery(query, function (err, offers) { 
 
@@ -705,10 +705,17 @@ exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,Latitude,Longitu
                                 console.log(err);
                                 db.close();
                               }else{
+                                if(offer.length){
                                 db.close();
                                 callback(JSON.stringify(offer));
                                 console.log("");
                                 UpdateOfferEvents(offer[0].ClientId,UserId,OfferId,"Viewed",Latitude,Longitude)
+                                }else{
+                                  var msj= [{
+                                              "State": "OfferId doesn't exist"
+                                            }]
+                                  callback(JSON.stringify(msj));
+                                }
                               }
 
                             })
@@ -741,9 +748,16 @@ exports.RedeemSingleOffer = function RedeemSingleOffer(UserId,OfferId,Latitude,L
                                 console.log(err);
                                 db.close();
                               }else{
+                                if(offer.length){
                                 db.close();
                                 callback(JSON.stringify(offer));
                                 Redeem(offer[0].ClientId,UserId,OfferId,Latitude,Longitude)
+                                }else{
+                                  var msj= [{
+                                              "State": "OfferId doesn't exist"
+                                            }]
+                                  callback(JSON.stringify(msj));
+                                }
                               }
 
                             })
