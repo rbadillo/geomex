@@ -882,221 +882,6 @@ function UpdateOfferEvents(ClientId,UserId,OfferId,Event,Latitude,Longitude){
         });
 }
 
-// LAST 10 Messages Sent By Client
-exports.GetMessagesSentByClient = function GetMessagesSentByClient(ClientId,callback){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-
-                    query="Select Clients.Name as ClientName, Clients.Logo,Messages.Message, Messages.TimeCreated \
-                          from Messages,Clients \
-                          where Messages.ClientId=Clients.ClientId \
-                          and Messages.ClientId="+ClientId
-                          +" and Messages.Visibility='public'"
-                          +" and Clients.IsActive=1"
-                          +" ORDER BY Messages.TimeCreated DESC LIMIT 10";
-
-                            db.driver.execQuery(query, function (err, messages) { 
-
-                              if(err){
-                                console.log(err);
-                                db.close();
-                              }else{
-                                db.close();
-                                for(var i=0;i<messages.length;i++){
-                                var auxMoment=moment(messages[i].TimeCreated);
-                                var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
-                                messages[i].TimeCreated=TimeCreatedLocal;
-                                }
-                                callback(JSON.stringify(messages));
-                              }
-
-                            })
-            });
-        });
-}
-
-exports.GetMessagesReceivedByUser = function GetMessagesReceivedByUser(UserId,callback){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-
-                    query="SELECT distinct(MessageId) from SentMessages where UserId=" +UserId +" ORDER BY TimeSent DESC LIMIT 10;"
-
-                    db.driver.execQuery(query, function (err, messages) { 
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                        var user_msj=[]
-                        for(var i=0;i<messages.length;i++){
-                          user_msj.push(messages[i].MessageId);
-                        }
-                        if(messages.length){
-                        GetMessagesReceivedByUserPrivate(user_msj,callback)
-                        }else{
-                          console.log("UserId: " +UserId +" Has Not Received Any Messages")
-                          callback(JSON.stringify(messages))
-                        }
-                      }
-
-                    })
-            });
-        });
-}
-
-// LAST 10 Messages Received
-function GetMessagesReceivedByUserPrivate(MessagesId,callback){
-
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-
-                    query="Select Clients.Name as ClientName, Clients.Logo,Messages.Message, Messages.TimeCreated \
-                          from Messages,Clients \
-                          where Messages.ClientId=Clients.ClientId \
-                          and Clients.IsActive=1 \
-                          and Messages.MessageId in ("+MessagesId
-                          +" ) ORDER BY Messages.TimeCreated DESC LIMIT 10";
-
-                            db.driver.execQuery(query, function (err, messages) { 
-
-                              if(err){
-                                console.log(err);
-                                db.close();
-                              }else{
-                                db.close();
-                                for(var i=0;i<messages.length;i++){
-                                var auxMoment=moment(messages[i].TimeCreated);
-                                var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
-                                messages[i].TimeCreated=TimeCreatedLocal;
-                                }
-                                callback(JSON.stringify(messages));
-                              }
-
-                            })
-            });
-        });
-
-}
-
-// LAST 10 Friend Locations By User
-exports.GetLocationsByUser = function GetLocationsByUser(UserId,callback){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-
-                    query="SELECT distinct Clients.Name,Clients.Logo,LocationEvents.LocationName,LocationEvents.TimeCreated \
-                    from LocationEvents,Clients,Locations \
-                    where LocationEvents.UserId= "+UserId 
-                    +" and LocationEvents.Event='at' \
-                    and Clients.ClientId=LocationEvents.ClientId and Clients.IsActive=1 \
-                    and Locations.LocationId=LocationEvents.LocationId and Locations.IsActive=1 \
-                    and Locations.Visibility='public' \
-                    ORDER BY LocationEvents.TimeCreated DESC LIMIT 10";
-
-                    db.driver.execQuery(query, function (err, locations) { 
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                        // Convert Dates to Local Time
-                        for(var i=0;i<locations.length;i++){
-                        var auxMoment=moment(locations[i].TimeCreated);
-                        var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
-                        locations[i].TimeCreated=TimeCreatedLocal;
-                        }
-                        callback(JSON.stringify(locations));
-                      }
-
-                    })
-            });
-        });
-}
-
-// LAST 20 Friend Activities
-exports.GetFriendsPlaces = function GetFriendsPlaces(FriendList,callback){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-
-                    query="SELECT distinct Users.FbName,Users.FbLastName,Users.FbPhoto,LocationEvents.UserId, \
-                     LocationEvents.LocationName,LocationEvents.TimeCreated from Users,LocationEvents,Locations,Clients \
-                     where LocationEvents.UserId in  (" +FriendList +") and LocationEvents.Event='at' \
-                     and Users.IsActive =1 and Users.UserId=LocationEvents.UserId \
-                     and Clients.ClientId=Locations.ClientId and Clients.IsActive=1 \
-                     and Locations.LocationId=LocationEvents.LocationId and Locations.IsActive=1 \
-                     and Locations.Visibility='public' \
-                     order by LocationEvents.TimeCreated Desc LIMIT 20"
-
-                    db.driver.execQuery(query, function (err, locations) { 
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-
-                        // Convert Dates to Local Time
-                        for(var i=0;i<locations.length;i++){
-                        var auxMoment=moment(locations[i].TimeCreated);
-                        var TimeCreatedLocal=moment.utc([auxMoment.year(),auxMoment.month(),auxMoment.date(),auxMoment.hour(),auxMoment.minutes(),auxMoment.seconds()])
-                        locations[i].TimeCreated=TimeCreatedLocal;
-                        }
-
-                        callback(JSON.stringify(locations));
-                      }
-                    })
-            });
-        });
-}
-
-exports.GetAllClients = function GetAllClients(callback){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var clt = db.models.Clients;
-
-                    clt.find({ IsActive:1 },function (err, Clients) {
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                        callback(JSON.stringify(Clients));
-                      }
-                    });
-            });
-        });
-}
 
 exports.GetAllActiveClients = function GetAllActiveClients(callback){
 
@@ -1167,113 +952,6 @@ exports.GetClosestLocations = function GetClosestLocations(Latitude,Longitude,Ra
         });
 }
 
-
-exports.GetClientLocations = function GetClientLocations(ClientId,callback){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var loc = db.models.Locations;
-
-                    loc.find({ClientId:ClientId,IsActive:1,Visibility:'public'},function (err, locations) {
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                        callback(JSON.stringify(locations));
-                      }
-                    });
-            });
-        });
-}
-
-exports.GetUserActiveState= function GetUserActiveState(UserId,callback){
-
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var User= db.models.Users;
-
-                    var msj= [{
-                                "State": ""
-                              }]
-
-                    User.get(UserId,function (err, usr) {
-                        if(err){
-                            msj[0].State="Error";
-                            callback(JSON.stringify(msj))
-                            
-                        }else{
-
-                            msj[0].State=usr.IsActive;
-                            callback(JSON.stringify(msj))
-                          }
-                    });
-            });
-        });
-
-}
-
-
-exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
-
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var User= db.models.Users;
-
-                    var msj= [{
-                                "State": ""
-                              }]
-
-                    User.get(UserId,function (err, usr) {
-                        if(err){
-                            
-                            msj[0].State="Error"
-                            callback(JSON.stringify(msj))
-                            
-                        }else{
-
-                            var ActualState= usr.IsActive
-
-                            if(ActualState==1){
-                              ActualState=0
-                            }else{
-                              ActualState=1
-                            }
-
-                            usr.IsActive= ActualState;
-
-                            usr.save(function (err) {
-                                 if (err){
-                                    console.log(err);
-                                    db.close();
-                                    msj[0].State="Error"
-                                    callback(JSON.stringify(msj))
-                                 }else{
-                                 console.log("User IsActive Flag Updated Sucessfully");
-                                 db.close();
-                                 msj[0].State="Sucess"
-                                 callback(JSON.stringify(msj))
-                                 }
-                             });
-                          }
-                    });
-            });
-        });
-
-}
 
 exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
 
@@ -1458,7 +1136,7 @@ exports.GetFriends = function GetFriends(FriendList,callback){
         });
 }
 
-// LAST 20 Friend Activities
+// LAST 5 Coupons Redeemed by Friend
 exports.GetFriendActivity = function GetFriendActivity(FriendId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
@@ -1491,7 +1169,7 @@ exports.GetFriendActivity = function GetFriendActivity(FriendId,callback){
         });
 }
 
-
+// Helper Function For Messages Functionality
 exports.GetOffersId = function GetOffersId(UserTime,UserId,Timezone,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
@@ -1530,6 +1208,7 @@ exports.GetOffersId = function GetOffersId(UserTime,UserId,Timezone,callback){
         });
 }
 
+// Helper Function For Messages Functionality
 exports.UnreadMessagesNumber = function UnreadMessagesNumber(UserId,Offerlist,callback){
 
         var msj= [{
@@ -1574,6 +1253,7 @@ exports.UnreadMessagesNumber = function UnreadMessagesNumber(UserId,Offerlist,ca
       }
 }
 
+// Helper Function For Messages Functionality
 exports.GetMessages = function GetMessages(UserId,Offerlist,callback){
 
         var msj= []
@@ -1615,6 +1295,7 @@ exports.GetMessages = function GetMessages(UserId,Offerlist,callback){
       }
 }
 
+// Helper Function For Messages Functionality
 function GetMessagesPrivate(UserId,Messages,callback){
       var MIds=[]
 
@@ -1661,7 +1342,7 @@ function GetMessagesPrivate(UserId,Messages,callback){
 
   }
 
-  // LAST 20 Friend Activities
+// Helper Function For Messages Functionality
 exports.ReadMessage = function ReadMessage(UserId,MessageId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
