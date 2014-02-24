@@ -17,7 +17,12 @@ express.logger.token('date', function(){
 app.get('/',Utilities.Test);
 app.get('/:UserId/GetAllActiveClients',Utilities.GetAllActiveClients);
 app.get('/:UserId/GetClosestLocations/:Latitude/:Longitude',Utilities.GetClosestLocations);
-
+app.post('/:UserId/GetFriends',Utilities.GetFriends);
+app.get('/:UserId/GetFriendActivity/:FriendId',Utilities.GetFriendActivity);
+app.get('/:UserId/IsLocationActive/:LocationId',Utilities.IsLocationActive);
+app.get('/:UserId/:Timezone/GetUnreadMessages',Utilities.GetUnreadMessages);
+app.get('/:UserId/:Timezone/GetMessages',Utilities.GetMessages);
+app.get('/:UserId/ReadMessage/:MessageId',Utilities.ReadMessage);
 
 app.get('/:UserId/GetClientLocations/:ClientId',Utilities.GetClientLocations);
 app.get('/:UserId/GetMessagesSentByClient/:ClientId',Utilities.GetMessagesSentByClient);
@@ -25,7 +30,7 @@ app.get('/:UserId/GetMessagesReceivedByUser',Utilities.GetMessagesReceivedByUser
 app.get('/:UserId/GetLocationsByUser/:UserLocation',Utilities.GetLocationsByUser);
 app.get('/:UserId/GetUserActiveState',Utilities.GetUserActiveState);
 app.get('/:UserId/UpdateUserActiveState',Utilities.UpdateUserActiveState);
-app.get('/:UserId/IsLocationActive/:LocationId',Utilities.IsLocationActive);
+
 app.post('/:UserId/GetFriendsPlaces',Utilities.GetFriendsPlaces);
 
 app.listen(app.get('port'));

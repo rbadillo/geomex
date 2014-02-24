@@ -557,6 +557,7 @@ function GetPrivateOffers(UserTime,UserId,PublicOffers,Timezone,callback){
                     privateOffer.find( {StartDate:orm.lte(UserTime), EndDate:orm.gte(UserTime), UserId:UserId  },function (err, off) {
 
                       if(err){
+                        console.log("Error")
                         console.log(err);
                         db.close();
                       }else{
@@ -1274,7 +1275,7 @@ exports.UpdateUserActiveState= function UpdateUserActiveState(UserId,callback){
 
 }
 
-exports.IsOfferValid= function IsOfferValid(UserId,OfferId,callback){
+exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
 
   orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
@@ -1287,7 +1288,7 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,callback){
                                 "State": ""
                               }]
 
-                    query="Select MultiUse from Offers \
+                    query="Select IsPrivate from Offers \
                            where OfferId=" +OfferId
 
                             db.driver.execQuery(query, function (err, offer) { 
@@ -1305,17 +1306,25 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,callback){
                                   msj[0].State=0
                                   callback(JSON.stringify(msj))
                                 }else{
-                                var OfferUseType=offer[0].MultiUse
+                                var OfferUseType=offer[0].IsPrivate
 
                                 if(offer.length && OfferUseType==1){
-                                  msj[0].State=1
-                                  callback(JSON.stringify(msj))  
-                                }else{
+                                  // Private Offer 
 
-                                      query="Select * from OfferRedemption \
-                                              where OfferId=" +OfferId
-                                              +" and UserId=" +UserId
-                                              +" LIMIT 1"
+                                  query="Select UserPrivateOffers.OfferId from UserPrivateOffers \
+                                  where \
+                                  UserPrivateOffers.OfferId=" +OfferId
+                                  +" and UserPrivateOffers.StartDate<='" +UserTime +"'"
+                                  +" and '" +UserTime +"' <=UserPrivateOffers.EndDate \
+                                  and UserPrivateOffers.UserId=" +UserId
+                                  +" and UserPrivateOffers.OfferId not in \
+                                  (Select distinct OfferRedemption.OfferId \
+                                  from OfferRedemption,Offers \
+                                  where Offers.MultiUse=0 \
+                                  and OfferRedemption.UserId=" +UserId 
+                                  +" and OfferRedemption.OfferId="+OfferId+")";
+
+                                  //console.log(query)
 
                                       db.driver.execQuery(query, function (err, offer) { 
 
@@ -1328,10 +1337,44 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,callback){
                                                 db.close();
 
                                                 if(offer.length){
-                                                    msj[0].State=0
+                                                    msj[0].State=1
                                                     callback(JSON.stringify(msj)) 
                                                   }else{
+                                                    msj[0].State=0
+                                                    callback(JSON.stringify(msj))
+                                                  }
+                                              }
+
+                                      })
+
+                                }else{
+                                  // Public Offer
+
+                                      query="Select Offers.OfferId from Offers \
+                                      where \
+                                      Offers.OfferId=" +OfferId
+                                      +" and Offers.StartDate<='" +UserTime +"'"
+                                      +" and '" +UserTime +"' <=Offers.EndDate \
+                                      and Offers.OfferId not in (Select distinct OfferRedemption.OfferId \
+                                      from OfferRedemption,Offers \
+                                      where Offers.MultiUse=0 \
+                                      and OfferRedemption.UserId=" +UserId +" and OfferRedemption.OfferId="+OfferId+")"
+
+                                      db.driver.execQuery(query, function (err, offer) { 
+
+                                              if(err){
+                                                console.log(err);
+                                                db.close();
+                                                msj[0].State=0
+                                                callback(JSON.stringify(msj))
+                                              }else{
+                                                db.close();
+
+                                                if(offer.length){
                                                     msj[0].State=1
+                                                    callback(JSON.stringify(msj)) 
+                                                  }else{
+                                                    msj[0].State=0
                                                     callback(JSON.stringify(msj))
                                                   }
                                               }
@@ -1355,23 +1398,301 @@ exports.IsLocationActive= function IsLocationActive(LocationId,callback){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var Location= db.models.Locations;
 
                     var msj= [{
                                 "State": ""
                               }]
 
-                    Location.get(LocationId,function (err, loc) {
-                        if(err){
-                            msj[0].State="Error";
-                            callback(JSON.stringify(msj))
-                            
-                        }else{
+                    query="Select Locations.IsActive as Location, Clients.IsActive as Client \
+                    from Locations,Clients \
+                    where LocationId=" +LocationId +" and Clients.ClientId=Locations.ClientId"
 
-                            msj[0].State=loc.IsActive;
-                            callback(JSON.stringify(msj))
-                          }
-                    });
+                    db.driver.execQuery(query, function (err, active) { 
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                        msj[0].State="Error";
+                        callback(JSON.stringify(msj))
+                      }else{
+                        console.log(active)
+                        db.close();
+                        if(active[0].Location==1 && active[0].Client==1){
+                            msj[0].State=1;
+                        }else{
+                          msj[0].State=0;
+                        }
+                        callback(JSON.stringify(msj));
+                      }
+                    })
+            });
+        });
+}
+
+// LAST 20 Friend Activities
+exports.GetFriends = function GetFriends(FriendList,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+
+                    query="SELECT distinct Users.FbName,Users.FbLastName,Users.FbPhoto \
+                     from Users \
+                     where Users.UserId in  (" +FriendList +") \
+                     order by Users._Updated Desc LIMIT 20"
+
+                    db.driver.execQuery(query, function (err, friends) { 
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                      }else{
+                        db.close();
+                        callback(JSON.stringify(friends));
+                      }
+                    })
+            });
+        });
+}
+
+// LAST 20 Friend Activities
+exports.GetFriendActivity = function GetFriendActivity(FriendId,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+
+                    query="Select distinct OfferRedemption.OfferId,Offers.Title,Offers.Subtitle,Offers.EndDate, \
+                    Offers.PrimaryImage,Offers.SecondaryImage,OfferRedemption.ClientId,Clients.Name as ClientName,Clients.Logo \
+                    from OfferRedemption,Offers,Clients \
+                    where \
+                    OfferRedemption.UserId=" +FriendId +" and Clients.ClientId=OfferRedemption.ClientId \
+                    and Offers.OfferId=OfferRedemption.OfferId \
+                    and Offers.IsPrivate=0 \
+                    Order by OfferRedemption.TimeCreated DESC LIMIT 5";
+
+                    db.driver.execQuery(query, function (err, friendActivity) { 
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                      }else{
+                        db.close();
+                        callback(JSON.stringify(friendActivity));
+                      }
+                    })
+            });
+        });
+}
+
+
+exports.GetOffersId = function GetOffersId(UserTime,UserId,Timezone,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var offer = db.models.Offers;
+
+                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
+                            Offers.Name,Offers.Title,Offers.Subtitle, \
+                            Offers.Instructions,Offers.Disclaimer, \
+                            Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+                            Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+                            Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
+                            Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+                            where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
+                            and Clients.IsActive=1 and Offers.IsActive=1 \
+                            and Clients.ClientId=Offers.ClientId"
+
+                    db.driver.execQuery(query, function (err, offers) { 
+
+                              if(err){
+                                console.log(err);
+                                db.close();
+                              }else{
+                                db.close();
+                                GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
+                              }
+
+                      })
+
+                    
+            });
+        });
+}
+
+exports.UnreadMessagesNumber = function UnreadMessagesNumber(UserId,Offerlist,callback){
+
+        var msj= [{
+                      "State": ""
+                    }]
+
+        if(Offerlist.length==0){
+          msj[0].State=0;
+          callback(JSON.stringify(msj))
+        }else{
+
+            orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+              if (err) throw err;
+
+                db.load("./Models", function (err) {
+                        if (err) throw err;
+                        // loaded!
+                        var offer = db.models.Offers;
+
+                        query="Select distinct UserId,MessageId \
+                        from SentMessages \
+                        where UserId=" +UserId
+                        +" and MessageRead=0 \
+                        and MessageId in (Select MessageId from Messages where IsPrivate=1 \
+                        and OfferId in (" +Offerlist +") );"
+
+                        db.driver.execQuery(query, function (err, Messages) { 
+
+                                  if(err){
+                                    console.log(err);
+                                    db.close();
+                                    msj[0].State=0;
+                                    callback(JSON.stringify(msj))
+                                  }else{
+                                    db.close();
+                                    msj[0].State=Messages.length;
+                                    callback(JSON.stringify(msj))
+                                  }
+                          })
+                });
+            });
+      }
+}
+
+exports.GetMessages = function GetMessages(UserId,Offerlist,callback){
+
+        var msj= []
+
+        if(Offerlist.length==0){
+          console.log("UserId: " +UserId +" - OfferList Is Empty")
+          callback(JSON.stringify(msj))
+        }else{
+
+            orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+              if (err) throw err;
+
+                db.load("./Models", function (err) {
+                        if (err) throw err;
+                        // loaded!
+                        var offer = db.models.Offers;
+
+                        query="Select distinct MessageId \
+                        from SentMessages \
+                        where UserId=" +UserId
+                        +" and MessageId in (Select MessageId from Messages where IsPrivate=1 \
+                        and OfferId in (" +Offerlist +") );"
+
+                        db.driver.execQuery(query, function (err, Messages) { 
+
+                                  if(err){
+                                    console.log(err);
+                                    db.close();
+                                    callback(JSON.stringify(msj))
+                                  }else{
+                                    db.close();
+                                    //console.log(Messages)
+                                    //callback(JSON.stringify(msj))
+                                    GetMessagesPrivate(UserId,Messages,callback)
+                                  }
+                          })
+                });
+            });
+      }
+}
+
+function GetMessagesPrivate(UserId,Messages,callback){
+      var MIds=[]
+
+      for(var i=0;i<Messages.length;i++){
+        MIds.push(Messages[i].MessageId)
+      }
+
+      var msj= []
+
+        if(MIds.length==0){
+          console.log("UserId: " +UserId +" - MessageList Is Empty")
+          callback(JSON.stringify(msj))
+        }else{
+
+            orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+              if (err) throw err;
+
+                db.load("./Models", function (err) {
+                        if (err) throw err;
+                        // loaded!
+
+                        query="Select Clients.ClientId, Clients.Name as ClientName,Clients.Logo, \
+                        Messages.MessageId,Messages.Message, Messages.OfferId,Messages.TimeCreated \
+                        from Clients,Messages \
+                        where Messages.ClientId=Clients.ClientId \
+                        and Messages.MessageId in (" +MIds +")"
+                        +" Order by Messages.TimeCreated DESC"
+
+                        db.driver.execQuery(query, function (err, Messages) { 
+
+                                  if(err){
+                                    console.log(err);
+                                    db.close();
+                                    callback(JSON.stringify(msj))
+                                  }else{
+                                    db.close();
+                                    //console.log(Messages)
+                                    callback(JSON.stringify(Messages))
+                                  }
+                          })
+                });
+            });
+      }
+
+  }
+
+  // LAST 20 Friend Activities
+exports.ReadMessage = function ReadMessage(UserId,MessageId,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+
+                    var msj= [{
+                      "State": ""
+                    }]
+
+                    query="Update SentMessages \
+                          Set MessageRead=1 \
+                          where UserId=" +UserId
+                         +" and MessageId=" +MessageId
+
+                    db.driver.execQuery(query, function (err, friends) { 
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                        msj[0].State="Error";
+                        callback(JSON.stringify(msj))
+                      }else{
+                        db.close();
+                        msj[0].State=1;
+                        callback(JSON.stringify(msj))
+                      }
+                    })
             });
         });
 }

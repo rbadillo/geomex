@@ -18,7 +18,7 @@ app.get('/',Utilities.Test);
 app.get('/:UserId/:Timezone/GetOffers/:ClientId',Utilities.Offers);
 app.get('/:UserId/:Timezone/GetOffers/:ClientId/:OfferId',Utilities.SingleOffer);
 app.get('/:UserId/:Timezone/GetOffers/:ClientId/:OfferId/Redeem',Utilities.Redeem);
-app.get('/:UserId/:Timezone/GetOffers/:ClientId/:OfferId/IsOfferValid',Utilities.IsOfferValid);
+app.get('/:UserId/:Timezone/GetOffers/:ClientId/IsOfferValid/:OfferId',Utilities.IsOfferValid);
 
 app.listen(app.get('port'));
 console.log("Offer Server - Listening Port: " +app.get('port'));
