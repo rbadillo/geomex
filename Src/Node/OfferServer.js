@@ -16,8 +16,8 @@ express.logger.token('date', function(){
 
 app.get('/',Utilities.Test);
 app.get('/:UserId/:Timezone/GetOffers/:ClientId',Utilities.Offers);
-app.get('/:UserId/:Timezone/GetOffers/:ClientId/:OfferId',Utilities.SingleOffer);
-app.get('/:UserId/:Timezone/GetOffers/:ClientId/:OfferId/Redeem',Utilities.Redeem);
+app.get('/:UserId/:Timezone/GetOffers/:ClientId/OfferDetails/:OfferId',Utilities.SingleOffer);
+app.get('/:UserId/:Timezone/GetOffers/:ClientId/Redeem/:OfferId',Utilities.Redeem);
 app.get('/:UserId/:Timezone/GetOffers/:ClientId/IsOfferValid/:OfferId',Utilities.IsOfferValid);
 
 app.listen(app.get('port'));

@@ -997,7 +997,7 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                   and UserPrivateOffers.UserId=" +UserId
                                   +" and UserPrivateOffers.OfferId not in \
                                   (Select distinct OfferRedemption.OfferId \
-                                  from OfferRedemption,Offers \
+                                  from OfferRedemption \
                                   where Offers.MultiUse=0 \
                                   and OfferRedemption.UserId=" +UserId 
                                   +" and OfferRedemption.OfferId="+OfferId+")";
@@ -1034,9 +1034,11 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                       +" and Offers.StartDate<='" +UserTime +"'"
                                       +" and '" +UserTime +"' <=Offers.EndDate \
                                       and Offers.OfferId not in (Select distinct OfferRedemption.OfferId \
-                                      from OfferRedemption,Offers \
+                                      from OfferRedemption \
                                       where Offers.MultiUse=0 \
                                       and OfferRedemption.UserId=" +UserId +" and OfferRedemption.OfferId="+OfferId+")"
+
+                                      //console.log(query)
 
                                       db.driver.execQuery(query, function (err, offer) { 
 
@@ -1117,7 +1119,7 @@ exports.GetFriends = function GetFriends(FriendList,callback){
                     if (err) throw err;
                     // loaded!
 
-                    query="SELECT distinct Users.FbName,Users.FbLastName,Users.FbPhoto \
+                    query="SELECT distinct Users.UserId,Users.FbName,Users.FbLastName,Users.FbPhoto \
                      from Users \
                      where Users.UserId in  (" +FriendList +") \
                      order by Users._Updated Desc LIMIT 20"

@@ -68,8 +68,12 @@ exports.SingleOffer = function SingleOffer(req,res){
       var OfferId=req.params.OfferId
       var Latitude= req.query.latitude
       var Longitude= req.query.longitude
+      var Timezone=req.params.Timezone
+      var LocalTime= moment.utc().zone(Timezone);
+      var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
+      var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
 
-      DAL.IsOfferValid(UserId,OfferId,function(output){
+      DAL.IsOfferValid(UserId,OfferId,LocalToUtc,function(output){
         var tmp= JSON.parse(output)
         if(tmp[0].State==0){
             res.setHeader('Content-Type', 'application/json');
@@ -117,8 +121,12 @@ exports.Redeem= function Redeem(req,res){
       var OfferId=req.params.OfferId
       var Latitude= req.query.latitude
       var Longitude= req.query.longitude
+      var Timezone=req.params.Timezone
+      var LocalTime= moment.utc().zone(Timezone);
+      var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
+      var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
 
-      DAL.IsOfferValid(UserId,OfferId,function(output){
+      DAL.IsOfferValid(UserId,OfferId,LocalToUtc,function(output){
         var tmp= JSON.parse(output)
         if(tmp[0].State==0){
             res.setHeader('Content-Type', 'application/json');
