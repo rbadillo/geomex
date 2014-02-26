@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/user_photo"
+            android:layout_width="match_parent"
+            android:layout_height="144dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_person" />
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/user_photo"
+            android:gravity="center_horizontal"
+            android:padding="16dp"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            android:background="@drawable/vertical_shadow_background" />
+
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_photo"
+            android:padding="16dp"
+            android:fontFamily="sans-serif-light"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/activity_user_subtitle"
+            android:background="#ccc" />
+
+        <View
+            android:id="@+id/section_divider"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/subtitle"
+            android:background="@android:color/darker_gray" />
+    </RelativeLayout>
+</ScrollView>

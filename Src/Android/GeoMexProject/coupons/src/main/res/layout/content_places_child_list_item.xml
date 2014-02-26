@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:background="#eee">
+
+    <Button
+        android:id="@+id/list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:drawableLeft="@drawable/ic_place"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorSecondary"
+        android:text="@string/content_places_locations"
+        android:background="@drawable/borderless_btn_selector" />
+
+    <View
+        android:layout_width="1px"
+        android:layout_height="32dp"
+        android:background="@drawable/vertical_divider_background" />
+
+    <Button
+        android:id="@+id/coupons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:drawableLeft="@drawable/ic_labels"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorSecondary"
+        android:text="@string/content_places_coupons"
+        android:background="@drawable/borderless_btn_selector" />
+</LinearLayout>

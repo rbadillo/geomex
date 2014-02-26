@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Context-Core">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/coupons/src/main/libs/Context-Core.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

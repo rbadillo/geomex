@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ddd">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/action_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
+            android:minHeight="64dp" />
+
+        <View
+            android:id="@+id/section_divider"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/action_search"
+            android:background="@android:color/darker_gray" />
+
+        <RadioGroup
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/section_divider">
+
+            <RadioButton
+                android:id="@+id/content_coupons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:gravity="center_vertical"
+                android:minHeight="64dp"
+                android:fontFamily="sans-serif-light"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/content_coupons"
+                android:button="@null"
+                android:background="@drawable/drawer_item_selector"
+                android:checked="true" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <RadioButton
+                android:id="@+id/content_social"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:gravity="center_vertical"
+                android:minHeight="64dp"
+                android:fontFamily="sans-serif-light"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/content_social"
+                android:button="@null"
+                android:background="@drawable/drawer_item_selector" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <RadioButton
+                android:id="@+id/content_places"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:gravity="center_vertical"
+                android:minHeight="64dp"
+                android:fontFamily="sans-serif-light"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/content_places"
+                android:button="@null"
+                android:background="@drawable/drawer_item_selector" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <RadioButton
+                android:id="@+id/content_adverts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:gravity="center_vertical"
+                android:minHeight="64dp"
+                android:fontFamily="sans-serif-light"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/content_adverts"
+                android:button="@null"
+                android:background="@drawable/drawer_item_selector" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+        </RadioGroup>
+    </RelativeLayout>
+</ScrollView>

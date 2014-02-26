@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <ImageView
+        android:id="@+id/secondary_image"
+        android:layout_width="match_parent"
+        android:layout_height="102dp"
+        android:layout_margin="5dp"
+        android:scaleType="centerCrop" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="112dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="32dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/list_item_background">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:layout_centerVertical="true"
+            android:scaleType="centerInside" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/logo"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/redemption"
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title" />
+
+            <TextView
+                android:id="@+id/end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/subtitle"
+                android:layout_toLeftOf="@+id/client_name"
+                android:layout_alignParentLeft="true"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorTertiary" />
+
+            <TextView
+                android:id="@id/client_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/subtitle"
+                android:layout_alignParentRight="true"
+                android:maxWidth="64dp"
+                android:singleLine="true"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="?android:attr/textColorSecondary" />
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>
