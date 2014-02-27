@@ -935,6 +935,7 @@ exports.GetClosestLocations = function GetClosestLocations(Latitude,Longitude,Ra
                        AND Longitude \
                         BETWEEN longpoint - (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
                             AND longpoint + (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
+                       AND IsPrivate=0 \
                      ORDER BY Distance_In_KM \
                      LIMIT 15"
 
@@ -1095,14 +1096,19 @@ exports.IsLocationActive= function IsLocationActive(LocationId,callback){
                         msj[0].State="Error";
                         callback(JSON.stringify(msj))
                       }else{
-                        console.log(active)
+                        //console.log(active)
                         db.close();
-                        if(active[0].Location==1 && active[0].Client==1){
-                            msj[0].State=1;
+                        if(active.length){
+                            if(active[0].Location==1 && active[0].Client==1){
+                                msj[0].State=1;
+                            }else{
+                              msj[0].State=0;
+                            }
+                            callback(JSON.stringify(msj));
                         }else{
-                          msj[0].State=0;
+                          msj[0].State="Error";
+                          callback(JSON.stringify(msj));
                         }
-                        callback(JSON.stringify(msj));
                       }
                     })
             });
