@@ -892,7 +892,7 @@ exports.GetAllActiveClients = function GetAllActiveClients(callback){
                     if (err) throw err;
                     // loaded!
 
-                    query="Select Name,Logo,IsGold,OfferClosestExpiration from Clients where IsActive=1 and ActiveOffers>0 \
+                    query="Select ClientId,Name,Logo,IsGold,OfferClosestExpiration from Clients where IsActive=1 and ActiveOffers>0 \
                     Order by IsGold DESC,OfferClosestExpiration ASC"
 
                     db.driver.execQuery(query, function (err, clients) { 
