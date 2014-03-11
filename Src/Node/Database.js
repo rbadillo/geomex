@@ -998,7 +998,7 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                   and UserPrivateOffers.UserId=" +UserId
                                   +" and UserPrivateOffers.OfferId not in \
                                   (Select distinct OfferRedemption.OfferId \
-                                  from OfferRedemption \
+                                  from OfferRedemption,Offers \
                                   where Offers.MultiUse=0 \
                                   and OfferRedemption.UserId=" +UserId 
                                   +" and OfferRedemption.OfferId="+OfferId+")";
