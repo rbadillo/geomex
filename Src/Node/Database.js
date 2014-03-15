@@ -62,13 +62,14 @@ exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Addr
                       }else{
                         if(loc.length){
                             console.log("Existing Location");
+                            GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode);
                             db.close();
                           }else{
                             var location = db.models.Locations();
                             location.Name=Name
                             location.ClientId=ClientId
                             location.IsActive=1
-                            location.Visibility="public"
+                            location.IsPrivate=0
                             location.Latitude=Latitude
                             location.Longitude=Longitude
                             location.Address=Address
@@ -111,7 +112,7 @@ function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,Ci
                         console.log(err);
                         db.close();
                       }else{
-                        console.log("Id: " +loc[0].LocationId);
+                        console.log("DB LocationId: " +loc[0].LocationId);
                         db.close();
                         PostGimbal(Name,Address,Latitude,Longitude,loc[0].LocationId);
                       }
@@ -133,9 +134,7 @@ function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
             }
         },
         "placeAttributes": {
-            "latitude": Latitude,
-            "longitude": Longitude,
-            "locationId": LocationId
+            "location_id": LocationId
         }
     }
 
@@ -143,12 +142,12 @@ function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
 
   // An object of options to indicate where to post to
   var post_options = {
-      host: 'sandbox.gimbal.com',
+      host: 'manager.gimbal.com',
       port: '443',
       path: '/api/geofences',
       method: 'POST',
       headers: {
-          'AUTHORIZATION': 'Token token=7ec5f434d5ac2f91172bb1a396ebd4c1',
+          'AUTHORIZATION': 'Token token=88530dc982fb7b9a5aa1498197b3038f',
           'Content-Type': 'application/json',
           'Content-Length': post_data.length
       }
