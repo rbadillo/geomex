@@ -891,7 +891,7 @@ exports.GetAllActiveClients = function GetAllActiveClients(callback){
                     if (err) throw err;
                     // loaded!
 
-                    query="Select Name,Logo,IsGold,OfferClosestExpiration from Clients where IsActive=1 and ActiveOffers>0 \
+                    query="Select ClientId,Name,Logo,IsGold,OfferClosestExpiration from Clients where IsActive=1 and ActiveOffers>0 \
                     Order by IsGold DESC,OfferClosestExpiration ASC"
 
                     db.driver.execQuery(query, function (err, clients) { 
@@ -997,7 +997,7 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                   and UserPrivateOffers.UserId=" +UserId
                                   +" and UserPrivateOffers.OfferId not in \
                                   (Select distinct OfferRedemption.OfferId \
-                                  from OfferRedemption \
+                                  from OfferRedemption,Offers \
                                   where Offers.MultiUse=0 \
                                   and OfferRedemption.UserId=" +UserId 
                                   +" and OfferRedemption.OfferId="+OfferId+")";
