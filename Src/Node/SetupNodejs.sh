@@ -11,3 +11,4 @@ sudo npm install apn@1.4.3
 sudo npm install winston@0.7.2
 sudo npm install forever@0.10.8 -g
 sudo npm install node-gcm@0.9.6
+sudo npm install request@2.34.0
