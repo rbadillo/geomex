@@ -1329,7 +1329,8 @@ function GetMessagesPrivate(UserId,Messages,callback){
                         Messages.TimeCreated \
                         from Clients,Messages,SentMessages \
                         where Messages.ClientId=Clients.ClientId \
-                        and Messages.MessageId in (" +MIds +")"
+                        and SentMessages.UserId= " +UserId
+                        +" and Messages.MessageId in (" +MIds +")"
                         +" and SentMessages.MessageId=Messages.MessageId" 
                         +" Order by Messages.TimeCreated DESC"
 
