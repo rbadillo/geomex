@@ -1325,10 +1325,12 @@ function GetMessagesPrivate(UserId,Messages,callback){
                         // loaded!
 
                         query="Select Clients.ClientId, Clients.Name as ClientName,Clients.Logo, \
-                        Messages.MessageId,Messages.Message, Messages.OfferId,Messages.TimeCreated \
-                        from Clients,Messages \
+                        Messages.MessageId,Messages.Message, Messages.OfferId,SentMessages.MessageRead, \
+                        Messages.TimeCreated \
+                        from Clients,Messages,SentMessages \
                         where Messages.ClientId=Clients.ClientId \
                         and Messages.MessageId in (" +MIds +")"
+                        +" and SentMessages.MessageId=Messages.MessageId" 
                         +" Order by Messages.TimeCreated DESC"
 
                         db.driver.execQuery(query, function (err, Messages) { 
