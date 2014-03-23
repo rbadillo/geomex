@@ -110,7 +110,7 @@ How to Setup Nodejs Modules
 	a) ./SetupNodejs.sh
 	
 	
-How to Export/Import Mysql Data
+How to Export/Import Mysql Database
 ======
 
 1.- Export
@@ -123,4 +123,8 @@ How to Export/Import Mysql Data
 
 3.- Import
 
-	b) mysql -u [USER] -p [DATABASE] < [FILE.sql]
+	c) mysql -u [USER] -p [DATABASE] < [FILE.sql]
+	
+Note: Data Only - Insert Statements
+
+	d) mysqldump -u [USER] -p --skip-triggers --compact --complete-insert --no-create-info [DATABASE] > [FILE.sql]
