@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `geomex`.`OfferEvents`;
 
 CREATE TABLE IF NOT EXISTS `geomex`.`OfferEvents` (
   `Id` INT NOT NULL AUTO_INCREMENT ,
-  `UserId` INT NOT NULL ,
+  `UserId` BIGINT UNSIGNED NOT NULL ,
   `ClientId` INT NOT NULL ,
   `OfferId` INT NOT NULL ,
   `Event` VARCHAR(45) NOT NULL ,

@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `geomex`.`Users`;
 
 CREATE  TABLE IF NOT EXISTS `geomex`.`Users` (
-  `UserId` INT NOT NULL ,
+  `UserId` BIGINT UNSIGNED NOT NULL ,
   `DeviceToken` VARCHAR(255) NULL ,
   `PhoneType` VARCHAR(50) NOT NULL ,
   `FbName` VARCHAR(100) NULL ,

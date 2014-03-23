@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `geomex`.`LocationEvents`;
 
 CREATE TABLE IF NOT EXISTS `geomex`.`LocationEvents` (
   `Id` INT NOT NULL AUTO_INCREMENT ,
-  `UserId` INT NOT NULL ,
+  `UserId` BIGINT UNSIGNED NOT NULL ,
   `ClientId` INT NOT NULL ,
   `LocationId` INT NOT NULL ,
   `LocationName` VARCHAR(255) NOT NULL ,
@@ -15,6 +15,12 @@ CREATE TABLE IF NOT EXISTS `geomex`.`LocationEvents` (
   PRIMARY KEY (`Id`) ,
   INDEX `ClientId` (`ClientId` ASC) ,
   INDEX `LocationId` (`LocationId` ASC) ,
+  INDEX `UserId_LocationEvents` (`UserId` ASC) ,
+  CONSTRAINT `UserId_LocationEvents`
+    FOREIGN KEY (`UserId` )
+    REFERENCES `geomex`.`Users` (`UserId` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
   CONSTRAINT `ClientId_LocationEvents`
     FOREIGN KEY (`ClientId` )
     REFERENCES `geomex`.`Clients` (`ClientId` )

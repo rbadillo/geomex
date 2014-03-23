@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS `geomex`.`UserPrivateOffers`;
 CREATE TABLE IF NOT EXISTS `geomex`.`UserPrivateOffers` (
   `Id` INT NOT NULL AUTO_INCREMENT ,
   `ClientId` INT NOT NULL ,
-  `UserId` INT NOT NULL ,
+  `UserId` BIGINT UNSIGNED NOT NULL ,
   `OfferId` INT NOT NULL ,
   `StartDate` DATETIME NOT NULL ,
   `EndDate` DATETIME NOT NULL ,
