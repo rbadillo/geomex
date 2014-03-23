@@ -115,7 +115,7 @@ How to Export/Import Mysql Data
 
 1.- Export
 
-	a) mysqldump -u [USER] -p --skip-triggers --compact --complete-insert --no-create-info [DATABASE] > [FILE.sql]
+	a) mysqldump -u [USER] -p [DATABASE] > [FILE.sql]
 	
 
 2.- Import
