@@ -115,9 +115,12 @@ How to Export/Import Mysql Data
 
 1.- Export
 
-	a) mysqldump -u [USER] -p --skip-triggers --compact --complete-insert --no-create-info [DATABASE] > [FILE.sql]
+	a) mysqldump -u [USER] -p [DATABASE] > [FILE.sql]
 	
+2.- Copy SQL File to remote server.
 
-2.- Import
+	b) scp [FILE.sql] [USER]@[REMOTEHOST]:/some/remote/directory
+
+3.- Import
 
 	b) mysql -u [USER] -p [DATABASE] < [FILE.sql]
