@@ -5,7 +5,7 @@ var DAL= require('./Database');
 var service = new apn.connection({ gateway:'gateway.sandbox.push.apple.com' });
 
 service.on('connected', function() {
-    console.log("Connected to APNS");
+    //console.log("Connected to APNS");
 });
 
 service.on('transmitted', function(notification, device) {
@@ -35,17 +35,17 @@ service.on('disconnected', function() {
 service.on('socketError', console.error);
 
 // If you plan on sending identical paylods to many devices you can do something like this.
-exports.PushMessage=function PushMessage(Message,Devices,ClientName) {
+exports.PushMessage=function PushMessage(Message,Devices,ClientName,SendMessageOnly) {
     var note = new apn.notification();
     note.alert= ClientName +": " +Message
     note.sound = "ping.aiff";
     note.badge = 1;
-    Devices=Devices.split(",");
-    //console.log(Devices);
  
-    for(var i=0;i<Devices.length;i++){
-        //console.log("Device: " +Devices[i])
-        DAL.UpdateSentMessage(Devices[i],Message,"Add");
+    if(SendMessageOnly=="false"){
+        for(var i=0;i<Devices.length;i++){
+            //console.log("Device: " +Devices[i])
+            DAL.UpdateSentMessage(Devices[i],Message,"Add");
+        }
     }
     
     service.pushNotification(note, Devices);

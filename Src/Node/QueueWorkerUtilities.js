@@ -8,53 +8,24 @@ exports.Test = function Test(req,res){
 
 exports.SendMessage = function SendMessage(req,res){
 	res.end('Success');
-  var LocationId=req.body.location_id
-  var Message=req.body.message
+
+  console.log()
+  var OfferId=req.body.offer_id
+  var OfferExpirationMinutes=req.body.offer_expiration_minutes
+  var MessageTitle=req.body.message_title
+  var MessageSubtitle=req.body.message_subtitle
   var ClientId=req.body.client_id
   var ClientName=req.body.client_name
-  var Visibility=req.body.visibility
-  GetUsersFromUserControl(LocationId,"/GetUsersByLocationId/",Message,ClientId,ClientName,Visibility);
-}
+  var ClientLogo=req.body.client_logo
+  var UserQuery=req.body.user_query
+  var SendMessageOnly=req.body.send_message_only.toLowerCase()
 
-function GetUsersFromUserControl(LocationId,Path,Message,ClientId,ClientName,Visibility) {
-  // Build the post string from an object
+  DAL.GetUsersDeviceToken(UserQuery,OfferId,ClientId,OfferExpirationMinutes,SendMessageOnly,function(ActiveUsers){
 
-  // An object of options to indicate where to post to
-  var get_options = {
-      host: 'localhost',
-      port: '9000',
-      path: Path + LocationId,
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/json'
-      }
-  };
+    DAL.AddMessage(MessageSubtitle,OfferId,ClientId,function(){
+      //Send Message to RabbitMQ
+      MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly);
+    });
 
-  // Set up the request
-  var req = http.get(get_options, function(res) {
-      var ActiveUsers="";
-      res.setEncoding('utf8');
-
-      res.on('data', function (chunk) {
-          ActiveUsers= ActiveUsers + chunk;
-      });
-
-      res.on('error', function(e){
-          console.log(e)
-      });
-
-      res.on('end', function(){
-          //Inserting Message into DB
-          DAL.AddMessage(Message,LocationId,ClientId,Visibility,function(){
-              //Send Message to RabbitMQ
-          MQ.PublishMessage("PushMessages",LocationId,ActiveUsers,Message,ClientId,ClientName);
-          });
-      });
   });
-
-  // Handle Error If User Control Server is Down
-  req.on('error', function(e){
-          console.log("User Control Server - Not Available - " +Date())
-  });
-
 }

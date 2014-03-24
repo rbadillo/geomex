@@ -2,9 +2,9 @@ var gcm = require('node-gcm');
 var DAL= require('./Database');
 
 //Server ID
-var sender = new gcm.Sender('AIzaSyBBOTq-W10C642PZv8dClTtxCZULhaOXY0');
+var sender = new gcm.Sender('AIzaSyBJ4dXx1wHgP92z5-jDcHu0qitSaVsVc84');
 
-exports.PushMessage=function PushMessage(Message,Devices,ClientName) {
+exports.PushMessage=function PushMessage(MessageTitle,MessageSubtitle,Devices,OfferId,ClientName,ClientLogo,SendMessageOnly) {
 
         // Create Payload
         var message = new gcm.Message({
@@ -12,17 +12,20 @@ exports.PushMessage=function PushMessage(Message,Devices,ClientName) {
             delayWhileIdle: true,
             timeToLive: 259200,  // 3 days alive
             data: {
-                key1: ClientName,
-                key2: Message
+                offer_id: OfferId,
+                message_title: MessageTitle,
+                message_subtitle: MessageSubtitle,
+                client_name: ClientName,
+                client_logo: ClientLogo
             }
         });
 
-        var Devices=Devices.split(",");
 
-        // Update Analytics
-        for(var i=0;i<Devices.length;i++){
-            //console.log("Device: " +Devices[i])
-            DAL.UpdateSentMessage(Devices[i],Message,"Add");
+        if(SendMessageOnly=="false"){
+            // Update Analytics
+            for(var i=0;i<Devices.length;i++){
+                DAL.UpdateSentMessage(Devices[i],MessageSubtitle,"Add");
+            }
         }
 
         for(var i=0;i<Devices.length;i++){
@@ -36,6 +39,7 @@ exports.PushMessage=function PushMessage(Message,Devices,ClientName) {
                         DAL.UpdateSentMessage(aux[0],Message,"Delete");
                     }else{
                         if(result.failure==1){
+                            console.log("Failure Sending Message To Device: " +aux[0])
                             DAL.UpdateSentMessage(aux[0],Message,"Delete");
                         }else{
                             console.log("Notification Transmitted Successfully To Device: " +aux[0]);

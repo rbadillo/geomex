@@ -7,19 +7,23 @@ connection.on('ready', function () {
   //console.log("Conection Ready");
 });
 
-exports.PublishMessage=function PublishMessage(QueueName,LocationId,Devices,Message,ClientId,ClientName) {
+exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly) {
 
   // Prepare to Send Message to RabbitMQ
   var q=connection.queue(QueueName);
 
   var msj= {
-          "LocationId": LocationId,
-          "Users": JSON.parse(Devices),
-          "Message": Message,
+          "OfferId": OfferId,
+          "Users": Devices,
+          "MessageTitle": MessageTitle,
+          "MessageSubtitle": MessageSubtitle,
           "ClientId": ClientId,
-          "ClientName": ClientName
+          "ClientName": ClientName,
+          "ClientLogo": ClientLogo,
+          "SendMessageOnly": SendMessageOnly
     }
 
+  console.log("");
   console.log("Msg Sent to Queue:");
   console.log("");
   console.log(msj);

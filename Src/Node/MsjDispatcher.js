@@ -15,9 +15,9 @@ connection.on('ready', function () {
             console.log("Start - " +new Date());
             console.log("MsjDispatcher - Got Message From RabbitMQ")
             // Print messages to stdout
-            
-            //console.log(message.Users.iOS);
+
             if(message.hasOwnProperty('Users')){
+            
             
               if(message.Users.hasOwnProperty('iOS')){
                     var iOSPhones= message.Users.iOS
@@ -25,12 +25,12 @@ connection.on('ready', function () {
 
                     if(iOSPhones.length > 0){
                       console.log("MsjDispatcher - Sending Push To iOS Devices")
-                      Ios.PushMessage(message.Message,iOSPhones,message.ClientName);
+                      Ios.PushMessage(message.MessageSubtitle,iOSPhones,message.ClientName,message.SendMessageOnly);
                     }else{
                       console.log("MsjDispatcher - Not Active iOS Users To Send Push Notification")
-                      console.log("");
                     }
                 }
+            
             
               if(message.Users.hasOwnProperty('Android')){
                     var AndroidPhones= message.Users.Android
@@ -38,10 +38,10 @@ connection.on('ready', function () {
 
                     if(AndroidPhones.length > 0){
                       console.log("MsjDispatcher - Sending Push To Android Devices")
-                      Android.PushMessage(message.Message,AndroidPhones,message.ClientName);
+                      //MessageTitle,MessageSubtitle,Devices,OfferId,ClientName,ClientLogo
+                      Android.PushMessage(message.MessageTitle,message.MessageSubtitle,AndroidPhones,message.OfferId,message.ClientName,message.ClientLogo,message.SendMessageOnly);
                     }else{
                       console.log("MsjDispatcher - Not Active Android Users To Send Push Notification")
-                      console.log("");
                     }
               }
 

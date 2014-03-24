@@ -181,7 +181,7 @@ function tryParseJson(str) {
     }
 }
 
-exports.AddMessage = function AddMessage(Message,LocationId,ClientId,Visibility,callback){
+exports.AddMessage = function AddMessage(Message,OfferId,ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
@@ -191,22 +191,22 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId,Visibility,
                     // loaded!
                     var message = db.models.Messages;
 
-    message.find({Message: Message, LocationId: LocationId, ClientId: ClientId, Visibility:Visibility},function (err, msj) {
+    message.find({Message: Message, OfferId: OfferId, ClientId: ClientId},function (err, msj) {
 
                       if(err){
                           console.log(err);
                           db.close();
                       }else{
                           if(msj.length){
-                            console.log("Existing Message - Message: " +Message +" - LocationId: " +LocationId +" - ClientId: " +ClientId);
+                            console.log("Existing Message - Message: " +Message +" - ClientId: " +ClientId);
                             db.close();
                             callback();
                           }else{
                             var msj = db.models.Messages();
                             msj.Message=Message
-                            msj.LocationId=LocationId
+                            msj.OfferId=OfferId
                             msj.ClientId=ClientId
-                            msj.Visibility=Visibility
+                            msj.IsPrivate=1
                             msj.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
                             
                             msj.save(function (err) {
@@ -214,7 +214,7 @@ exports.AddMessage = function AddMessage(Message,LocationId,ClientId,Visibility,
                                         console.log(err);
                                         db.close();
                                      }else{
-                                     console.log("New Message Added Sucessfully - Message: " +Message +" - LocationId: " +LocationId +" - ClientId: " +ClientId);
+                                     console.log("New Message Added Sucessfully - Message: " +Message +" - ClientId: " +ClientId);
                                      db.close();
                                      callback();
                                      }
@@ -411,7 +411,7 @@ exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Actio
                     if (err) throw err;
                     // loaded!
                     var User = db.models.Users;
-                    
+
                     User.find({ DeviceToken: DeviceToken}, function (err,usr) {
                         if(err){
                             console.log(err);
@@ -465,6 +465,7 @@ function AddSentMessage(UserId,MessageId){
                     var SentMessage = db.models.SentMessages();
                     SentMessage.UserId=UserId
                     SentMessage.MessageId=MessageId
+                    SentMessage.MessageRead=0
                     SentMessage.TimeSent=moment.utc().format("YYYY-MM-DD HH:mm:ss");
                     
                     SentMessage.save(function (err) {
@@ -472,7 +473,7 @@ function AddSentMessage(UserId,MessageId){
                             console.log(err);
                             db.close();
                          }else{
-                         console.log("SentMessage Added Sucessfully");
+                         //console.log("SentMessage Added Sucessfully");
                          db.close();
                          }
                      });
@@ -496,7 +497,7 @@ function DeleteSentMessage(UserId,MessageId){
                             console.log(err);
                             db.close();
                         }else{
-                            console.log("SentMessage Deleted Sucessfully");
+                            //console.log("SentMessage Deleted Sucessfully");
                             db.close();
                         }
                     });
@@ -1384,6 +1385,94 @@ exports.ReadMessage = function ReadMessage(UserId,MessageId,callback){
                         callback(JSON.stringify(msj))
                       }
                     })
+            });
+        });
+}
+
+exports.GetUsersDeviceToken = function GetFriends(UserQuery,OfferId,ClientId,OfferExpirationMinutes,SendMessageOnly,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+
+                    query=UserQuery
+
+                    var ActiveUsers={
+                      "iOS":[],
+                      "Android":[]
+                    }
+
+                    var iOS=[]
+                    var Android=[]
+
+                    db.driver.execQuery(query, function (err, users) { 
+
+                      if(err){
+                        console.log(err);
+                        callback(ActiveUsers);
+                        db.close();
+                      }else{
+                        db.close();
+                        //console.log(users)
+                        //return
+                        for(var i=0;i<users.length;i++){
+                            if(users[i].PhoneType=="iOS"){
+                              iOS.push(users[i].DeviceToken)
+                            }else if(users[i].PhoneType=="Android"){
+                              Android.push(users[i].DeviceToken)
+                            }
+                        }
+
+                        if(SendMessageOnly=="false"){
+                          for(var i=0;i<users.length;i++){
+                            AddPrivateOfferToUser(users[i].UserId,OfferId,OfferExpirationMinutes,ClientId)
+                          }
+                        }
+
+                        ActiveUsers["iOS"]=iOS;
+                        ActiveUsers["Android"]=Android;
+                        callback(ActiveUsers);
+                      }
+                    })
+            });
+        });
+}
+
+function AddPrivateOfferToUser(UserId,OfferId,OfferExpirationMinutes,ClientId){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var UserPrivateOffers = db.models.UserPrivateOffers();
+                    UserPrivateOffers.UserId=UserId
+                    UserPrivateOffers.ClientId=ClientId
+                    UserPrivateOffers.OfferId=OfferId
+
+                    // Calculate Start and End Date Of Private Offer
+                    var Start= moment.utc()
+                    UserPrivateOffers.StartDate=Start.format("YYYY-MM-DD HH:mm:ss");
+
+                    var End= Start.add('minutes',OfferExpirationMinutes)
+                    UserPrivateOffers.EndDate=End.format("YYYY-MM-DD HH:mm:ss");
+
+                    UserPrivateOffers.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                    
+                    UserPrivateOffers.save(function (err) {
+                         if (err){
+                            console.log(err);
+                            console.log("ERROR Adding PrivateOffer To User: " +UserId +" - OfferId: " +OfferId);
+                            db.close();
+                         }else{
+                            //console.log("PrivateOffer Added Sucessfully To User: " +UserId +" - OfferId: " +OfferId);
+                            db.close();
+                         }
+                     });
             });
         });
 }
