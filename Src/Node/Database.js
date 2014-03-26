@@ -621,6 +621,7 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
 function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback){
 
 // Remove Offers Already Redeemed
+
   for(var i=0;i<PublicOffers.length;i++){
       for(var j=0;j<RedemedOffers.length;j++){
         if(PublicOffers[i].OfferId==RedemedOffers[j] && PublicOffers[i].MultiUse==0){
@@ -629,39 +630,40 @@ function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback
       }
     }
 
-// Remove PrivateOffers Already Redeemed
-   for(var i=0;i<PrivateOffers.length;i++){
-      for(var j=0;j<RedemedOffers.length;j++){
-        if(PrivateOffers[i]==RedemedOffers[j]){
-          PrivateOffers.splice(i,1);
-        }
-      }
-    }
-
-
 // Remove PrivateOffers Not added to User
-    for(var i=0;i<PublicOffers.length;i++){
-        var UserPrivateOffer= false;
-        if(PublicOffers[i].IsPrivate==1){
+    var i=0;
+    while(i<PublicOffers.length){
+      var UserPrivateOffer= false;
+      if(PublicOffers[i].IsPrivate==1){
           for(var j=0;j<PrivateOffers.length;j++){
             if(PublicOffers[i].OfferId==PrivateOffers[j]){
               UserPrivateOffer=true;
+              break;
             }
           }
           if(!UserPrivateOffer){
             PublicOffers.splice(i,1);
+          }else{
+            i=i+1
           }
+        }else{
+          i=i+1
         }
     }
 
-// Remove Offers Exceding the TotalRedemption 
-    for(var i=0;i<PublicOffers.length;i++){
+// Remove Offers Exceding the TotalRedemption
+    var i=0;
+    while(i<PublicOffers.length){
       if(PublicOffers[i].TotalRedemption!=null){
         if(PublicOffers[i].ActualRedemption>=PublicOffers[i].TotalRedemption){
           PublicOffers.splice(i,1);
+        }else{
+          i=i+1
         }
+      }else{
+        i=i+1
       }
-    }
+    } 
 
 // Convert Dates to Local Time
     for(var i=0;i<PublicOffers.length;i++){
