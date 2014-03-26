@@ -49,6 +49,7 @@ module.exports = function (db, cb) {
     db.define('Users', {
         DeviceToken : String,
         PhoneType : String,
+        Timezone: String,
         FbName : String,
         FbLastName : String,
         FbAge : Number,

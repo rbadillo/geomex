@@ -228,7 +228,7 @@ exports.AddMessage = function AddMessage(Message,OfferId,ClientId,callback){
 }
 
 
-exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude){
+exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Timezone,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
@@ -246,6 +246,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Event,FbName,FbL
                             usr.UserId=UserId
                             usr.DeviceToken=DeviceToken
                             usr.PhoneType=PhoneType
+                            usr.Timezone=Timezone
                             usr.FbName=FbName
                             usr.FbLastName=FbLastName
                             usr.FbAge=FbAge
@@ -279,6 +280,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Event,FbName,FbL
                             usr.UserId=UserId
                             usr.DeviceToken=DeviceToken
                             usr.PhoneType=PhoneType
+                            usr.Timezone=Timezone
                             usr.FbName=FbName
                             usr.FbLastName=FbLastName
                             usr.FbAge=FbAge
@@ -1389,7 +1391,7 @@ exports.ReadMessage = function ReadMessage(UserId,MessageId,callback){
         });
 }
 
-exports.GetUsersDeviceToken = function GetFriends(UserQuery,OfferId,ClientId,OfferExpirationMinutes,SendMessageOnly,callback){
+exports.GetUsersDeviceToken = function GetUsersDeviceToken(UserQuery,OfferId,ClientId,SendMessageOnly,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
@@ -1407,6 +1409,7 @@ exports.GetUsersDeviceToken = function GetFriends(UserQuery,OfferId,ClientId,Off
 
                     var iOS=[]
                     var Android=[]
+                    var UserIds=[]
 
                     db.driver.execQuery(query, function (err, users) { 
 
@@ -1424,55 +1427,121 @@ exports.GetUsersDeviceToken = function GetFriends(UserQuery,OfferId,ClientId,Off
                             }else if(users[i].PhoneType=="Android"){
                               Android.push(users[i].DeviceToken)
                             }
+                            UserIds.push(users[i].UserId)
                         }
+
+                        //if(SendMessageOnly=="false"){
+                          //for(var i=0;i<users.length;i++){
+                            //AddPrivateOfferToUser(users[i].UserId,OfferId,ClientId)
+                         // }
+                       // }
 
                         if(SendMessageOnly=="false"){
-                          for(var i=0;i<users.length;i++){
-                            AddPrivateOfferToUser(users[i].UserId,OfferId,OfferExpirationMinutes,ClientId)
-                          }
+                            AddPrivateOfferRecursive(UserIds,0,OfferId,ClientId,function(){
+                                  ActiveUsers["iOS"]=iOS;
+                                  ActiveUsers["Android"]=Android;
+                                  callback(ActiveUsers);
+                            })
+                        }else{
+                          ActiveUsers["iOS"]=iOS;
+                          ActiveUsers["Android"]=Android;
+                          callback(ActiveUsers);
                         }
 
-                        ActiveUsers["iOS"]=iOS;
-                        ActiveUsers["Android"]=Android;
-                        callback(ActiveUsers);
                       }
                     })
             });
         });
 }
 
-function AddPrivateOfferToUser(UserId,OfferId,OfferExpirationMinutes,ClientId){
+
+function AddPrivateOfferRecursive(UserIds,Index,OfferId,ClientId,callback){
+
+  if(Index >= UserIds.length){
+      console.log()
+      callback();
+  }else{
+      AddPrivateOfferToUser(UserIds[Index],OfferId,ClientId,function(){
+          Index=Index+1;
+          AddPrivateOfferRecursive(UserIds,Index,OfferId,ClientId,callback)
+      })
+  }
+}
+
+function AddPrivateOfferToUser(UserId,OfferId,ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
 
             db.load("./Models", function (err) {
                     if (err) throw err;
-                    // loaded!
-                    var UserPrivateOffers = db.models.UserPrivateOffers();
-                    UserPrivateOffers.UserId=UserId
-                    UserPrivateOffers.ClientId=ClientId
-                    UserPrivateOffers.OfferId=OfferId
 
-                    // Calculate Start and End Date Of Private Offer
-                    var Start= moment.utc()
-                    UserPrivateOffers.StartDate=Start.format("YYYY-MM-DD HH:mm:ss");
+                    var User= db.models.Users;
+                    var Offers= db.models.Offers;
 
-                    var End= Start.add('minutes',OfferExpirationMinutes)
-                    UserPrivateOffers.EndDate=End.format("YYYY-MM-DD HH:mm:ss");
+                    Offers.get(OfferId,function (err,offer) {
+                        if(err){
+                          console.log(err);
+                          console.log("Error retrieving data from database - OfferId: " +OfferId);
+                          db.close();
+                          callback()
+                        }else{
 
-                    UserPrivateOffers.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                    
-                    UserPrivateOffers.save(function (err) {
-                         if (err){
-                            console.log(err);
-                            console.log("ERROR Adding PrivateOffer To User: " +UserId +" - OfferId: " +OfferId);
-                            db.close();
-                         }else{
-                            //console.log("PrivateOffer Added Sucessfully To User: " +UserId +" - OfferId: " +OfferId);
-                            db.close();
+                              User.get(UserId,function (err, usr) {
+                                  if(err){
+                                    console.log(err);
+                                    console.log("Error retrieving data from database - UserId: " +UserId);
+                                    db.close();
+                                    callback();
+                                  }else{
+                                    
+                                    // loaded!
+                                    var UserPrivateOffers = db.models.UserPrivateOffers();
+                                    UserPrivateOffers.UserId=UserId
+                                    UserPrivateOffers.ClientId=ClientId
+                                    UserPrivateOffers.OfferId=OfferId
+
+                                    // Calculate Start and End Date Of Private Offer
+                                    var LocalTime= moment.utc().zone(usr.Timezone);
+                                    var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
+                                    var StartDate=LocalToUtc;
+                                    var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
+                                    UserPrivateOffers.StartDate=LocalToUtc;
+
+                                    var End= StartDate.add('minutes',offer.DynamicRedemptionMinutes)
+
+                                    if(End.diff(offer.EndDate) > 0){
+                                      // Set End Date as Offer End because is greater.
+                                      UserPrivateOffers.EndDate=moment(offer.EndDate).format("YYYY-MM-DD HH:mm:ss");
+                                    }else{
+                                      // Set End Date Dynamic.
+                                      UserPrivateOffers.EndDate=End.format("YYYY-MM-DD HH:mm:ss");
+                                    }
+
+                                    UserPrivateOffers.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                                    
+                                    UserPrivateOffers.save(function (err) {
+                                         if (err){
+                                            console.log(err);
+                                            console.log("ERROR Adding PrivateOffer To User: " +UserId +" - OfferId: " +OfferId);
+                                            db.close();
+                                            callback()
+                                         }else{
+                                            console.log("PrivateOffer Added Sucessfully To User: " +UserId +" - OfferId: " +OfferId);
+                                            db.close();
+                                            callback();
+                                         }
+                                     });
+                                  }
+                              });
+
                          }
-                     });
+
+                    })
+
+                    
+
+                    
             });
         });
 }

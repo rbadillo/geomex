@@ -12,6 +12,7 @@ exports.Register = function Register(req,res){
     var UserId;
     var DeviceToken;
     var PhoneType;
+    var Timezone;
     var Event;
     var FbName;
     var FbLastName;
@@ -42,6 +43,12 @@ exports.Register = function Register(req,res){
     PhoneType=req.body.phone_type
     }catch(e){
     PhoneType=null;
+    }
+
+    try{
+    Timezone=req.body.timezone
+    }catch(e){
+    Timezone=null;
     }
 
     try{
@@ -127,6 +134,7 @@ exports.Register = function Register(req,res){
     console.log("UserId: " +UserId);
     console.log("DeviceToken: " +DeviceToken);
     console.log("PhoneType: " +PhoneType);
+    console.log("Timezone: " +Timezone);
     console.log("Event: " +Event);
     console.log("FbName: " +FbName);
     console.log("FbLastName: " +FbLastName);
@@ -142,7 +150,7 @@ exports.Register = function Register(req,res){
     console.log("Longitude: " + Longitude);
     console.log("");
 
-    DAL.AddUser(UserId,DeviceToken,PhoneType,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude);
+    DAL.AddUser(UserId,DeviceToken,PhoneType,Timezone,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude);
    
 }
 
