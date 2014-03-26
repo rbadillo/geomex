@@ -4,6 +4,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Users` (
   `UserId` BIGINT UNSIGNED NOT NULL ,
   `DeviceToken` VARCHAR(255) NULL ,
   `PhoneType` VARCHAR(50) NOT NULL ,
+  `Timezone` VARCHAR(10) NOT NULL ,
   `FbName` VARCHAR(100) NULL ,
   `FbLastName` VARCHAR(100) NULL ,
   `FbAge` INT NULL ,
