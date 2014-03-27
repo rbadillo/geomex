@@ -38,7 +38,7 @@ module.exports = function (db, cb) {
     });
 
     db.define('SentMessages', {
-        UserId : Number,
+        UserId : {type:"number",unsigned: true, size:8, rational: false},
         MessageId : Number,
         MessageRead : Number,
         TimeSent : Date
@@ -47,6 +47,7 @@ module.exports = function (db, cb) {
     });
 
     db.define('Users', {
+        UserId: {type:"number",unsigned: true, size:8, rational: false},
         DeviceToken : String,
         PhoneType : String,
         Timezone: String,
@@ -65,7 +66,7 @@ module.exports = function (db, cb) {
     });
 
     db.define('LocationEvents', {
-        UserId : Number,
+        UserId : {type:"number",unsigned: true, size:8, rational: false},
         ClientId: Number,
         LocationId : Number,
         LocationName: String,
@@ -103,7 +104,7 @@ module.exports = function (db, cb) {
 
     db.define('UserPrivateOffers', {
         ClientId: Number,
-        UserId: Number,
+        UserId: {type:"number",unsigned: true, size:8, rational: false},
         OfferId: Number,
         StartDate: Date,
         EndDate: Date,
@@ -114,7 +115,7 @@ module.exports = function (db, cb) {
 
     db.define('OfferRedemption', {
         ClientId: Number,
-        UserId: Number,
+        UserId: {type:"number",unsigned: true, size:8, rational: false},
         OfferId: Number,
         TimeCreated : Date
     },{
@@ -123,7 +124,7 @@ module.exports = function (db, cb) {
 
     db.define('OfferEvents', {
         ClientId: Number,
-        UserId: Number,
+        UserId: {type:"number",unsigned: true, size:8, rational: false},
         OfferId: Number,
         Event: String,
         Latitude: Number,
@@ -134,7 +135,7 @@ module.exports = function (db, cb) {
     });
 
     db.define('AppEvents', {
-        UserId: Number,
+        UserId: {type:"number",unsigned: true, size:8,  rational: false},
         Event: String,
         Latitude: Number,
         Longitude: Number,

@@ -419,7 +419,7 @@ exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Actio
                             console.log(err);
                             db.close();
                         }else{
-                            //console.log(usr[0].UserId);
+                            console.log(usr[0].UserId);
                             GetMessageId(usr[0].UserId,Message,Action);
                             db.close();
                         }
@@ -445,6 +445,7 @@ function GetMessageId(UserId,Message,Action){
                         }else{
                             //console.log(msj[0].MessageId);
                             if(Action=="Add"){
+                              console.log(UserId)
                               AddSentMessage(UserId,msj[0].MessageId);
                             }else if (Action=="Delete"){
                                DeleteSentMessage(UserId,msj[0].MessageId);
@@ -464,6 +465,7 @@ function AddSentMessage(UserId,MessageId){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
+                    console.log(UserId)
                     var SentMessage = db.models.SentMessages();
                     SentMessage.UserId=UserId
                     SentMessage.MessageId=MessageId
@@ -904,7 +906,7 @@ exports.GetAllActiveClients = function GetAllActiveClients(callback){
                     // loaded!
 
                     query="Select ClientId,Name,Logo,IsGold,OfferClosestExpiration from Clients where IsActive=1 and ActiveOffers>0 \
-                    Order by IsGold DESC,OfferClosestExpiration ASC"
+                    Order by IsGold DESC,OfferClosestExpiration ASC,ClientId ASC"
 
                     db.driver.execQuery(query, function (err, clients) { 
 
@@ -1166,7 +1168,7 @@ exports.GetFriendActivity = function GetFriendActivity(FriendId,callback){
                     // loaded!
 
                     query="Select distinct OfferRedemption.OfferId,Offers.Title,Offers.Subtitle,Offers.EndDate, \
-                    Offers.PrimaryImage,Offers.SecondaryImage,OfferRedemption.ClientId,Clients.Name as ClientName,Clients.Logo \
+                    Offers.PrimaryImage,Offers.SecondaryImage,OfferRedemption.ClientId,Clients.Name as ClientName,Clients.Logo,OfferRedemption.TimeCreated \
                     from OfferRedemption,Offers,Clients \
                     where \
                     OfferRedemption.UserId=" +FriendId +" and Clients.ClientId=OfferRedemption.ClientId \
@@ -1344,7 +1346,7 @@ function GetMessagesPrivate(UserId,Messages,callback){
                         and SentMessages.UserId= " +UserId
                         +" and Messages.MessageId in (" +MIds +")"
                         +" and SentMessages.MessageId=Messages.MessageId" 
-                        +" Order by Messages.TimeCreated DESC"
+                        +" Order by SentMessages.MessageRead,Messages.TimeCreated DESC"
 
                         db.driver.execQuery(query, function (err, Messages) { 
 
