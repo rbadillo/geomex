@@ -1,0 +1,2 @@
+0 */1 * * * python /home/geomex/Desktop/capistrano/current/Utilities/NearDns.py >/dev/null 2>&1
+*/1 * * * * python /home/geomex/Desktop/capistrano/current/Utilities/ClientUtility.py > /home/geomex/Desktop/capistrano/current/Utilities/ClientUtility.log
