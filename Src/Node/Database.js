@@ -412,21 +412,23 @@ exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Actio
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    var User = db.models.Users;
+                    query="Select UserId,DeviceToken,PhoneType from Users where DeviceToken= '" +DeviceToken +"'"
 
-                    User.find({ DeviceToken: DeviceToken}, function (err,usr) {
-                        if(err){
-                            console.log(err);
-                            db.close();
-                        }else{
-                            console.log(usr[0].UserId);
-                            GetMessageId(usr[0].UserId,Message,Action);
-                            db.close();
-                        }
-                    });
+                            db.driver.execQuery(query, function (err, user) { 
+
+                                  if(err){
+                                    console.log(err);
+                                    db.close();
+                                  }else{
+                                    db.close();
+                                    GetMessageId(user[0].UserId,Message,Action);
+                                  }
+
+                            })
                 });
             });
     }
+
 
 function GetMessageId(UserId,Message,Action){
 
@@ -445,7 +447,6 @@ function GetMessageId(UserId,Message,Action){
                         }else{
                             //console.log(msj[0].MessageId);
                             if(Action=="Add"){
-                              console.log(UserId)
                               AddSentMessage(UserId,msj[0].MessageId);
                             }else if (Action=="Delete"){
                                DeleteSentMessage(UserId,msj[0].MessageId);
@@ -465,7 +466,6 @@ function AddSentMessage(UserId,MessageId){
             db.load("./Models", function (err) {
                     if (err) throw err;
                     // loaded!
-                    console.log(UserId)
                     var SentMessage = db.models.SentMessages();
                     SentMessage.UserId=UserId
                     SentMessage.MessageId=MessageId
