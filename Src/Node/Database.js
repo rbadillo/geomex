@@ -43,7 +43,7 @@ exports.AddClient = function AddClient(Name,Logo){
 }
 
 //exports.AddLocation = function AddLocation
-exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode){
+exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
@@ -61,8 +61,8 @@ exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Addr
                         db.close();
                       }else{
                         if(loc.length){
-                            console.log("Existing Location");
-                            GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode);
+                            console.log("Existing Location - " +Name);
+                            GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId);
                             db.close();
                           }else{
                             var location = db.models.Locations();
@@ -83,9 +83,9 @@ exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Addr
                                     console.log(err);
                                     db.close();
                                  }else{
-                                 console.log("Location Added Sucessfully");
+                                 console.log("Location Added Sucessfully - " +Name);
                                  db.close();
-                                 GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode);
+                                 GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId);
                                  }
                              });
                           }
@@ -95,7 +95,7 @@ exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Addr
         });
 }
 
-function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode){
+function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
@@ -112,16 +112,66 @@ function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,Ci
                         console.log(err);
                         db.close();
                       }else{
-                        console.log("DB LocationId: " +loc[0].LocationId);
+                        //console.log("DB LocationId: " +loc[0].LocationId);
                         db.close();
-                        PostGimbal(Name,Address,Latitude,Longitude,loc[0].LocationId);
+                        AddGimbalGeofence(Name,Address,Latitude,Longitude,loc[0].LocationId,OfferId,ClientId);
                       }
                     });
             });
         });
 }
 
-function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
+function GetOfferObject(OfferId,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var Offers = db.models.Offers;
+
+                    Offers.find({OfferId:OfferId},function (err, offer) {
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                        callback(null)
+                      }else{
+                        db.close();
+                        callback(offer)
+                      }
+                    });
+            });
+        });
+}
+
+function GetClientObject(ClientId,callback){
+
+        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+                    var Client = db.models.Clients;
+
+                    Client.find({ClientId:ClientId},function (err, client) {
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                        callback(null)
+                      }else{
+                        db.close();
+                        callback(client)
+                      }
+                    });
+            });
+        });
+}
+
+function AddGimbalGeofence(Name,Address,Latitude,Longitude,LocationId,OfferId,ClientId) {
   // Build the post string from an object
   var Place= {
         "name": Name,
@@ -162,7 +212,187 @@ function PostGimbal(Name,Address,Latitude,Longitude,LocationId) {
       });
 
       res.on('end', function(){
-          console.log('Gimbal: ' +res.statusCode);
+          if(res.statusCode==200){
+
+            GimbalResponse=JSON.parse(Response)
+            GimbalLocationId=GimbalResponse.id
+
+            GetOfferObject(OfferId,function(OfferObject){
+              if(OfferObject!=null){
+                console.log("SUCCESS - Creating Gimbal Geofence - " +Name +" - GimbalLocationId: " +GimbalLocationId +" - HTTP " +res.statusCode)
+                AddGimbalCommunication(Name,OfferObject,ClientId,GimbalLocationId)
+              }else{
+                console.log("Error - OfferId: " +OfferId +" doesn't exist")
+              }
+
+            })
+
+          }else{
+            console.log("ERROR - Creating Gimbal Geofence - " +Name +" - GimbalLocationId: " +GimbalLocationId +" - HTTP " +res.statusCode)
+          }
+      });
+
+  });
+
+  // post the data
+  post_req.write(post_data);
+  post_req.end();
+
+}
+
+function AddGimbalCommunication(Name,OfferObject,ClientId,GimbalLocationId) {
+  // Build the post string from an object
+  var Communication= {
+        "name": "At " +Name,
+        "published":true,
+        "start_date": moment(OfferObject[0].StartDate).format("YYYY-MM-DD"),
+        "end_date": moment(OfferObject[0].EndDate).format("YYYY-MM-DD"),
+        "notification": {
+            "title": "Near",
+            "description": "Near"
+        },
+        "context_trigger":{
+          "geofence":{"event_type":"at","locations":[GimbalLocationId]}
+        }
+    }
+
+  var post_data = tryParseJson(Communication);
+
+  // An object of options to indicate where to post to
+  var post_options = {
+      host: 'manager.gimbal.com',
+      port: '443',
+      path: '/api/communications',
+      method: 'POST',
+      headers: {
+          'AUTHORIZATION': 'Token token=88530dc982fb7b9a5aa1498197b3038f',
+          'Content-Type': 'application/json',
+          'Content-Length': post_data.length
+      }
+  };
+
+  // Set up the request
+  var post_req = https.request(post_options, function(res) {
+      var Response="";
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          Response= Response + chunk;
+      });
+
+      res.on('end', function(){
+          if(res.statusCode==200){
+
+            GimbalResponse=JSON.parse(Response)
+            GimbalCommunicationId=GimbalResponse.id
+
+            GetClientObject(ClientId,function(ClientObject){
+              if(ClientObject!=null){
+                console.log("SUCCESS - Creating Gimbal Communication - " +Name +" - GimbalLocationId: " +GimbalLocationId +" - HTTP " +res.statusCode)
+                AddGimbalCommunicationAttributes(Name,OfferObject,ClientObject,GimbalLocationId,GimbalCommunicationId)
+              }else{
+                console.log("ERROR - ClientId: " +ClientId +" doesn't exist")
+              }
+            })
+
+          }else{
+            console.log("ERROR - Creating Gimbal Communication - " +Name +" - GimbalLocationId: " +GimbalLocationId +" - HTTP " +res.statusCode)
+          }
+      });
+
+  });
+
+  // post the data
+  post_req.write(post_data);
+  post_req.end();
+
+}
+
+function AddGimbalCommunicationAttributes(Name,OfferObject,ClientObject,GimbalLocationId,CommunicationId) {
+  // Build the post string from an object
+  var Attributes= {
+        "communication_attributes": {
+          "offer_id": OfferObject[0].OfferId,
+          "client_name": ClientObject[0].Name,
+          "offer_title": OfferObject[0].Title,
+          "offer_subtitle": OfferObject[0].Subtitle,
+          "client_logo": ClientObject[0].Logo,
+          "client_id": ClientObject[0].ClientId
+        }
+    }
+
+  var post_data = tryParseJson(Attributes);
+
+  // An object of options to indicate where to post to
+  var post_options = {
+      host: 'manager.gimbal.com',
+      port: '443',
+      path: '/api/communications/'+CommunicationId+'/communication_attributes',
+      method: 'POST',
+      headers: {
+          'AUTHORIZATION': 'Token token=88530dc982fb7b9a5aa1498197b3038f',
+          'Content-Type': 'application/json',
+          'Content-Length': post_data.length
+      }
+  };
+
+  // Set up the request
+  var post_req = https.request(post_options, function(res) {
+      var Response="";
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          Response= Response + chunk;
+      });
+
+      res.on('end', function(){
+          if(res.statusCode==200){
+            console.log("SUCCESS - Adding Communication Attributes - " +Name +" - GimbalLocationId: " +GimbalLocationId +" - CommunicationId: " +CommunicationId +" - HTTP " +res.statusCode)
+            PublishGimbalCommunication(Name,GimbalLocationId,CommunicationId)
+          }else{
+            console.log("ERROR - Adding Communication Attributes - " +Name +" - GimbalLocationId: " +GimbalLocationId +" - CommunicationId: " +CommunicationId +" - HTTP " +res.statusCode)
+          }
+      });
+
+  });
+
+  // post the data
+  post_req.write(post_data);
+  post_req.end();
+
+}
+
+function PublishGimbalCommunication(Name,GimbalLocationId,CommunitationId) {
+  // Build the post string from an object
+  var Publish= {}
+
+  var post_data = tryParseJson(Publish);
+
+  // An object of options to indicate where to post to
+  var post_options = {
+      host: 'manager.gimbal.com',
+      port: '443',
+      path: '/api/communications/'+CommunitationId+'/publish',
+      method: 'POST',
+      headers: {
+          'AUTHORIZATION': 'Token token=88530dc982fb7b9a5aa1498197b3038f',
+          'Content-Type': 'application/json',
+          'Content-Length': post_data.length
+      }
+  };
+
+  // Set up the request
+  var post_req = https.request(post_options, function(res) {
+      var Response="";
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          Response= Response + chunk;
+      });
+
+      res.on('end', function(){
+          if(res.statusCode==200){
+            console.log("SUCCESS - Publishing Communication - " +Name +" - GimbalLocationId: " +GimbalLocationId +" - CommunitationId: " +CommunitationId +" - HTTP " +res.statusCode)
+          }else{
+            console.log("ERROR - Publishing Communication - " +Name +" - GimbalLocationId: " +GimbalLocationId +" - CommunitationId: " +CommunitationId +" - HTTP " +res.statusCode)
+          }
       });
 
   });
@@ -257,6 +487,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Timezone,Event,F
                             usr.FbWork=FbWork
                             usr.FbLink=FbLink
                             usr.FbPhoto=FbPhoto
+                            usr.LastRegister=moment.utc().format("YYYY-MM-DD HH:mm:ss");
 
                             usr.save(function (err) {
                                  if (err){
@@ -291,6 +522,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Timezone,Event,F
                             usr.FbWork=FbWork
                             usr.FbLink=FbLink
                             usr.FbPhoto=FbPhoto
+                            usr.LastRegister=moment.utc().format("YYYY-MM-DD HH:mm:ss");
                             
                             usr.save(function (err) {
                                  if (err){

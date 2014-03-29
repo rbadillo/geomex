@@ -60,7 +60,8 @@ module.exports = function (db, cb) {
         FbSchool : String,
         FbWork : String,
         FbLink : String,
-        FbPhoto : String
+        FbPhoto : String,
+        LastRegister : Date
     },{ 
         id: ['UserId']  // Primary Key
     });
