@@ -1,4 +1,4 @@
-@reboot /home/geomex/Near/current/Utilities/NearServer.sh >> /home/geomex/Desktop/Logs/NearServer.log
-0 */1 * * * python /home/geomex/Near/current/Utilities/NearDns.py >> /home/geomex/Desktop/Logs/NearDns.log
+@reboot /home/geomex/Near/current/Utilities/NearServer.sh >> /home/geomex/Logs/NearServer.log
+0 */1 * * * python /home/geomex/Near/current/Utilities/NearDns.py >> /home/geomex/Logs/NearDns.log
 */1 * * * * python /home/geomex/Near/current/Utilities/ClientUtility.py >> /home/geomex/Logs/ClientUtility.log
 0 19 * * * bash /home/geomex/Near/current/Utilities/BackupDB.sh >> /home/geomex/Logs/BackupDB.log
