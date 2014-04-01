@@ -13,17 +13,30 @@ How to Setup Environment
 
 	a) cd /
 
-4.- Instalar git
+4.- Update al Server
+
+	a) sudo apt-get update
+	
+5.- Instalar git
 
 	a) sudo apt-get install -y git-core
+	
+6.- Create Base Directories
 
-5.- Traer Repositorio Remoto
+	a) cd ~
+	b) mkdir Near
+	c) mkdir DbBackup
+	d) mkdir Logs
 
-	a) git clone https://github.com/rbadillo/geomex.git
+6.- Traer Repositorio Remoto
 
-6.- Cambiarse al SetupScripts Directory
+	a) cd Near/
+	b) git clone https://github.com/rbadillo/geomex.git
+	c) mv geomex/ current/
 
-	a) cd /geomex/SetupScripts
+7.- Cambiarse al SetupScripts Directory
+
+	a) cd /current/SetupScripts
 
 7.- Correr el Script 01Gui.sh
 
@@ -43,7 +56,7 @@ After reboot
 
 10.- Cambiarse al SetupScripts Directory
 
-	a) cd /geomex/SetupScripts
+	a) cd /current/SetupScripts
 
 11.- Correr el Script 02Technologies.sh
 
@@ -59,7 +72,7 @@ After reboot
 
 15.- Cambiarse al SetupScripts Directory
 
-	a) cd /geomex/SetupScripts
+	a) cd /current/SetupScripts
 
 16.- Correr el Script 04VncServer.sh (User geomex)
 
@@ -81,9 +94,9 @@ How to Setup Mysql Database
 
 	a) sudo su
 
-3.- Cambiarse al geomex/Src/Sql Directory
+3.- Cambiarse al current/Src/Sql Directory
 
-	a) cd /geomex/Src/Sql
+	a) cd /current/Src/Sql
 
 4.- Correr Script SetupDatabase.sh
 
@@ -101,9 +114,9 @@ How to Setup Nodejs Modules
 
 	a) sudo su
 
-3.- Cambiarse al geomex/Src/Node Directory
+3.- Cambiarse al current/Src/Node Directory
 
-	a) cd /geomex/Src/Node
+	a) cd /current/Src/Node
 
 4.- Correr Script SetupNodejs.sh
 
