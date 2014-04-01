@@ -1,2 +1,4 @@
-0 */1 * * * python /home/geomex/Desktop/capistrano/current/Utilities/NearDns.py >> /home/geomex/Desktop/capistrano/current/Utilities/NearDns.log
-*/1 * * * * python /home/geomex/Desktop/capistrano/current/Utilities/ClientUtility.py >> /home/geomex/Desktop/capistrano/current/Utilities/ClientUtility.log
+@reboot /home/geomex/Near/current/Utilities/NearServer.sh >> /home/geomex/Desktop/Near/current/log/NearServer.log
+0 */1 * * * python /home/geomex/Near/current/Utilities/NearDns.py >> /home/geomex/Desktop/Near/current/log/NearDns.log
+*/1 * * * * python /home/geomex/Near/current/Utilities/ClientUtility.py >> /home/geomex/Near/current/log/ClientUtility.log
+0 19 * * * bash /home/geomex/Near/current/Utilities/BackupDB.sh >> /home/geomex/Near/current/log/BackupDB.log
