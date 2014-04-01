@@ -1246,6 +1246,7 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                   from OfferRedemption,Offers \
                                   where Offers.MultiUse=0 \
                                   and OfferRedemption.UserId=" +UserId 
+                                  +" and OfferRedemption.OfferId=Offers.OfferId"
                                   +" and OfferRedemption.OfferId="+OfferId+")";
 
                                   //console.log(query)
@@ -1279,10 +1280,13 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                       Offers.OfferId=" +OfferId
                                       +" and Offers.StartDate<='" +UserTime +"'"
                                       +" and '" +UserTime +"' <=Offers.EndDate \
-                                      and Offers.OfferId not in (Select distinct OfferRedemption.OfferId \
-                                      from OfferRedemption \
+                                      and Offers.OfferId not in \
+                                      (Select distinct OfferRedemption.OfferId \
+                                      from OfferRedemption,Offers \
                                       where Offers.MultiUse=0 \
-                                      and OfferRedemption.UserId=" +UserId +" and OfferRedemption.OfferId="+OfferId+")"
+                                      and OfferRedemption.UserId=" +UserId 
+                                      +" and OfferRedemption.OfferId=Offers.OfferId"
+                                      +" and OfferRedemption.OfferId="+OfferId+")";
 
                                       //console.log(query)
 
@@ -1399,14 +1403,15 @@ exports.GetFriendActivity = function GetFriendActivity(FriendId,callback){
                     if (err) throw err;
                     // loaded!
 
-                    query="Select distinct OfferRedemption.OfferId,Offers.Title,Offers.Subtitle,Offers.EndDate, \
-                    Offers.PrimaryImage,Offers.SecondaryImage,OfferRedemption.ClientId,Clients.Name as ClientName,Clients.Logo,OfferRedemption.TimeCreated \
+                    query="Select OfferRedemption.OfferId,Offers.Title,Offers.Subtitle,Offers.EndDate, \
+                    Offers.PrimaryImage,Offers.SecondaryImage,OfferRedemption.ClientId,Clients.Name as ClientName,Clients.Logo,Max(OfferRedemption.TimeCreated) as TimeCreated \
                     from OfferRedemption,Offers,Clients \
                     where \
                     OfferRedemption.UserId=" +FriendId +" and Clients.ClientId=OfferRedemption.ClientId \
                     and Offers.OfferId=OfferRedemption.OfferId \
                     and Offers.IsPrivate=0 \
-                    Order by OfferRedemption.TimeCreated DESC LIMIT 5";
+                    Group by OfferRedemption.OfferId \
+                    Order by TimeCreated DESC LIMIT 5";
 
                     db.driver.execQuery(query, function (err, friendActivity) { 
 
