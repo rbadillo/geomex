@@ -1164,24 +1164,25 @@ exports.GetClosestLocations = function GetClosestLocations(Latitude,Longitude,Ra
                     if (err) throw err;
                     // loaded!
 
-                    query="SELECT Name,Latitude, Longitude, \
+                    query="SELECT Locations.Name,Locations.Latitude,Locations.Longitude,Clients.Logo as ClientLogo, \
                            (6378.10 * ACOS(COS(RADIANS(latpoint)) \
                                     * COS(RADIANS(latitude)) \
                                     * COS(RADIANS(longpoint) - RADIANS(longitude)) \
                                     + SIN(RADIANS(latpoint)) \
-                                    * SIN(RADIANS(latitude)))) AS Distance_In_KM \
-                     FROM Locations \
+                                    * SIN(RADIANS(latitude)))) AS DistanceInKm \
+                     FROM Locations,Clients \
                      JOIN ( \
                            SELECT "  +Latitude   +" AS latpoint, "  +Longitude +" AS longpoint \
                        ) AS p \
-                     WHERE Latitude \
+                     WHERE Locations.Latitude \
                         BETWEEN latpoint  - (" +Radius +" / 111.045) \
                             AND latpoint  + (" +Radius +" / 111.045) \
-                       AND Longitude \
+                       AND Locations.Longitude \
                         BETWEEN longpoint - (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
                             AND longpoint + (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
-                       AND IsPrivate=0 \
-                     ORDER BY Distance_In_KM \
+                       AND Locations.IsPrivate=0 \
+                       AND Locations.ClientId=Clients.ClientId \
+                     ORDER BY DistanceInKm \
                      LIMIT 15"
 
                     db.driver.execQuery(query, function (err, locations) { 
