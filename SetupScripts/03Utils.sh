@@ -9,3 +9,6 @@ sudo apt-get update
 sudo apt-get install -y sublime-text
 sudo apt-get install -y python-mysqldb
 sudo apt-get install -y httperf
+sudo apt-get install -y python-dev
+sudo apt-get install -y python-setuptools
+sudo easy_install psutil
