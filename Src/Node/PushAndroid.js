@@ -22,31 +22,19 @@ exports.PushMessage=function PushMessage(MessageTitle,MessageSubtitle,Devices,Of
 
 
         if(SendMessageOnly=="false"){
-            // Update Analytics
-            for(var i=0;i<Devices.length;i++){
-                DAL.UpdateSentMessage(Devices[i],MessageSubtitle,"Add");
-            }
+            
+            DAL.UpdateSentMessageRecursive(Devices,0,MessageSubtitle,"Add",function(){
+                SendGCMPush(Devices,0,message,function(){
+                    console.log()
+                })
+            })
+        }else{
+            SendGCMPush(Devices,0,message,function(){
+                console.log()
+            })
         }
 
-        for(var i=0;i<Devices.length;i++){
-                // Auxiliary Array
-                var aux=[];
-                aux.push(Devices[i]);
-
-                sender.sendNoRetry(message, aux, function (err, result) {
-                    if(err){
-                        console.log("Error:" +err);
-                        DAL.UpdateSentMessage(aux[0],Message,"Delete");
-                    }else{
-                        if(result.failure==1){
-                            console.log("Failure Sending Message To Device: " +aux[0])
-                            DAL.UpdateSentMessage(aux[0],Message,"Delete");
-                        }else{
-                            console.log("Notification Transmitted Successfully To Device: " +aux[0]);
-                        }
-                    }
-                });
-        }
+        
 }
 
 function CreateCollapseKey()
@@ -59,3 +47,37 @@ function CreateCollapseKey()
 
     return text;
 }
+
+
+function SendGCMPush(Devices,Index,message,callback){
+
+    if(Index >= Devices.length){
+        console.log()
+        callback();
+    }else{
+        // Auxiliary Array
+        var aux=[];
+        aux.push(Devices[Index]);
+
+        sender.sendNoRetry(message, aux, function (err, result) {
+                if(err){
+                        console.log("Error:" +err);
+                        DAL.UpdateSentMessage(aux[0],Message,"Delete");
+                        Index=Index+1
+                        SendGCMPush(Devices,Index,message,callback)
+                }else{
+                        if(result.failure==1){
+                            console.log("Failure Sending Message To Device: " +aux[0])
+                            DAL.UpdateSentMessage(aux[0],Message,"Delete");
+                            Index=Index+1
+                            SendGCMPush(Devices,Index,message,callback)
+                        }else{
+                            console.log("Notification Transmitted Successfully To Device: " +aux[0]);
+                            Index=Index+1
+                            SendGCMPush(Devices,Index,message,callback)
+                        }
+                }
+            });
+        }
+}
+

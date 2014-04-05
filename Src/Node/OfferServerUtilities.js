@@ -7,9 +7,9 @@ exports.Test = function Test(req,res){
 
 exports.Offers = function Offers(req,res){
 
-    var UserId=req.params.UserId.toLowerCase()
+    var UserId=req.params.UserId
 
-    if(UserId=="null" || UserId=="undefined"){
+    if(UserId=="null" || UserId=="undefined" || UserId=="(null)"){
       res.setHeader('Content-Type', 'application/json');
       res.statusCode=406
       var msj= [{
@@ -50,7 +50,7 @@ exports.SingleOffer = function SingleOffer(req,res){
 
     var UserId=req.params.UserId
 
-    if(UserId=="null" || UserId=="undefined"){
+    if(UserId=="null" || UserId=="undefined" || UserId=="(null)"){
       res.setHeader('Content-Type', 'application/json');
       res.statusCode=406
       var msj= [{
@@ -79,14 +79,14 @@ exports.SingleOffer = function SingleOffer(req,res){
             res.setHeader('Content-Type', 'application/json');
             res.statusCode=406
             var msj= [{
-                    "State": "UserId: "+UserId +" - OfferId: " +OfferId +" - Event: OfferId already redeemed or doesn't exist"
+                    "State": "UserId: "+UserId +" - OfferId: " +OfferId +" - Status: Offer Redeemed/Inactive/Doesn't Exist"
                   }]
             var response= JSON.stringify(msj)
             res.write(response);
             res.end();
 
             console.log("");
-            console.log("ERROR - UserId: "+UserId +" - OfferId: " +OfferId +" - Event: OfferId already redeemed or doesn't exist");
+            console.log("ERROR - UserId: "+UserId +" - OfferId: " +OfferId +" - Status: Offer Redeemed/Inactive/Doesn't Exist");
             console.log("");
         }else{
 
@@ -103,7 +103,7 @@ exports.SingleOffer = function SingleOffer(req,res){
 exports.Redeem= function Redeem(req,res){
     var UserId=req.params.UserId
 
-    if(UserId=="null" || UserId=="undefined"){
+    if(UserId=="null" || UserId=="undefined" || UserId=="(null)"){
       res.setHeader('Content-Type', 'application/json');
       res.statusCode=406
       var msj= [{

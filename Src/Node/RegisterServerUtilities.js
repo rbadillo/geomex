@@ -205,6 +205,7 @@ exports.GeoEvent = function Register(req,res){
     if(Event=="at" || Event=="left"){
     DAL.GeoEvent(UserId,LocationId,Event,Latitude,Longitude)
     }else{
+      console.log("");
       console.log("ERROR - Wrong Event: " +Event +" - UserId: " +UserId +" - LocationId: " +LocationId)
       console.log("")
     }

@@ -21,7 +21,7 @@ exports.SendMessage = function SendMessage(req,res){
   DAL.GetUsersDeviceToken(UserQuery,OfferId,ClientId,SendMessageOnly,function(ActiveUsers){
 
     DAL.AddMessage(MessageSubtitle,OfferId,ClientId,function(){
-      //Send Message to RabbitMQ
+      //Sending Message to RabbitMQ
       MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly);
     });
 

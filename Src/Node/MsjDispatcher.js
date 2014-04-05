@@ -12,6 +12,7 @@ connection.on('ready', function () {
 
           // Receive messages
           q.subscribe(function (message) {
+            console.log()
             console.log("Start - " +new Date());
             console.log("MsjDispatcher - Got Message From RabbitMQ")
             // Print messages to stdout

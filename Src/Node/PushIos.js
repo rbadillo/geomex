@@ -42,12 +42,13 @@ exports.PushMessage=function PushMessage(Message,Devices,ClientName,SendMessageO
     note.badge = 1;
  
     if(SendMessageOnly=="false"){
-        for(var i=0;i<Devices.length;i++){
-            //console.log("Device: " +Devices[i])
-            DAL.UpdateSentMessage(Devices[i],Message,"Add");
-        }
+
+        DAL.UpdateSentMessageRecursive(Devices,0,Message,"Add",function(){
+            service.pushNotification(note, Devices);
+            service.shutdown();
+        })
+    }else{
+        service.pushNotification(note, Devices);
+        service.shutdown();
     }
-    
-    service.pushNotification(note, Devices);
-    service.shutdown();
 }
