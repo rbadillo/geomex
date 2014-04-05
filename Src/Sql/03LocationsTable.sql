@@ -6,6 +6,7 @@ CREATE  TABLE IF NOT EXISTS `geomex`.`Locations` (
   `ClientId` INT NOT NULL ,
   `IsActive` TINYINT NOT NULL DEFAULT 1,
   `IsPrivate` TINYINT NOT NULL DEFAULT 0 ,
+  `GeoMessage` TINYINT NOT NULL DEFAULT 1 ,
   `Latitude` DECIMAL(10,6) NOT NULL ,
   `Longitude` DECIMAL(10,6) NOT NULL ,
   `Address` VARCHAR(255) NOT NULL ,
