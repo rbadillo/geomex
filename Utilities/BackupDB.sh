@@ -9,3 +9,7 @@ Path="/home/geomex/DbBackup/"
 Path=$Path$FileOutput
 
 mysqldump -uroot -pEstaTrivialDb! geomex > $Path
+
+echo ""
+echo "Database Backup - " $FileOutput " - Date: " $(date)
+echo ""

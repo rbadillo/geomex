@@ -1,7 +1,7 @@
 import MySQLdb
 import datetime
 
-print "#################################################################"
+print ""
 print "Start: " +str(datetime.datetime.now())
 
 # Open database connection
@@ -33,9 +33,7 @@ for client in ClientIds:
 		if(TmpClient[0][2]>MaxEndDate):
 			MaxEndDate=TmpClient[0][2]
 
-print ""
 print "MaxEndDate: " +str(MaxEndDate)
-print ""
 
 # Populate Utility Dictionary
 for client in ClientIds:
@@ -43,23 +41,23 @@ for client in ClientIds:
 	query="SELECT OfferId,StartDate,EndDate from Offers where IsActive=1 and ClientId=%s and PublishedDate <= '%s' and '%s' <= EndDate" %(client[0],UTC_Time,UTC_Time)
 	cursor.execute(query)
 	TmpClient = cursor.fetchall()
-	print "ClientId: " +str(client[0])
-	print "ActiveOffers: " +str(len(TmpClient))
+	#print "ClientId: " +str(client[0])
+	#print "ActiveOffers: " +str(len(TmpClient))
 	Utility[client[0]]["ActiveOffers"]=len(TmpClient)
 	if(len(TmpClient)):
-		print "OfferClosestExpiration: " +str(TmpClient[0][2])
+		#print "OfferClosestExpiration: " +str(TmpClient[0][2])
 		Utility[client[0]]["OfferClosestExpiration"]=TmpClient[0][2]
 	else:
-		print "OfferClosestExpiration MaxEndDate: " +str(MaxEndDate)
+		#print "OfferClosestExpiration MaxEndDate: " +str(MaxEndDate)
 		Utility[client[0]]["OfferClosestExpiration"]=MaxEndDate
-	print ""
+	#print ""
 
 
 #Update Clients Table
 for client in ClientIds:
 	query="UPDATE Clients SET ActiveOffers=%s,OfferClosestExpiration='%s' WHERE ClientId=%s" %(Utility[client[0]]["ActiveOffers"],Utility[client[0]]["OfferClosestExpiration"],client[0])
 	print query
-	print ""
+	#print ""
 	try:
 		cursor.execute(query)
 		db.commit()

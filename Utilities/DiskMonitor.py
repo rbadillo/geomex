@@ -2,28 +2,21 @@ import psutil
 import smtplib
 import datetime
 
-i=0
-SendAlert=0
-CPU=0
-Trigger=35.0
+Trigger=85.0
 
 print ""
 print "Start: " +str(datetime.datetime.now())
 
-while i<3:
-	CPU=psutil.cpu_percent(interval=3)
-	print "CPU Utilization: " +str(CPU) +" %"
-	if(CPU>Trigger):
-		SendAlert=SendAlert+1
-	i=i+1
+DiskUsed=psutil.disk_usage('/')
+DiskPercentage=DiskUsed[3]
+print "Disk Space Used: " +str(DiskPercentage) +" %"
 
-
-if(SendAlert==3):
-	print "Sending Email - CPU Alert"
+if(DiskPercentage>Trigger):
+	print "Sending Email - Disk Alert"
 	fromaddr = 'descubrenear@gmail.com'
 	toaddrs  = 'beto_best@hotmail.com'
-	subject="Near - CPU Alert"
-	body = "CPU Utilization: " +str(CPU) +" %"
+	subject="Near - Disk Alert"
+	body = "Disk Space Used: " +str(DiskPercentage) +" %"
 	message = 'Subject: %s\n\n%s' % (subject, body)
 
 	# Credentials (if needed)
@@ -39,5 +32,3 @@ if(SendAlert==3):
 
 print "End: " +str(datetime.datetime.now())
 print ""
-
-

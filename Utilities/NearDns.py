@@ -2,7 +2,7 @@ import urllib2
 import base64
 import datetime
 
-print "#################################################################"
+print ""
 print "Start: " +str(datetime.datetime.now())
 
 myurl = "near.noip.me"
@@ -12,8 +12,6 @@ password = "b3t0SaTuRn01"
 web_page = urllib2.urlopen("http://iptools.bizhat.com/ipv4.php")
 myip = web_page.read()
 
-
-print ""
 print "Your IP is " + myip
 
 update_url = "https://dynupdate.no-ip.com/nic/update?hostname=" + myurl + "&myip=" + myip
@@ -25,6 +23,5 @@ resp = urllib2.urlopen(req)
 content = resp.read()
 print content
 
-print ""
 print "End: " +str(datetime.datetime.now())
 print ""
