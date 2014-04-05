@@ -1236,9 +1236,11 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                 if(offer.length && OfferUseType==1){
                                   // Private Offer 
 
-                                  query="Select UserPrivateOffers.OfferId from UserPrivateOffers \
+                                  query="Select UserPrivateOffers.OfferId from UserPrivateOffers,Offers \
                                   where \
-                                  UserPrivateOffers.OfferId=" +OfferId
+                                  UserPrivateOffers.OfferId= Offers.OfferId \
+                                  and Offers.IsActive=1 \
+                                  and UserPrivateOffers.OfferId=" +OfferId
                                   +" and UserPrivateOffers.StartDate<='" +UserTime +"'"
                                   +" and '" +UserTime +"' <=UserPrivateOffers.EndDate \
                                   and UserPrivateOffers.UserId=" +UserId
@@ -1246,6 +1248,7 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                   (Select distinct OfferRedemption.OfferId \
                                   from OfferRedemption,Offers \
                                   where Offers.MultiUse=0 \
+                                  and Offers.IsActive=1 \
                                   and OfferRedemption.UserId=" +UserId 
                                   +" and OfferRedemption.OfferId=Offers.OfferId"
                                   +" and OfferRedemption.OfferId="+OfferId+")";
@@ -1279,12 +1282,14 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                       query="Select Offers.OfferId from Offers \
                                       where \
                                       Offers.OfferId=" +OfferId
+                                      +" and Offers.IsActive=1"
                                       +" and Offers.StartDate<='" +UserTime +"'"
                                       +" and '" +UserTime +"' <=Offers.EndDate \
                                       and Offers.OfferId not in \
                                       (Select distinct OfferRedemption.OfferId \
                                       from OfferRedemption,Offers \
                                       where Offers.MultiUse=0 \
+                                      and Offers.IsActive=1 \
                                       and OfferRedemption.UserId=" +UserId 
                                       +" and OfferRedemption.OfferId=Offers.OfferId"
                                       +" and OfferRedemption.OfferId="+OfferId+")";

@@ -24,13 +24,12 @@ app.get('/:UserId/IsLocationActive/:LocationId',Utilities.IsLocationActive);
 app.get('/:UserId/:Timezone/GetUnreadMessages',Utilities.GetUnreadMessages);
 app.get('/:UserId/:Timezone/GetMessages',Utilities.GetMessages);
 app.get('/:UserId/ReadMessage/:MessageId',Utilities.ReadMessage);
-app.get('/:UserId/ShowGeoMessage/:LocationId',Utilities.ShowGeoMessage);
+app.get('/:UserId/:Timezone/ShowGeoMessage/:LocationId/Offer/:OfferId',Utilities.ShowGeoMessage);
 
 //OfferServer
 app.get('/:UserId/:Timezone/GetOffers/:ClientId',Utilities.Offers);
 app.get('/:UserId/:Timezone/GetOffers/:ClientId/OfferDetails/:OfferId',Utilities.SingleOffer);
 app.get('/:UserId/:Timezone/GetOffers/:ClientId/Redeem/:OfferId',Utilities.Redeem);
-app.get('/:UserId/:Timezone/GetOffers/:ClientId/IsOfferValid/:OfferId',Utilities.IsOfferValid);
 
 //RegisterServer
 app.post('/Register',Utilities.Register);

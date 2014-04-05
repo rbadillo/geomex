@@ -75,11 +75,6 @@ exports.Redeem = function Redeem(req,res){
 	console.log()
 }
 
-exports.IsOfferValid = function IsOfferValid(req,res){
-	RedirectUrl=req.path
-	request.get('http://127.0.0.1:5000'+RedirectUrl).pipe(res)
-	console.log()
-}
 
 
 //RegisterServer

@@ -181,18 +181,50 @@ exports.ShowGeoMessage= function ShowGeoMessage(req,res){
 
     var UserId=req.params.UserId
     var LocationId=req.params.LocationId
+    var OfferId=req.params.OfferId
+    var Timezone=req.params.Timezone
+    var LocalTime= moment.utc().zone(Timezone);
+    var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
+    var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
 
     DAL.ShowGeoMessage(LocationId, function (output){
       var tmp= JSON.parse(output)
       if(tmp[0].State=="Error"){
         res.statusCode=404
-      }
-      res.setHeader('Content-Type', 'application/json');
-      res.write(output);
-      res.end();
-      console.log("");
-      console.log("ShowGeoMessage - UserId: " +UserId +" - LocationId: " +LocationId +" - Status: " +tmp[0].State)
-      console.log("");
-    });
+        res.setHeader('Content-Type', 'application/json');
+        res.write(output);
+        res.end();
+        console.log("");
+        console.log("ERROR - ShowGeoMessage - UserId: " +UserId +" - LocationId: " +LocationId +" - Status: " +tmp[0].State)
+        console.log("");
+    }else if(tmp[0].State==0){
+        res.setHeader('Content-Type', 'application/json');
+        res.write(output);
+        res.end();
+        console.log("");
+        console.log("ShowGeoMessage - UserId: " +UserId +" - LocationId: " +LocationId +" - Status: " +tmp[0].State)
+        console.log("");
+    }else{
 
+        DAL.IsOfferValid(UserId,OfferId,LocalToUtc,function(output){
+        var tmp= JSON.parse(output)
+        if(tmp[0].State==0){
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode=406
+            res.write(output);
+            res.end();
+            console.log("");
+            console.log("ShowGeoMessage/IsOfferValid - UserId: "+UserId +" - LocationId: " +LocationId +" - OfferId: " +OfferId +" - Status: " +tmp[0].State +" - Offer: Redeemed/Inactive/Doesn't Exist");
+            console.log("");
+        }else{
+            res.setHeader('Content-Type', 'application/json');
+            res.write(output);
+            res.end();
+            console.log("");
+            console.log("ShowGeoMessage/IsOfferValid - UserId: " +UserId +" - LocationId: " +LocationId +" - OfferId: " +OfferId +" - Status: " +tmp[0].State)
+            console.log("");
+          }
+      });
+    }
+  });
 }

@@ -153,24 +153,3 @@ exports.Redeem= function Redeem(req,res){
     }
 }
 
-exports.IsOfferValid= function IsOfferValid(req,res){
-    var UserId=req.params.UserId
-    var OfferId=req.params.OfferId
-    var Timezone=req.params.Timezone
-    var LocalTime= moment.utc().zone(Timezone);
-    var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
-    var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
-
-    DAL.IsOfferValid(UserId,OfferId,LocalToUtc,function(output){
-      var tmp= JSON.parse(output)
-      res.setHeader('Content-Type', 'application/json');
-      if(tmp[0].State==0){
-        res.statusCode=406
-      }
-      res.write(output);
-      res.end();
-      console.log("");
-      console.log("IsOfferValid - UserId: " +UserId +" - OfferId: " +OfferId +" - UserTime: " +LocalToUtc +" - ValidState: " +tmp[0].State);
-      console.log("");
-    });
-}
