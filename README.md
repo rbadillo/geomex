@@ -141,27 +141,3 @@ How to Export/Import Mysql Database
 Note: Data Only - Insert Statements
 
 	mysqldump -u [USER] -p --skip-triggers --compact --complete-insert --no-create-info [DATABASE] > [FILE.sql]
-	
-	
-	
-How to Setup Static IP for Server
-======
-
-1.- Edit Interface file
-	
-	sudo nano /etc/network/interfaces
-	
-2.- Setup your eth0 interface
-
-	auto eth0
-	iface eth0 inet static
-	address 192.168.0.X
-	netmask 255.255.255.0
-	gateway 192.168.0.1
-	network 192.168.0.0
-	broadcast 192.168.0.255
-	
-3.- Reboot System
-
-	sudo reboot
-
