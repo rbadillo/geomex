@@ -175,3 +175,24 @@ exports.ReadMessage= function ReadMessage(req,res){
       console.log("");
     });
 }
+
+
+exports.ShowGeoMessage= function ShowGeoMessage(req,res){
+
+    var UserId=req.params.UserId
+    var LocationId=req.params.LocationId
+
+    DAL.ShowGeoMessage(LocationId, function (output){
+      var tmp= JSON.parse(output)
+      if(tmp[0].State=="Error"){
+        res.statusCode=404
+      }
+      res.setHeader('Content-Type', 'application/json');
+      res.write(output);
+      res.end();
+      console.log("");
+      console.log("ShowGeoMessage - UserId: " +UserId +" - LocationId: " +LocationId +" - Status: " +tmp[0].State)
+      console.log("");
+    });
+
+}

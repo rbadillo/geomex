@@ -1565,7 +1565,7 @@ function GetMessagesPrivate(UserId,Messages,callback){
       var msj= []
 
         if(MIds.length==0){
-          console.log("UserId: " +UserId +" - MessageList Is Empty")
+          //console.log("UserId: " +UserId +" - MessageList Is Empty")
           callback(JSON.stringify(msj))
         }else{
 
@@ -1791,6 +1791,51 @@ function AddPrivateOfferToUser(UserId,OfferId,ClientId,callback){
                     
 
                     
+            });
+        });
+}
+
+
+exports.ShowGeoMessage= function ShowGeoMessage(LocationId,callback){
+
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err) throw err;
+
+            db.load("./Models", function (err) {
+                    if (err) throw err;
+                    // loaded!
+
+                    var msj= [{
+                                "State": ""
+                              }]
+
+                    query="Select Locations.GeoMessage as LocationMsg, Clients.IsActive as Client \
+                    from Locations,Clients \
+                    where LocationId=" +LocationId +" and Clients.ClientId=Locations.ClientId"
+
+                    db.driver.execQuery(query, function (err, active) { 
+
+                      if(err){
+                        console.log(err);
+                        db.close();
+                        msj[0].State="Error";
+                        callback(JSON.stringify(msj))
+                      }else{
+                        //console.log(active)
+                        db.close();
+                        if(active.length){
+                            if(active[0].LocationMsg==1 && active[0].Client==1){
+                                msj[0].State=1;
+                            }else{
+                              msj[0].State=0;
+                            }
+                            callback(JSON.stringify(msj));
+                        }else{
+                          msj[0].State="Error";
+                          callback(JSON.stringify(msj));
+                        }
+                      }
+                    })
             });
         });
 }

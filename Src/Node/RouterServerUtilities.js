@@ -49,6 +49,12 @@ exports.ReadMessage = function ReadMessage(req,res){
 	console.log()
 }
 
+exports.ShowGeoMessage = function ShowGeoMessage(req,res){
+	RedirectUrl=req.path
+	request.get('http://127.0.0.1:4000'+RedirectUrl).pipe(res)
+	console.log()
+}
+
 
 //OfferServer
 exports.Offers = function Offers(req,res){

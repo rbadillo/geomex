@@ -23,6 +23,7 @@ app.get('/:UserId/IsLocationActive/:LocationId',Utilities.IsLocationActive);
 app.get('/:UserId/:Timezone/GetUnreadMessages',Utilities.GetUnreadMessages);
 app.get('/:UserId/:Timezone/GetMessages',Utilities.GetMessages);
 app.get('/:UserId/ReadMessage/:MessageId',Utilities.ReadMessage);
+app.get('/:UserId/ShowGeoMessage/:LocationId',Utilities.ShowGeoMessage);
 
 app.listen(app.get('port'));
 console.log("Feature Server - Listening Port: " +app.get('port'));
