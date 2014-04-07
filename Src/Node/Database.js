@@ -1510,6 +1510,14 @@ exports.GetFriends = function GetFriends(FriendList,callback){
                     if (err) throw err;
                     // loaded!
 
+                    if(FriendList==undefined || FriendList.length==0){
+
+                      db.close();
+                      var friends= [{}]
+                      callback(JSON.stringify(friends));
+
+                    }else{
+
                     query="SELECT distinct Users.UserId,Users.FbName,Users.FbLastName,Users.FbPhoto, \
                      Users.LastRegister from Users \
                      where Users.UserId in  (" +FriendList +") \
@@ -1525,6 +1533,7 @@ exports.GetFriends = function GetFriends(FriendList,callback){
                         callback(JSON.stringify(friends));
                       }
                     })
+                  }
             });
         });
 }
