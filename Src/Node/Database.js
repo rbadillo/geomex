@@ -1513,7 +1513,7 @@ exports.GetFriends = function GetFriends(FriendList,callback){
                     if(FriendList==undefined || FriendList.length==0){
 
                       db.close();
-                      var friends= [{}]
+                      var friends= []
                       callback(JSON.stringify(friends));
 
                     }else{
