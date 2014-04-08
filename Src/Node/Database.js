@@ -531,7 +531,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Timezone,Event,F
                                  }else{
                                  //console.log("User Updated Sucessfully - UserId: "+UserId);
                                  db.close();
-                                 if(Event=="register"){
+                                 if(Event !== undefined && Event.toLowerCase()=="register"){
                                     UpdateAppEvents(UserId,Event,Latitude,Longitude);
                                   }else{
                                       console.log("ERROR - Wrong Event: " +Event +" - UserId: " +UserId)

@@ -53,7 +53,6 @@ exports.Register = function Register(req,res){
 
     try{
     Event=req.body.event
-    Event=Event.toLowerCase();
     }catch(e){
     Event= null;
     }
