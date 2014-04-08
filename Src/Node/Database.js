@@ -882,8 +882,8 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                     // loaded!
                     var offer = db.models.Offers;
 
-                      query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
-                            Offers.Name,Offers.Title,Offers.Subtitle, \
+                      query="Select Clients.Name as ClientName,Clients.Logo,Clients.ClientHexColor,Offers.OfferId, \
+                            Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
@@ -1065,8 +1065,8 @@ exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,Latitude,Longitu
                     if (err) throw err;
                     // loaded!
 
-                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
-                            Offers.Name,Offers.Title,Offers.Subtitle, \
+                    query="Select Clients.Name as ClientName,Clients.Logo,Clients.ClientHexColor,Offers.OfferId, \
+                            Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
@@ -1108,8 +1108,8 @@ exports.RedeemSingleOffer = function RedeemSingleOffer(UserId,OfferId,Latitude,L
                     if (err) throw err;
                     // loaded!
 
-                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
-                            Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+                    query="Select Clients.Name as ClientName,Clients.Logo,Clients.ClientHexColor,Offers.OfferId, \
+                            Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
                             Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
