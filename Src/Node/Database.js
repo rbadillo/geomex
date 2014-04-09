@@ -882,7 +882,7 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
                     // loaded!
                     var offer = db.models.Offers;
 
-                      query="Select Clients.Name as ClientName,Clients.Logo,Clients.ClientHexColor,Offers.OfferId, \
+                      query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
                             Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
@@ -1065,7 +1065,7 @@ exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,Latitude,Longitu
                     if (err) throw err;
                     // loaded!
 
-                    query="Select Clients.Name as ClientName,Clients.Logo,Clients.ClientHexColor,Offers.OfferId, \
+                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
                             Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
@@ -1108,7 +1108,7 @@ exports.RedeemSingleOffer = function RedeemSingleOffer(UserId,OfferId,Latitude,L
                     if (err) throw err;
                     // loaded!
 
-                    query="Select Clients.Name as ClientName,Clients.Logo,Clients.ClientHexColor,Offers.OfferId, \
+                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
                             Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
                             Offers.Instructions,Offers.Disclaimer, \
                             Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
@@ -1267,7 +1267,8 @@ exports.GetAllActiveClients = function GetAllActiveClients(callback){
                     if (err) throw err;
                     // loaded!
 
-                    query="Select ClientId,Name,Logo,IsGold,OfferClosestExpiration from Clients where IsActive=1 and ActiveOffers>0 \
+                    query="Select ClientId,Name,Logo,ClientHexColor,IsGold,OfferClosestExpiration from Clients \
+                    where IsActive=1 and ActiveOffers>0 \
                     Order by IsGold DESC,OfferClosestExpiration ASC,ClientId ASC"
 
                     db.driver.execQuery(query, function (err, clients) { 
