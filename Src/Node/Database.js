@@ -1663,7 +1663,7 @@ exports.GetMessages = function GetMessages(UserId,Offerlist,callback){
         var msj= []
 
         if(Offerlist.length==0){
-          console.log("UserId: " +UserId +" - OfferList Is Empty")
+          //console.log("UserId: " +UserId +" - OfferList Is Empty")
           callback(JSON.stringify(msj))
         }else{
 
@@ -1721,7 +1721,7 @@ function GetMessagesPrivate(UserId,Messages,callback){
                         if (err) throw err;
                         // loaded!
 
-                        query="Select Clients.ClientId, Clients.Name as ClientName,Clients.Logo, \
+                        query="Select Clients.ClientId, Clients.Name as ClientName,Clients.Logo,Clients.ClientHexColor, \
                         Messages.MessageId,Messages.Message, Messages.OfferId,SentMessages.MessageRead, \
                         Messages.TimeCreated \
                         from Clients,Messages,SentMessages \
