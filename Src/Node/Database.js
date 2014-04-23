@@ -974,7 +974,7 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
                         for(var i=0;i<off.length;i++){
                           ofertasUsadas.push(off[i].OfferId);
                         }
-                        FilterOffers(PublicOffers,ofertasPrivadas,ofertasUsadas,Timezone,callback);
+                        FilterOffers(PublicOffers,ofertasPrivadas,PrivateOffers,ofertasUsadas,Timezone,callback);
                       }
                     });
             });
@@ -982,7 +982,7 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
 }
 
 
-function FilterOffers(PublicOffers,PrivateOffers,RedemedOffers,Timezone,callback){
+function FilterOffers(PublicOffers,PrivateOffers,PrivateOffersObject,RedemedOffers,Timezone,callback){
 
 var FinalOfferList=[]
 var IndexToRemove=[]
@@ -1005,7 +1005,12 @@ var IndexToRemove=[]
           for(var j=0;j<PrivateOffers.length;j++){
             if(PublicOffers[i].OfferId==PrivateOffers[j]){
               UserPrivateOffer=true;
-              break;
+              for(var k=0;k<PrivateOffersObject.length;k++){
+                if(PrivateOffers[j]==PrivateOffersObject[k].OfferId){
+                  PublicOffers[i].EndDate=PrivateOffersObject[k].EndDate;
+                  break;
+                }
+              }
             }
           }
           if(!UserPrivateOffer){
