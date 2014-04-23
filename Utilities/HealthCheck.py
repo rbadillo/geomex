@@ -13,7 +13,7 @@ try:
 	ResponseTime=r.elapsed
 	ResponseTime=str(ResponseTime).split(".")
 	ResponseTime=ResponseTime[1][:-3]
-	print "Code: " +str(Code)
+	print "HTTP Code: " +str(Code)
 	print "Response Time: " +str(ResponseTime) +" miliseconds"
 	if(Code!=200):
 		print "Sending Email - Health Check HTTP CODE Error Alert"
