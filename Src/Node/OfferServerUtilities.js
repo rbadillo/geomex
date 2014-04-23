@@ -73,20 +73,20 @@ exports.SingleOffer = function SingleOffer(req,res){
       var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
       var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
 
-      DAL.IsOfferValid(UserId,OfferId,LocalToUtc,function(output){
+      DAL.IsOfferValid(UserId,OfferId,ClientId,LocalToUtc,function(output){
         var tmp= JSON.parse(output)
         if(tmp[0].State==0){
             res.setHeader('Content-Type', 'application/json');
             res.statusCode=406
             var msj= [{
-                    "State": "UserId: "+UserId +" - OfferId: " +OfferId +" - Status: Offer Redeemed/Inactive/Doesn't Exist"
+                    "State": "UserId: "+UserId +" - ClientId: " +ClientId +" - Status: Client Active/Inactive" +" - OfferId: " +OfferId +" - Status: Offer Redeemed/Inactive/Doesn't Exist"
                   }]
             var response= JSON.stringify(msj)
             res.write(response);
             res.end();
 
             console.log("");
-            console.log("ERROR - UserId: "+UserId +" - OfferId: " +OfferId +" - Status: Offer Redeemed/Inactive/Doesn't Exist");
+            console.log("ERROR - UserId: "+UserId +" - ClientId: " +ClientId +" - Status: Client Active/Inactive" +" - OfferId: " +OfferId +" - Status: Offer Redeemed/Inactive/Doesn't Exist");
             console.log("");
         }else{
 
@@ -126,20 +126,20 @@ exports.Redeem= function Redeem(req,res){
       var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
       var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
 
-      DAL.IsOfferValid(UserId,OfferId,LocalToUtc,function(output){
+      DAL.IsOfferValid(UserId,OfferId,ClientId,LocalToUtc,function(output){
         var tmp= JSON.parse(output)
         if(tmp[0].State==0){
             res.setHeader('Content-Type', 'application/json');
             res.statusCode=406
             var msj= [{
-                    "State": "UserId: "+UserId +" - OfferId: " +OfferId +" - Event: OfferId already redeemed or doesn't exist"
+                    "State": "UserId: "+UserId +" - ClientId: " +ClientId +" - Status: Client Active/Inactive" +" - OfferId: " +OfferId +" - Status: Offer Redeemed/Inactive/Doesn't Exist"
                   }]
             var response= JSON.stringify(msj)
             res.write(response);
             res.end();
 
             console.log("");
-            console.log("ERROR - UserId: "+UserId +" - OfferId: " +OfferId +" - Event: OfferId already redeemed or doesn't exist");
+            console.log("ERROR - UserId: "+UserId +" - ClientId: " +ClientId +" - Status: Client Active/Inactive" +" - OfferId: " +OfferId +" - Status: Offer Redeemed/Inactive/Doesn't Exist");
             console.log("");
         }else{
 

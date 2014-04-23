@@ -180,6 +180,7 @@ exports.ReadMessage= function ReadMessage(req,res){
 exports.ShowGeoMessage= function ShowGeoMessage(req,res){
 
     var UserId=req.params.UserId
+    var ClientId=req.params.ClientId
     var LocationId=req.params.LocationId
     var OfferId=req.params.OfferId
     var Timezone=req.params.Timezone
@@ -206,7 +207,7 @@ exports.ShowGeoMessage= function ShowGeoMessage(req,res){
         console.log("");
     }else{
 
-        DAL.IsOfferValid(UserId,OfferId,LocalToUtc,function(output){
+        DAL.IsOfferValid(UserId,OfferId,ClientId,LocalToUtc,function(output){
         var tmp= JSON.parse(output)
         if(tmp[0].State==0){
             res.setHeader('Content-Type', 'application/json');

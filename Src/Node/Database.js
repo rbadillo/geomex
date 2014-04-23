@@ -1336,7 +1336,7 @@ exports.GetClosestLocations = function GetClosestLocations(Latitude,Longitude,Ra
 }
 
 
-exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
+exports.IsOfferValid= function IsOfferValid(UserId,OfferId,ClientId,UserTime,callback){
 
   orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;
@@ -1349,114 +1349,145 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,UserTime,callback){
                                 "State": ""
                               }]
 
-                    query="Select IsPrivate from Offers \
-                           where OfferId=" +OfferId
+                    query="Select IsActive from Clients \
+                           where ClientId=" +ClientId
 
-                            db.driver.execQuery(query, function (err, offer) { 
+                    db.driver.execQuery(query, function (err, client) { 
 
-                              if(err){
+                          if(err){
                                 console.log(err);
                                 db.close();
                                 msj[0].State=0
                                 callback(JSON.stringify(msj))
-                              }else{
-
-                                if(offer[0]===undefined){
+                           }else{
+                              if(client[0]===undefined){
                                   //console.log("Offer Undefined");
                                   db.close();
                                   msj[0].State=0
                                   callback(JSON.stringify(msj))
                                 }else{
-                                var OfferUseType=offer[0].IsPrivate
 
-                                if(offer.length && OfferUseType==1){
-                                  // Private Offer 
+                                var ClientActive=client[0].IsActive
 
-                                  query="Select UserPrivateOffers.OfferId from UserPrivateOffers,Offers \
-                                  where \
-                                  UserPrivateOffers.OfferId= Offers.OfferId \
-                                  and Offers.IsActive=1 \
-                                  and UserPrivateOffers.OfferId=" +OfferId
-                                  +" and UserPrivateOffers.StartDate<='" +UserTime +"'"
-                                  +" and '" +UserTime +"' <=UserPrivateOffers.EndDate \
-                                  and UserPrivateOffers.UserId=" +UserId
-                                  +" and UserPrivateOffers.OfferId not in \
-                                  (Select distinct OfferRedemption.OfferId \
-                                  from OfferRedemption,Offers \
-                                  where Offers.MultiUse=0 \
-                                  and Offers.IsActive=1 \
-                                  and OfferRedemption.UserId=" +UserId 
-                                  +" and OfferRedemption.OfferId=Offers.OfferId"
-                                  +" and OfferRedemption.OfferId="+OfferId+")";
+                                if(client.length && ClientActive==1){
 
-                                  //console.log(query)
+                                        query="Select IsPrivate from Offers \
+                                               where OfferId=" +OfferId
 
-                                      db.driver.execQuery(query, function (err, offer) { 
+                                                db.driver.execQuery(query, function (err, offer) { 
 
-                                              if(err){
-                                                console.log(err);
-                                                db.close();
-                                                msj[0].State=0
-                                                callback(JSON.stringify(msj))
-                                              }else{
-                                                db.close();
-
-                                                if(offer.length){
-                                                    msj[0].State=1
-                                                    callback(JSON.stringify(msj)) 
-                                                  }else{
+                                                  if(err){
+                                                    console.log(err);
+                                                    db.close();
                                                     msj[0].State=0
                                                     callback(JSON.stringify(msj))
-                                                  }
-                                              }
-
-                                      })
-
-                                }else{
-                                  // Public Offer
-
-                                      query="Select Offers.OfferId from Offers \
-                                      where \
-                                      Offers.OfferId=" +OfferId
-                                      +" and Offers.IsActive=1"
-                                      +" and Offers.StartDate<='" +UserTime +"'"
-                                      +" and '" +UserTime +"' <=Offers.EndDate \
-                                      and Offers.OfferId not in \
-                                      (Select distinct OfferRedemption.OfferId \
-                                      from OfferRedemption,Offers \
-                                      where Offers.MultiUse=0 \
-                                      and Offers.IsActive=1 \
-                                      and OfferRedemption.UserId=" +UserId 
-                                      +" and OfferRedemption.OfferId=Offers.OfferId"
-                                      +" and OfferRedemption.OfferId="+OfferId+")";
-
-                                      //console.log(query)
-
-                                      db.driver.execQuery(query, function (err, offer) { 
-
-                                              if(err){
-                                                console.log(err);
-                                                db.close();
-                                                msj[0].State=0
-                                                callback(JSON.stringify(msj))
-                                              }else{
-                                                db.close();
-
-                                                if(offer.length){
-                                                    msj[0].State=1
-                                                    callback(JSON.stringify(msj)) 
                                                   }else{
-                                                    msj[0].State=0
-                                                    callback(JSON.stringify(msj))
-                                                  }
-                                              }
 
-                                      })
-                                    }
-                                 }
-                              }
+                                                    if(offer[0]===undefined){
+                                                      //console.log("Offer Undefined");
+                                                      db.close();
+                                                      msj[0].State=0
+                                                      callback(JSON.stringify(msj))
+                                                    }else{
+                                                    var OfferUseType=offer[0].IsPrivate
 
-                            })
+                                                    if(offer.length && OfferUseType==1){
+                                                      // Private Offer 
+
+                                                      query="Select UserPrivateOffers.OfferId from UserPrivateOffers,Offers \
+                                                      where \
+                                                      UserPrivateOffers.OfferId= Offers.OfferId \
+                                                      and Offers.IsActive=1 \
+                                                      and UserPrivateOffers.OfferId=" +OfferId
+                                                      +" and UserPrivateOffers.StartDate<='" +UserTime +"'"
+                                                      +" and '" +UserTime +"' <=UserPrivateOffers.EndDate \
+                                                      and UserPrivateOffers.UserId=" +UserId
+                                                      +" and UserPrivateOffers.OfferId not in \
+                                                      (Select distinct OfferRedemption.OfferId \
+                                                      from OfferRedemption,Offers \
+                                                      where Offers.MultiUse=0 \
+                                                      and Offers.IsActive=1 \
+                                                      and OfferRedemption.UserId=" +UserId 
+                                                      +" and OfferRedemption.OfferId=Offers.OfferId"
+                                                      +" and OfferRedemption.OfferId="+OfferId+")";
+
+                                                      //console.log(query)
+
+                                                          db.driver.execQuery(query, function (err, offer) { 
+
+                                                                  if(err){
+                                                                    console.log(err);
+                                                                    db.close();
+                                                                    msj[0].State=0
+                                                                    callback(JSON.stringify(msj))
+                                                                  }else{
+                                                                    db.close();
+
+                                                                    if(offer.length){
+                                                                        msj[0].State=1
+                                                                        callback(JSON.stringify(msj)) 
+                                                                      }else{
+                                                                        msj[0].State=0
+                                                                        callback(JSON.stringify(msj))
+                                                                      }
+                                                                  }
+
+                                                          })
+
+                                                    }else{
+                                                      // Public Offer
+
+                                                          query="Select Offers.OfferId from Offers \
+                                                          where \
+                                                          Offers.OfferId=" +OfferId
+                                                          +" and Offers.IsActive=1"
+                                                          +" and Offers.StartDate<='" +UserTime +"'"
+                                                          +" and '" +UserTime +"' <=Offers.EndDate \
+                                                          and Offers.OfferId not in \
+                                                          (Select distinct OfferRedemption.OfferId \
+                                                          from OfferRedemption,Offers \
+                                                          where Offers.MultiUse=0 \
+                                                          and Offers.IsActive=1 \
+                                                          and OfferRedemption.UserId=" +UserId 
+                                                          +" and OfferRedemption.OfferId=Offers.OfferId"
+                                                          +" and OfferRedemption.OfferId="+OfferId+")";
+
+                                                          //console.log(query)
+
+                                                          db.driver.execQuery(query, function (err, offer) { 
+
+                                                                  if(err){
+                                                                    console.log(err);
+                                                                    db.close();
+                                                                    msj[0].State=0
+                                                                    callback(JSON.stringify(msj))
+                                                                  }else{
+                                                                    db.close();
+
+                                                                    if(offer.length){
+                                                                        msj[0].State=1
+                                                                        callback(JSON.stringify(msj)) 
+                                                                      }else{
+                                                                        msj[0].State=0
+                                                                        callback(JSON.stringify(msj))
+                                                                      }
+                                                                  }
+
+                                                          })
+                                                        } // End Public Offers
+                                                     } // End Valid Offer
+                                                  } // Else No Mysql Offer Private Error
+
+                                                }) // Query IsPrivate Execution
+
+                                            }else{
+                                              db.close();
+                                              msj[0].State=0
+                                              callback(JSON.stringify(msj))
+                                            } // Client is Inactive
+                                        } // Valid Client Object
+                                     } // Else No Mysql Client IsActive Error
+                              }) // Query Client IsActive Execution Execution
             });
         });
 

@@ -24,7 +24,7 @@ app.get('/:UserId/IsLocationActive/:LocationId',Utilities.IsLocationActive);
 app.get('/:UserId/:Timezone/GetUnreadMessages',Utilities.GetUnreadMessages);
 app.get('/:UserId/:Timezone/GetMessages',Utilities.GetMessages);
 app.get('/:UserId/ReadMessage/:MessageId',Utilities.ReadMessage);
-app.get('/:UserId/:Timezone/ShowGeoMessage/:LocationId/Offer/:OfferId',Utilities.ShowGeoMessage);
+app.get('/:UserId/:Timezone/ShowGeoMessage/:ClientId/LocationId/:LocationId/Offer/:OfferId',Utilities.ShowGeoMessage);
 
 //OfferServer
 app.get('/:UserId/:Timezone/GetOffers/:ClientId',Utilities.Offers);
