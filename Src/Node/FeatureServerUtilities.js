@@ -196,14 +196,14 @@ exports.ShowGeoMessage= function ShowGeoMessage(req,res){
         res.write(output);
         res.end();
         console.log("");
-        console.log("ERROR - ShowGeoMessage - UserId: " +UserId +" - LocationId: " +LocationId +" - Status: " +tmp[0].State)
+        console.log("ERROR - ShowGeoMessage - UserId: " +UserId +" - ClientId: " +ClientId +" - LocationId: " +LocationId +" - Status: " +tmp[0].State)
         console.log("");
     }else if(tmp[0].State==0){
         res.setHeader('Content-Type', 'application/json');
         res.write(output);
         res.end();
         console.log("");
-        console.log("ShowGeoMessage - UserId: " +UserId +" - LocationId: " +LocationId +" - Status: " +tmp[0].State)
+        console.log("ShowGeoMessage - UserId: " +UserId +" - ClientId: " +ClientId +" - LocationId: " +LocationId +" - Status: " +tmp[0].State)
         console.log("");
     }else{
 
@@ -215,14 +215,14 @@ exports.ShowGeoMessage= function ShowGeoMessage(req,res){
             res.write(output);
             res.end();
             console.log("");
-            console.log("ShowGeoMessage/IsOfferValid - UserId: "+UserId +" - LocationId: " +LocationId +" - OfferId: " +OfferId +" - Status: " +tmp[0].State +" - Offer: Redeemed/Inactive/Doesn't Exist");
+            console.log("ShowGeoMessage/IsOfferValid - UserId: "+UserId +" - ClientId: " +ClientId +" - LocationId: " +LocationId +" - OfferId: " +OfferId +" - Status: " +tmp[0].State +" - Offer: Redeemed/Inactive/Doesn't Exist");
             console.log("");
         }else{
             res.setHeader('Content-Type', 'application/json');
             res.write(output);
             res.end();
             console.log("");
-            console.log("ShowGeoMessage/IsOfferValid - UserId: " +UserId +" - LocationId: " +LocationId +" - OfferId: " +OfferId +" - Status: " +tmp[0].State)
+            console.log("ShowGeoMessage/IsOfferValid - UserId: " +UserId +" - ClientId: " +ClientId +" - LocationId: " +LocationId +" - OfferId: " +OfferId +" - Status: " +tmp[0].State)
             console.log("");
           }
       });
