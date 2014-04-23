@@ -1318,6 +1318,7 @@ exports.GetClosestLocations = function GetClosestLocations(Latitude,Longitude,Ra
                             AND longpoint + (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
                        AND Locations.IsPrivate=0 \
                        AND Locations.ClientId=Clients.ClientId \
+                       AND Clients.IsActive=1 \
                      ORDER BY DistanceInKm \
                      LIMIT 15"
 
