@@ -12,3 +12,4 @@ sudo apt-get install -y httperf
 sudo apt-get install -y python-dev
 sudo apt-get install -y python-setuptools
 sudo easy_install psutil
+sudo easy_install requests
