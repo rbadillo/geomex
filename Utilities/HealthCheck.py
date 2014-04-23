@@ -8,7 +8,7 @@ print ""
 print "Start: " +str(datetime.datetime.now())
 
 try:
-	r = requests.get('http://near.noip.me/517218456/GetAllActiveClients',timeout=Timeout)
+	r = requests.get('http://near.noip.me/HealthCheck/GetAllActiveClients',timeout=Timeout)
 	Code=r.status_code
 	ResponseTime=r.elapsed
 	ResponseTime=str(ResponseTime).split(".")
