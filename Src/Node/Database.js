@@ -1990,8 +1990,8 @@ exports.ShowGeoMessage= function ShowGeoMessage(LocationId,callback){
                                 "State": ""
                               }]
 
-                    query="Select Locations.GeoMessage as LocationMsg, Clients.IsActive as Client \
-                    from Locations,Clients \
+                    query="Select Locations.GeoMessage as LocationMsg,Locations.IsActive as LocationActive, \
+                    Clients.IsActive as Client from Locations,Clients \
                     where LocationId=" +LocationId +" and Clients.ClientId=Locations.ClientId"
 
                     db.driver.execQuery(query, function (err, active) { 
@@ -2005,7 +2005,7 @@ exports.ShowGeoMessage= function ShowGeoMessage(LocationId,callback){
                         //console.log(active)
                         db.close();
                         if(active.length){
-                            if(active[0].LocationMsg==1 && active[0].Client==1){
+                            if(active[0].LocationActive==1 && active[0].LocationMsg==1 && active[0].Client==1){
                                 msj[0].State=1;
                             }else{
                               msj[0].State=0;
