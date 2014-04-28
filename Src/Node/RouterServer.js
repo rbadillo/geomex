@@ -33,7 +33,7 @@ app.get('/:UserId/:Timezone/GetOffers/:ClientId/OfferDetails/:OfferId',Utilities
 app.get('/:UserId/:Timezone/GetOffers/:ClientId/Redeem/:OfferId',Utilities.Redeem);
 
 //RegisterServer
-app.post('/Register',Utilities.Register);
+app.post('/:UserId/Register',Utilities.Register);
 app.post('/:UserId/GeoEvent',Utilities.GeoEvent);
 
 //QueueWorker
