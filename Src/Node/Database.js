@@ -497,7 +497,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Timezone,Event,F
                                  //console.log("User Added Sucessfully - UserId: "+UserId);
                                     db.close();
                                    if(Event=="register"){
-                                      UpdateAppEvents(UserId,Event,Latitude,Longitude);
+                                      exports.UpdateAppEvents(UserId,Event,Latitude,Longitude);
                                   }else{
                                       console.log("ERROR - Wrong Event: " +Event +" - UserId: " +UserId)
                                       console.log("")
@@ -532,7 +532,7 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Timezone,Event,F
                                  //console.log("User Updated Sucessfully - UserId: "+UserId);
                                  db.close();
                                  if(Event !== undefined && Event.toLowerCase()=="register"){
-                                    UpdateAppEvents(UserId,Event,Latitude,Longitude);
+                                    exports.UpdateAppEvents(UserId,Event,Latitude,Longitude);
                                   }else{
                                       console.log("ERROR - Wrong Event: " +Event +" - UserId: " +UserId)
                                       console.log("")
@@ -605,7 +605,7 @@ function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event,Lati
         });
 }
 
-function UpdateAppEvents(UserId,Event,Latitude,Longitude){
+exports.UpdateAppEvents =function UpdateAppEvents(UserId,Event,Latitude,Longitude){
 
   orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
           if (err) throw err;

@@ -25,6 +25,7 @@ app.get('/:UserId/:Timezone/GetUnreadMessages',Utilities.GetUnreadMessages);
 app.get('/:UserId/:Timezone/GetMessages',Utilities.GetMessages);
 app.get('/:UserId/ReadMessage/:MessageId',Utilities.ReadMessage);
 app.get('/:UserId/:Timezone/ShowGeoMessage/:ClientId/LocationId/:LocationId/OfferId/:OfferId',Utilities.ShowGeoMessage);
+app.post('/:UserId/AppEvent',Utilities.AppEvent);
 
 //OfferServer
 app.get('/:UserId/:Timezone/GetOffers/:ClientId',Utilities.Offers);
@@ -33,7 +34,7 @@ app.get('/:UserId/:Timezone/GetOffers/:ClientId/Redeem/:OfferId',Utilities.Redee
 
 //RegisterServer
 app.post('/Register',Utilities.Register);
-app.post('/GeoEvent',Utilities.GeoEvent);
+app.post('/:UserId/GeoEvent',Utilities.GeoEvent);
 
 //QueueWorker
 app.post('/SendMessage',Utilities.SendMessage);

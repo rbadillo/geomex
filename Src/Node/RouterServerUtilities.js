@@ -55,6 +55,12 @@ exports.ShowGeoMessage = function ShowGeoMessage(req,res){
 	console.log()
 }
 
+exports.AppEvent = function AppEvent(req,res){
+	RedirectUrl=req.originalUrl
+	request.post('http://127.0.0.1:4000'+RedirectUrl,{form:req.body}).pipe(res)
+	console.log()
+}
+
 
 //OfferServer
 exports.Offers = function Offers(req,res){

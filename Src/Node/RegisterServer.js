@@ -16,7 +16,7 @@ express.logger.token('date', function(){
 
 app.get('/',Utilities.Test);
 app.post('/Register',Utilities.Register);
-app.post('/GeoEvent',Utilities.GeoEvent);
+app.post('/:UserId/GeoEvent',Utilities.GeoEvent);
 
 app.listen(app.get('port'));
 console.log("Register Server - Listening Port: " +app.get('port'));

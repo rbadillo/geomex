@@ -24,6 +24,7 @@ app.get('/:UserId/:Timezone/GetUnreadMessages',Utilities.GetUnreadMessages);
 app.get('/:UserId/:Timezone/GetMessages',Utilities.GetMessages);
 app.get('/:UserId/ReadMessage/:MessageId',Utilities.ReadMessage);
 app.get('/:UserId/:Timezone/ShowGeoMessage/:ClientId/LocationId/:LocationId/OfferId/:OfferId',Utilities.ShowGeoMessage);
+app.post('/:UserId/AppEvent',Utilities.AppEvent);
 
 app.listen(app.get('port'));
 console.log("Feature Server - Listening Port: " +app.get('port'));

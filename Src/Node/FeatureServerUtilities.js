@@ -229,3 +229,29 @@ exports.ShowGeoMessage= function ShowGeoMessage(req,res){
     }
   });
 }
+
+exports.AppEvent = function AppEvent(req,res){
+
+    var UserId=req.params.UserId
+    var Event=req.body.event
+    var Latitude=req.body.latitude
+    var Longitude=req.body.longitude
+    res.end('Success');
+
+    if(Event=="AppOpened" || Event == "AppClosed"){
+
+      DAL.UpdateAppEvents(UserId,Event,Latitude,Longitude);
+
+      console.log("");
+      console.log("AppEvent - UserId: " +UserId)
+      console.log("Event: " +Event)
+      console.log("Latitude: " +Latitude)
+      console.log("Longitude: " +Longitude)
+      console.log("");
+    }else{
+
+      console.log("");
+      console.log("ERROR - Wrong AppEvent - UserId: " +UserId +" - Event: " +Event)
+      console.log("");
+    }   
+}
