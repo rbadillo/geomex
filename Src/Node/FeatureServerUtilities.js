@@ -238,7 +238,7 @@ exports.AppEvent = function AppEvent(req,res){
     var Longitude=req.body.longitude
     res.end('Success');
 
-    if(Event=="AppOpened" || Event == "AppClosed"){
+    if(Event=="OpenedApp" || Event == "ClosedApp"){
 
       DAL.UpdateAppEvents(UserId,Event,Latitude,Longitude);
 
