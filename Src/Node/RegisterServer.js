@@ -15,7 +15,7 @@ express.logger.token('date', function(){
 });
 
 app.get('/',Utilities.Test);
-app.post('/Register',Utilities.Register);
+app.post('/:UserId/Register',Utilities.Register);
 app.post('/:UserId/GeoEvent',Utilities.GeoEvent);
 
 app.listen(app.get('port'));
