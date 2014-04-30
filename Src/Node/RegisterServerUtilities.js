@@ -7,7 +7,7 @@ exports.Test = function Test(req,res){
 }
 
 exports.Register = function Register(req,res){
-	  res.end('Success');
+	res.end('Success');
 	  //console.log(req.body);
     var UserId;
     var DeviceToken;

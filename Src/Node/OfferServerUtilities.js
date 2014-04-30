@@ -29,6 +29,8 @@ exports.Offers = function Offers(req,res){
       var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
       var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
       var ClientId= req.params.ClientId
+      var Latitude= req.query.latitude
+      var Longitude= req.query.longitude
   	  
       DAL.GetOffers(LocalToUtc,UserId,Timezone,ClientId, function (output){
         res.setHeader('Content-Type', 'application/json');
@@ -43,6 +45,8 @@ exports.Offers = function Offers(req,res){
         console.log("ClientId: " +ClientId);
         console.log("");
       });
+
+      DAL.UpdateAppEvents(UserId,ClientId,"ViewedClientOffers",Latitude,Longitude);
     }    
 }
 

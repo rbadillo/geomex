@@ -238,20 +238,27 @@ exports.AppEvent = function AppEvent(req,res){
     var Longitude=req.body.longitude
     res.end('Success');
 
-    if(Event=="OpenedApp" || Event == "ClosedApp"){
-
-      DAL.UpdateAppEvents(UserId,Event,Latitude,Longitude);
-
-      console.log("");
-      console.log("AppEvent - UserId: " +UserId)
-      console.log("Event: " +Event)
-      console.log("Latitude: " +Latitude)
-      console.log("Longitude: " +Longitude)
-      console.log("");
+    if(UserId=="null" || UserId=="undefined" || UserId=="(null)"){
+          console.log("");
+          console.log("ERROR - AppEvent - UserId can't be NULL or Undefined");
+          console.log("");
     }else{
 
-      console.log("");
-      console.log("ERROR - Wrong AppEvent - UserId: " +UserId +" - Event: " +Event)
-      console.log("");
-    }   
+        if(Event=="OpenedApp" || Event == "ClosedApp"){
+
+          DAL.UpdateAppEvents(UserId,null,Event,Latitude,Longitude);
+
+          console.log("");
+          console.log("AppEvent - UserId: " +UserId)
+          console.log("Event: " +Event)
+          console.log("Latitude: " +Latitude)
+          console.log("Longitude: " +Longitude)
+          console.log("");
+        }else{
+
+          console.log("");
+          console.log("ERROR - Wrong AppEvent - UserId: " +UserId +" - Event: " +Event)
+          console.log("");
+        }   
+    }
 }

@@ -137,6 +137,7 @@ module.exports = function (db, cb) {
 
     db.define('AppEvents', {
         UserId: {type:"number",unsigned: true, size:8,  rational: false},
+        ClientId: Number,
         Event: String,
         Latitude: Number,
         Longitude: Number,
