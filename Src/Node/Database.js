@@ -1049,6 +1049,24 @@ var IndexToRemove=[]
       PublicOffers[i].EndDate=EndDateLocal;
       }
 
+// Adjust UserTimezone
+    var now=moment();
+    var ServerTimezone=now.format("ZZ")
+    ServerTimezone=parseInt(ServerTimezone)/100
+
+    var UserTimezone=Timezone
+    UserTimezone=parseInt(UserTimezone)/100
+
+    var TimeDifference=ServerTimezone-UserTimezone
+
+    for(var i=0;i<PublicOffers.length;i++){
+      //now.add('hours',TimeDifference)
+      PublicOffers[i].PublishedDate=PublicOffers[i].PublishedDate.add('hours',TimeDifference);
+      PublicOffers[i].StartDate=PublicOffers[i].StartDate.add('hours',TimeDifference);
+      PublicOffers[i].EndDate=PublicOffers[i].EndDate.add('hours',TimeDifference);;
+      }
+
+
 
 // Final Filter For All Offers
   for(var i=0;i<PublicOffers.length;i++){
