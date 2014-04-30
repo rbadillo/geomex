@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `geomex`.`AppEvents` (
     FOREIGN KEY (`UserId` )
     REFERENCES `geomex`.`Users` (`UserId` )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION),
+    ON UPDATE NO ACTION,
   CONSTRAINT `ClientId_AppEvent`
     FOREIGN KEY (`ClientId` )
     REFERENCES `geomex`.`Clients` (`ClientId` )
