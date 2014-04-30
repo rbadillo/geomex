@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `geomex`.`AppEvents` (
     FOREIGN KEY (`ClientId` )
     REFERENCES `geomex`.`Clients` (`ClientId` )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION;
+    ON UPDATE NO ACTION);
 
 DROP TRIGGER IF EXISTS `geomex`.`AppEvents_Datetime_Created`;
 
