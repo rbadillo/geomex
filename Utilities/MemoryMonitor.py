@@ -1,22 +1,32 @@
 import psutil
 import smtplib
 import datetime
+import time
 
-Trigger=35.0
+i=0
+SendAlert=0
+CPU=0
+Trigger=40.0
 
 print ""
 print "Start: " +str(datetime.datetime.now())
 
-DiskUsed=psutil.disk_usage('/')
-DiskPercentage=DiskUsed[3]
-print "Disk Space Used: " +str(DiskPercentage) +" %"
+while i<3:
+	Memory=psutil.virtual_memory()
+	Memory= Memory[2]
+	print "Memory Utilization: " +str(Memory) +" %"
+	if(Memory>Trigger):
+		SendAlert=SendAlert+1
+	time.sleep(3)
+	i=i+1
 
-if(DiskPercentage>Trigger):
-	print "Sending Email - Disk Alert"
+
+if(SendAlert==3):
+	print "Sending Email - Memory Alert"
 	fromaddr = 'descubrenear@gmail.com'
 	toaddrs  = 'beto_best@hotmail.com'
-	subject="Near - Disk Alert"
-	body = "Disk Space Used: " +str(DiskPercentage) +" %"
+	subject="Near - Memory Alert"
+	body = "Memory Utilization: " +str(Memory) +" %"
 	message = 'Subject: %s\n\n%s' % (subject, body)
 
 	# Credentials (if needed)
@@ -32,3 +42,5 @@ if(DiskPercentage>Trigger):
 
 print "End: " +str(datetime.datetime.now())
 print ""
+
+

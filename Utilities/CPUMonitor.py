@@ -28,7 +28,7 @@ if(SendAlert==3):
 
 	# Credentials (if needed)
 	username = 'descubrenear'
-	password = 'badillogonzalez'
+	password = 'b3t0SaTuRn01'
 
 	# The actual mail send
 	server = smtplib.SMTP('smtp.gmail.com:587')

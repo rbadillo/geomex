@@ -25,7 +25,7 @@ try:
 
 		# Credentials (if needed)
 		username = 'descubrenear'
-		password = 'badillogonzalez'
+		password = 'b3t0SaTuRn01'
 
 		# The actual mail send
 		server = smtplib.SMTP('smtp.gmail.com:587')
@@ -44,7 +44,7 @@ except requests.exceptions.Timeout:
 
 	# Credentials (if needed)
 	username = 'descubrenear'
-	password = 'badillogonzalez'
+	password = 'b3t0SaTuRn01'
 
 	# The actual mail send
 	server = smtplib.SMTP('smtp.gmail.com:587')
@@ -62,7 +62,7 @@ except requests.exceptions.ConnectionError:
 
 	# Credentials (if needed)
 	username = 'descubrenear'
-	password = 'badillogonzalez'
+	password = 'b3t0SaTuRn01'
 
 	# The actual mail send
 	server = smtplib.SMTP('smtp.gmail.com:587')
