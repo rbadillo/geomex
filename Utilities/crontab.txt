@@ -5,3 +5,4 @@
 */1 * * * * python /home/geomex/Near/current/Utilities/CPUMonitor.py >> /home/geomex/Logs/CPUMonitor.log
 */1 * * * * python /home/geomex/Near/current/Utilities/DiskMonitor.py >> /home/geomex/Logs/DiskMonitor.log
 */1 * * * * python /home/geomex/Near/current/Utilities/HealthCheck.py >> /home/geomex/Logs/HealthCheck.log
+*/1 * * * * python /home/geomex/Near/current/Utilities/MemoryMonitor.py >> /home/geomex/Logs/MemoryMonitor.log
