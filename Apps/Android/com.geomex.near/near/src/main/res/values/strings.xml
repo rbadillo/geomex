@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Near</string>
+    <string name="app_id">175017302671961</string>
+    <string name="api_key_debug">AIzaSyDrFK9tycSfqsh9v87RkaKbD8omk4Lq5jQ</string>
+    <string name="api_key_release">AIzaSyCUcqkgIppwrCucc2dNU42IalP1eAsjusw</string>
+    <string name="app_description">Bienvenido</string>
+    <string name="app_website">descubrenear.com</string>
+    <string name="app_website_full">http://descubrenear.com</string>
+    <string name="action_overflow">Menú</string>
+    <string name="action_contact">Contacto</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_login">Iniciar sesión con Facebook</string>
+    <string name="action_logout">Cerrar sesión</string>
+    <string name="action_redeem">Canjear</string>
+    <string name="action_confirm_redeem">Confirmar</string>
+    <string name="drawer_open">Abrir menú de navegación</string>
+    <string name="drawer_close">Cerrar menú de navegación</string>
+    <string name="navigation_clients">Inicio</string>
+    <string name="navigation_inbox">Mensajes</string>
+    <string name="navigation_friends">Mis amigos</string>
+    <string name="navigation_maps">Lugares cercanos</string>
+    <string name="navigation_maps_not_available">La ubicación del dispositivo no está disponible.</string>
+    <string name="maps_get_directions">Obtener direcciones</string>
+    <string name="content_empty">Por el momento, no hay contenido para mostrar.</string>
+    <string name="network_error_message">No se pudo conectar con el servidor. Intenta de nuevo más tarde.</string>
+    <string name="network_error_retry">Actualizar</string>
+
+    <string name="activity_offers">Ofertas</string>
+    <string name="offer_start_date">A partir de</string>
+    <string name="offer_end_date">Hasta</string>
+    <string name="offer_is_gold">Destacado</string>
+    <string name="activity_user_offers">Actividad reciente</string>
+    <string name="user_offer_end_date">Canjeado</string>
+    <string name="user_offer_not_available">
+        Lo sentimos, esta oferta ya no está disponible.\n\n
+        Uno de los siguientes eventos sucedió:\n\n
+        A) La oferta ya fue canjeada.\n
+        B) El número de ofertas disponibles se agotó.\n
+        C) La oferta expiró.
+    </string>
+
+    <string-array name="months_of_the_year">
+        <item name="january">enero</item>
+        <item name="february">febrero</item>
+        <item name="march">marzo</item>
+        <item name="april">abril</item>
+        <item name="may">mayo</item>
+        <item name="june">junio</item>
+        <item name="july">julio</item>
+        <item name="august">agosto</item>
+        <item name="september">septiembre</item>
+        <item name="october">octubre</item>
+        <item name="november">noviembre</item>
+        <item name="december">diciembre</item>
+    </string-array>
+
+</resources>

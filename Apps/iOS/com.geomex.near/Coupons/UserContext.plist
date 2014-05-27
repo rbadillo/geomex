@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SHOW_DEBUG_PANELS</key>
+	<true/>
+	<key>CUSTOM_OPT_IN_FLOW</key>
+	<true/>
+	<key>COMMUNICATIONS_DISABLED</key>
+	<false/>
+	<key>CUSTOMER_OPT_IN_FLOW</key>
+	<false/>
+	<key>PRODUCTION_API_KEY</key>
+	<string>9d0edc61-5ea6-4e6c-aa35-a02873ef7e36</string>
+	<key>FEATURE_NAME</key>
+	<string>In-store Deals</string>
+	<key>FEATURE_DESCRIPTION</key>
+	<string>Receive exclusive offers, including ones when you are at or near participating stores.</string>
+</dict>
+</plist>

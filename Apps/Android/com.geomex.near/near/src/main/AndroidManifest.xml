@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.geomex.near"
+    android:versionCode="2"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.BATTERY_STATS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission android:name="com.geomex.near.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.geomex.near.permission.C2D_MESSAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:logo="@drawable/ic_near_white"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        android:debuggable="false">
+
+        <activity
+            android:name="com.geomex.near.MainActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.geomex.near.OffersActivity"
+            android:parentActivityName="com.geomex.near.MainActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.geomex.near.MainActivity" />
+        </activity>
+
+        <activity android:name="com.geomex.near.UserOffersActivity" />
+
+        <activity android:name="com.facebook.LoginActivity" />
+
+        <service android:name="com.geomex.near.PushMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.geomex.near.service.PUSH_MESSAGING_SERVICE" />
+            </intent-filter>
+        </service>
+
+        <service android:name="com.geomex.near.UserLocationService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.geomex.near.service.USER_LOCATION_SERVICE" />
+            </intent-filter>
+        </service>
+
+        <service android:name="com.qualcommlabs.usercontext.service.GimbalService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.geomex.near.service.USER_CONTEXT_SERVICE" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name="com.geomex.near.PushMessagingServiceStarter"
+            android:enabled="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.geomex.near" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.geomex.near.UserLocationServiceStarter"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.qualcommlabs.usercontext.service.UserContextServiceStartStopReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/app_id" />
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCUcqkgIppwrCucc2dNU42IalP1eAsjusw" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+    </application>
+</manifest>

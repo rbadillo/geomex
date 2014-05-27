@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="4dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/list_item_bg"
+        android:padding="4dp">
+
+        <ImageView
+            android:id="@+id/client_logo"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:layout_centerHorizontal="true"
+            android:scaleType="fitCenter" />
+
+        <LinearLayout
+            android:id="@+id/offer_is_gold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/client_logo"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_below="@id/client_logo"
+                android:src="@drawable/ic_star" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/holo_orange_dark"
+                android:textSize="12sp"
+                android:textStyle="bold|italic"
+                android:text="@string/offer_is_gold" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/client_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:layout_below="@id/offer_is_gold"
+            android:textColor="?android:attr/textColorSecondary"
+            android:lines="2" />
+
+    </RelativeLayout>
+</FrameLayout>
