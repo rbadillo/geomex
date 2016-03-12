@@ -32,7 +32,6 @@ exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,Message
           connection.disconnect()
           return callback(null)
           
-          });
       });
   });
 }
