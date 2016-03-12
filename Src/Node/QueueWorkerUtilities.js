@@ -7,8 +7,7 @@ exports.Test = function Test(req,res){
 }
 
 exports.SendMessage = function SendMessage(req,res){
-	res.end('Success');
-  console.log()
+
   var OfferId=req.body.offer_id
   var MessageTitle=req.body.message_title
   var MessageSubtitle=req.body.message_subtitle
@@ -18,12 +17,30 @@ exports.SendMessage = function SendMessage(req,res){
   var UserQuery=req.body.user_query
   var SendMessageOnly=req.body.send_message_only.toLowerCase()
 
-  DAL.GetUsersDeviceToken(UserQuery,OfferId,ClientId,SendMessageOnly,function(ActiveUsers){
+  DAL.GetUsersDeviceToken(UserQuery,OfferId,ClientId,SendMessageOnly,function(err,ActiveUsers){
 
-    DAL.AddMessage(MessageSubtitle,OfferId,ClientId,function(){
-      //Sending Message to RabbitMQ
-      MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly);
-    });
+    if(err)
+    {
+        return res.end('ERROR - ' +err);
+    }
+    else
+    {
+
+      DAL.AddMessage(MessageSubtitle,OfferId,ClientId,function(err){
+
+        if(err)
+        {
+          return res.end('ERROR - ' +err);
+        }
+        else
+        {
+          //Sending Message to RabbitMQ
+          MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,function(){
+            return res.end("Success")
+          });
+        }
+      });
+    }
 
   });
 }

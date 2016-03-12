@@ -417,47 +417,61 @@ function tryParseJson(str) {
 exports.AddMessage = function AddMessage(Message,OfferId,ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(err)
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
+                    if (err)
+                    {
+                      console.log(err)
+                      return callback(err)
+                    }
+                    else
+                    {
                     // loaded!
                     var message = db.models.Messages;
 
-    message.find({Message: Message, OfferId: OfferId, ClientId: ClientId},function (err, msj) {
+                    message.find({Message: Message, OfferId: OfferId, ClientId: ClientId},function (err, msj) {
 
-                      if(err){
-                          console.log(err);
-                          db.close();
-                      }else{
-                          if(msj.length){
-                            console.log("Existing Message - Message: " +Message +" - ClientId: " +ClientId);
-                            db.close();
-                            callback();
-                          }else{
-                            var msj = db.models.Messages();
-                            msj.Message=Message
-                            msj.OfferId=OfferId
-                            msj.ClientId=ClientId
-                            msj.IsPrivate=1
-                            msj.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                            
-                            msj.save(function (err) {
-                                     if (err){
-                                        console.log(err);
-                                        db.close();
-                                     }else{
-                                     console.log("New Message Added Sucessfully - Message: " +Message +" - ClientId: " +ClientId);
-                                     db.close();
-                                     callback();
-                                     }
-                                 });
-                          }
-                      }
-
+                                      if(err){
+                                          console.log(err);
+                                          db.close();
+                                          return callback(err)
+                                      }else{
+                                          if(msj.length){
+                                            console.log("Existing Message - Message: " +Message +" - ClientId: " +ClientId);
+                                            db.close();
+                                            return callback(null);
+                                          }else{
+                                            var msj = db.models.Messages();
+                                            msj.Message=Message
+                                            msj.OfferId=OfferId
+                                            msj.ClientId=ClientId
+                                            msj.IsPrivate=1
+                                            msj.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                                            
+                                            msj.save(function (err) {
+                                                     if (err){
+                                                        console.log(err);
+                                                        db.close();
+                                                        return callback(err)
+                                                     }else{
+                                                     console.log("New Message Added Sucessfully - Message: " +Message +" - ClientId: " +ClientId);
+                                                     db.close();
+                                                     return callback(null);
+                                                     }
+                                                 });
+                                          }
+                                      }
                     });
+                }
             });
-        });
+          }
+    });
 }
 
 
@@ -2028,10 +2042,22 @@ exports.ReadMessage = function ReadMessage(UserId,MessageId,callback){
 exports.GetUsersDeviceToken = function GetUsersDeviceToken(UserQuery,OfferId,ClientId,SendMessageOnly,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(err,null)
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(err,null)
+                    }
+                    else
+                    {
                     // loaded!
 
                     query=UserQuery
@@ -2049,8 +2075,9 @@ exports.GetUsersDeviceToken = function GetUsersDeviceToken(UserQuery,OfferId,Cli
 
                       if(err){
                         console.log(err);
-                        callback(ActiveUsers);
                         db.close();
+                        return callback(err,null);
+                        
                       }else{
                         db.close();
                         //console.log(users)
@@ -2074,17 +2101,19 @@ exports.GetUsersDeviceToken = function GetUsersDeviceToken(UserQuery,OfferId,Cli
                             AddPrivateOfferRecursive(UserIds,0,OfferId,ClientId,function(){
                                   ActiveUsers["iOS"]=iOS;
                                   ActiveUsers["Android"]=Android;
-                                  callback(ActiveUsers);
+                                  return callback(null,ActiveUsers);
                             })
                         }else{
                           ActiveUsers["iOS"]=iOS;
                           ActiveUsers["Android"]=Android;
-                          callback(ActiveUsers);
+                          return callback(null, ActiveUsers);
                         }
 
                       }
                     })
+                }
             });
+          }
         });
 }
 
@@ -2105,11 +2134,21 @@ function AddPrivateOfferRecursive(UserIds,Index,OfferId,ClientId,callback){
 function AddPrivateOfferToUser(UserId,OfferId,ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback()
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-
+                    if (err)
+                    {
+                      console.log(err)
+                      return callback()
+                    }
+                    else
+                    {
                     var User= db.models.Users;
                     var Offers= db.models.Offers;
 
@@ -2118,7 +2157,7 @@ function AddPrivateOfferToUser(UserId,OfferId,ClientId,callback){
                           console.log(err);
                           console.log("Error retrieving data from database - OfferId: " +OfferId);
                           db.close();
-                          callback()
+                          return callback()
                         }else{
 
                               User.get(UserId,function (err, usr) {
@@ -2126,7 +2165,7 @@ function AddPrivateOfferToUser(UserId,OfferId,ClientId,callback){
                                     console.log(err);
                                     console.log("Error retrieving data from database - UserId: " +UserId);
                                     db.close();
-                                    callback();
+                                    return callback();
                                   }else{
                                     
                                     // loaded!
@@ -2159,11 +2198,11 @@ function AddPrivateOfferToUser(UserId,OfferId,ClientId,callback){
                                             console.log(err);
                                             console.log("ERROR Adding PrivateOffer To User: " +UserId +" - OfferId: " +OfferId);
                                             db.close();
-                                            callback()
+                                            return callback()
                                          }else{
                                             console.log("PrivateOffer Added Sucessfully To User: " +UserId +" - OfferId: " +OfferId);
                                             db.close();
-                                            callback();
+                                            return callback();
                                          }
                                      });
                                   }
@@ -2174,10 +2213,11 @@ function AddPrivateOfferToUser(UserId,OfferId,ClientId,callback){
                     })
 
                     
-
+                }
                     
             });
-        });
+          }
+    });
 }
 
 
