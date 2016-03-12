@@ -35,8 +35,15 @@ exports.SendMessage = function SendMessage(req,res){
         else
         {
           //Sending Message to RabbitMQ
-          MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,function(){
-            return res.end("Success")
+          MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,function(err){
+              if(err)
+              {
+                  return res.end("ERROR - Publishing To RabbitMQ")
+              }
+              else
+              {
+                return res.end("Success")
+              }
           });
         }
       });

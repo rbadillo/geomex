@@ -36,6 +36,7 @@ exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,Message
                 console.log("Message Published Successfully to RabbitMQ");
                 console.log("");
                 connection.disconnect()
+                return callback(null)
             }     
           });
       });
