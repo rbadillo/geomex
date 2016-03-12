@@ -461,178 +461,230 @@ exports.AddMessage = function AddMessage(Message,OfferId,ClientId,callback){
 exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Timezone,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
+          if (err)
+          {
+            console.log(err);
+            db.close();
+          }
+          else
+          {
+              db.load("./Models", function (err) {
+                      if (err)
+                      {
+                        console.log(err);
+                        db.close();
+                      }
+                      else
+                      {
+                        // loaded!
+                        var User= db.models.Users;
 
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var User= db.models.Users;
+                        User.get(UserId,function (err, usr) {
+                            if(err){
+                                //console.log("New User - UserId: "+UserId);
 
-                    User.get(UserId,function (err, usr) {
-                        if(err){
-                            //console.log("New User - UserId: "+UserId);
+                                var usr = db.models.Users();
+                                usr.UserId=UserId
+                                usr.DeviceToken=DeviceToken
+                                usr.PhoneType=PhoneType
+                                usr.Timezone=Timezone
+                                usr.FbName=FbName
+                                usr.FbLastName=FbLastName
+                                usr.FbAge=FbAge
+                                usr.FbBirthday=FbBirthday
+                                usr.FbEmail=FbEmail
+                                usr.FbGender=FbGender
+                                usr.FbSchool=FbSchool
+                                usr.FbWork=FbWork
+                                usr.FbLink=FbLink
+                                usr.FbPhoto=FbPhoto
+                                usr.LastRegister=moment.utc().format("YYYY-MM-DD HH:mm:ss");
 
-                            var usr = db.models.Users();
-                            usr.UserId=UserId
-                            usr.DeviceToken=DeviceToken
-                            usr.PhoneType=PhoneType
-                            usr.Timezone=Timezone
-                            usr.FbName=FbName
-                            usr.FbLastName=FbLastName
-                            usr.FbAge=FbAge
-                            usr.FbBirthday=FbBirthday
-                            usr.FbEmail=FbEmail
-                            usr.FbGender=FbGender
-                            usr.FbSchool=FbSchool
-                            usr.FbWork=FbWork
-                            usr.FbLink=FbLink
-                            usr.FbPhoto=FbPhoto
-                            usr.LastRegister=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-
-                            usr.save(function (err) {
-                                 if (err){
-                                    console.log(err);
-                                    db.close();
-                                 }else{
-                                 //console.log("User Added Sucessfully - UserId: "+UserId);
-                                    db.close();
-                                   if(Event=="register"){
-                                      exports.UpdateAppEvents(UserId,null,Event,Latitude,Longitude);
-                                  }else{
-                                      console.log("ERROR - Wrong Event: " +Event +" - UserId: " +UserId)
-                                      console.log("")
+                                usr.save(function (err) {
+                                     if (err){
+                                        console.log(err);
+                                        db.close();
+                                     }else{
+                                     //console.log("User Added Sucessfully - UserId: "+UserId);
+                                        db.close();
+                                       if(Event !== undefined && Event=="register"){
+                                          exports.UpdateAppEvents(UserId,null,Event,Latitude,Longitude);
+                                      }else{
+                                          console.log("ERROR - Wrong Event: " +Event +" - UserId: " +UserId)
+                                          console.log("")
+                                        }
+                                     }
+                                 });
+                                
+                            }else{
+                                //console.log("Existing User - UserId: "+UserId);
+                                
+                                usr.UserId=UserId
+                                usr.DeviceToken=DeviceToken
+                                usr.PhoneType=PhoneType
+                                usr.Timezone=Timezone
+                                usr.FbName=FbName
+                                usr.FbLastName=FbLastName
+                                usr.FbAge=FbAge
+                                usr.FbBirthday=FbBirthday
+                                usr.FbEmail=FbEmail
+                                usr.FbGender=FbGender
+                                usr.FbSchool=FbSchool
+                                usr.FbWork=FbWork
+                                usr.FbLink=FbLink
+                                usr.FbPhoto=FbPhoto
+                                usr.LastRegister=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                                
+                                usr.save(function (err) {
+                                     if (err){
+                                        console.log(err);
+                                        db.close();
+                                     }else{
+                                     //console.log("User Updated Sucessfully - UserId: "+UserId);
+                                     db.close();
+                                     if(Event !== undefined && Event.toLowerCase()=="register"){
+                                        exports.UpdateAppEvents(UserId,null,Event,Latitude,Longitude);
+                                      }else{
+                                          console.log("ERROR - Wrong Event: " +Event +" - UserId: " +UserId)
+                                          console.log("")
+                                        }
                                     }
-                                 }
-                             });
-                            
-                        }else{
-                            //console.log("Existing User - UserId: "+UserId);
-                            
-                            usr.UserId=UserId
-                            usr.DeviceToken=DeviceToken
-                            usr.PhoneType=PhoneType
-                            usr.Timezone=Timezone
-                            usr.FbName=FbName
-                            usr.FbLastName=FbLastName
-                            usr.FbAge=FbAge
-                            usr.FbBirthday=FbBirthday
-                            usr.FbEmail=FbEmail
-                            usr.FbGender=FbGender
-                            usr.FbSchool=FbSchool
-                            usr.FbWork=FbWork
-                            usr.FbLink=FbLink
-                            usr.FbPhoto=FbPhoto
-                            usr.LastRegister=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                            
-                            usr.save(function (err) {
-                                 if (err){
-                                    console.log(err);
-                                    db.close();
-                                 }else{
-                                 //console.log("User Updated Sucessfully - UserId: "+UserId);
-                                 db.close();
-                                 if(Event !== undefined && Event.toLowerCase()=="register"){
-                                    exports.UpdateAppEvents(UserId,null,Event,Latitude,Longitude);
-                                  }else{
-                                      console.log("ERROR - Wrong Event: " +Event +" - UserId: " +UserId)
-                                      console.log("")
-                                    }
-                                }
-                             });
-                          }
-                    });
-            });
+                                 });
+                              }
+                        });
+                      }
+              });
+          }
         });
 }
+
 
 exports.GeoEvent = function GeoEvent(UserId,LocationId,Event,Latitude,Longitude){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err);
+            db.close();
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var Local= db.models.Locations;
+                    if (err)
+                    {
+                      console.log(err);
+                      db.close();
+                    }
+                    else
+                    {
+                      // loaded!
+                      var Local= db.models.Locations;
 
-                    Local.get(LocationId,function (err, loc) {
-                        if(err){
-                            console.log("Non Existing Location - LocationId: " +LocationId);
-                            console.log(err);
-                            console.log("");
-                            db.close();
-                        }else{
-                            //console.log("Existing Location - LocationId: " +LocationId);
-                            //console.log(loc.ClientId);
-                            db.close();
-                            UpdateLocationEvents(UserId,loc.ClientId,LocationId,loc.Name,Event,Latitude,Longitude);
-                          }
-                    });
+                      Local.get(LocationId,function (err, loc) {
+                          if(err){
+                              console.log("Non Existing Location - LocationId: " +LocationId);
+                              console.log(err);
+                              console.log("");
+                              db.close();
+                          }else{
+                              //console.log("Existing Location - LocationId: " +LocationId);
+                              //console.log(loc.ClientId);
+                              db.close();
+                              UpdateLocationEvents(UserId,loc.ClientId,LocationId,loc.Name,Event,Latitude,Longitude);
+                            }
+                      });
+                    }
             });
+          }
         });
 }
 
 function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event,Latitude,Longitude){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err);
+            db.close();
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var LocationEventAnalytics = db.models.LocationEvents();
-                    LocationEventAnalytics.UserId=UserId
-                    LocationEventAnalytics.ClientId=ClientId
-                    LocationEventAnalytics.LocationId=LocationId
-                    LocationEventAnalytics.LocationName=LocationName
-                    LocationEventAnalytics.Event=Event
-                    LocationEventAnalytics.Latitude=Latitude
-                    LocationEventAnalytics.Longitude=Longitude
-                    LocationEventAnalytics.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                    
-                    LocationEventAnalytics.save(function (err) {
-                         if (err){
-                            console.log(err);
-                            db.close();
-                         }else{
-                         //console.log("LocationEvents Updated Sucessfully - Location: " +LocationName +" - Event: " +Event +" - UserId: " +UserId);
-                         //console.log("")
-                         db.close();
-                         }
-                     });
-
+                    if (err)
+                    {
+                      console.log(err);
+                      db.close();
+                    }
+                    else
+                    {
+                      // loaded!
+                      var LocationEventAnalytics = db.models.LocationEvents();
+                      LocationEventAnalytics.UserId=UserId
+                      LocationEventAnalytics.ClientId=ClientId
+                      LocationEventAnalytics.LocationId=LocationId
+                      LocationEventAnalytics.LocationName=LocationName
+                      LocationEventAnalytics.Event=Event
+                      LocationEventAnalytics.Latitude=Latitude
+                      LocationEventAnalytics.Longitude=Longitude
+                      LocationEventAnalytics.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                      
+                      LocationEventAnalytics.save(function (err) {
+                           if (err){
+                              console.log(err);
+                              db.close();
+                           }else{
+                           //console.log("LocationEvents Updated Sucessfully - Location: " +LocationName +" - Event: " +Event +" - UserId: " +UserId);
+                           //console.log("")
+                           db.close();
+                           }
+                       });
+                    }
             });
+          }
         });
 }
 
 exports.UpdateAppEvents =function UpdateAppEvents(UserId,ClientId,Event,Latitude,Longitude){
 
   orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err);
+            db.close();
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var AppEvent= db.models.AppEvents();
-                    AppEvent.UserId=UserId
-                    AppEvent.ClientId=ClientId
-                    AppEvent.Event=Event
-                    AppEvent.Latitude=Latitude
-                    AppEvent.Longitude=Longitude
-                    AppEvent.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                    
-                    AppEvent.save(function (err) {
-                         if (err){
-                            console.log(err);
-                            console.log("");
-                            db.close();
-                         }else{
-                         //console.log("AppEvent Added Sucessfully - UserId: " +UserId);
-                         //console.log("");
-                         db.close();
-                         }
-                     });
+                    if (err)
+                    {
+                      console.log(err);
+                      db.close();
+                    }
+                    else
+                    {
+                      // loaded!
+                      var AppEvent= db.models.AppEvents();
+                      AppEvent.UserId=UserId
+                      AppEvent.ClientId=ClientId
+                      AppEvent.Event=Event
+                      AppEvent.Latitude=Latitude
+                      AppEvent.Longitude=Longitude
+                      AppEvent.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                      
+                      AppEvent.save(function (err) {
+                           if (err){
+                              console.log(err);
+                              console.log("");
+                              db.close();
+                           }else{
+                           //console.log("AppEvent Added Sucessfully - UserId: " +UserId);
+                           //console.log("");
+                           db.close();
+                           }
+                       });
+                  }
             });
+          }
         });
 }
 
