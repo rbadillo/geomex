@@ -2,6 +2,9 @@ var orm = require("orm");
 var moment = require('moment');
 var https= require('https');
 
+//Global Variables
+var emptyResponse = [];
+
 //exports.AddClient = function AddClient
 exports.AddClient = function AddClient(Name,Logo){
 
@@ -924,37 +927,52 @@ function DeleteSentMessage(UserId,MessageId){
 exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
+              db.load("./Models", function (err) {
+                      if (err)
+                      {
+                        console.log(err)
+                        db.close()
+                        return callback(JSON.stringify(emptyResponse))
+                      }
+                      else
+                      {
+                        // loaded!
+                        var offer = db.models.Offers;
 
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var offer = db.models.Offers;
+                          query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
+                                Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
+                                Offers.Instructions,Offers.Disclaimer, \
+                                Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+                                Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+                                Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
+                                Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+                                where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
+                                and Clients.IsActive=1 and Offers.IsActive=1 \
+                                and Clients.ClientId=Offers.ClientId and Offers.ClientId=" +ClientId
+                                +" Order by Offers.IsPrivate DESC,Offers.Priority DESC,Offers.EndDate DESC"
 
-                      query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
-                            Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
-                            Offers.Instructions,Offers.Disclaimer, \
-                            Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
-                            Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                            Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
-                            Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                            where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
-                            and Clients.IsActive=1 and Offers.IsActive=1 \
-                            and Clients.ClientId=Offers.ClientId and Offers.ClientId=" +ClientId
-                            +" Order by Offers.IsPrivate DESC,Offers.Priority DESC,Offers.EndDate DESC"
+                                db.driver.execQuery(query, function (err, offers) { 
 
-                            db.driver.execQuery(query, function (err, offers) { 
+                                      if(err){
+                                        console.log(err);
+                                        db.close();
+                                        return callback(JSON.stringify(emptyResponse))
+                                      }else{
+                                        db.close();
+                                        GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
+                                      }
 
-                                  if(err){
-                                    console.log(err);
-                                    db.close();
-                                  }else{
-                                    db.close();
-                                    GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
-                                  }
-
-                            })
-            });
+                                })
+                      }
+              });
+          }
         });
 }
 
@@ -962,29 +980,43 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
 function GetPrivateOffers(UserTime,UserId,PublicOffers,Timezone,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var privateOffer = db.models.UserPrivateOffers;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(JSON.stringify(emptyResponse))
+                    }
+                    else
+                    {
+                      // loaded!
+                      var privateOffer = db.models.UserPrivateOffers;
 
-                    privateOffer.find( {StartDate:orm.lte(UserTime), EndDate:orm.gte(UserTime), UserId:UserId  },function (err, off) {
+                      privateOffer.find( {StartDate:orm.lte(UserTime), EndDate:orm.gte(UserTime), UserId:UserId  },function (err, off) {
 
-                      if(err){
-                        console.log("Error")
-                        console.log(err);
-                        db.close();
-                      }else{
-                        //console.log(off.length);
-                        //for(var i=0;i<off.length;i++){
-                            //console.log("Private OfertaId: " +off[i].OfferId +" - UserId: " +off[i].UserId);
-                        //}
-                        db.close();
-                        GetUserRedemption(UserId,PublicOffers,off,Timezone,callback);
-                      }
-                    });
-            });
+                        if(err){
+                          console.log(err);
+                          db.close();
+                          return callback(JSON.stringify(emptyResponse))
+                        }else{
+                          //console.log(off.length);
+                          //for(var i=0;i<off.length;i++){
+                              //console.log("Private OfertaId: " +off[i].OfferId +" - UserId: " +off[i].UserId);
+                          //}
+                          db.close();
+                          GetUserRedemption(UserId,PublicOffers,off,Timezone,callback);
+                        }
+                      });
+                    }
+            });     
+          }
         });
 }
 
@@ -1004,29 +1036,44 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
         }
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var redemption = db.models.OfferRedemption;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(JSON.stringify(emptyResponse))
+                    }
+                    else
+                    {
+                      // loaded!
+                      var redemption = db.models.OfferRedemption;
 
-                    redemption.find( {OfferId: ofertas, UserId:UserId},function (err, off) {
+                      redemption.find( {OfferId: ofertas, UserId:UserId},function (err, off) {
 
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        //console.log(off.length);
-                        db.close();
-                        var ofertasUsadas=[]
-                        for(var i=0;i<off.length;i++){
-                          ofertasUsadas.push(off[i].OfferId);
+                        if(err){
+                          console.log(err);
+                          db.close();
+                          return callback(JSON.stringify(emptyResponse))
+                        }else{
+                          //console.log(off.length);
+                          db.close();
+                          var ofertasUsadas=[]
+                          for(var i=0;i<off.length;i++){
+                            ofertasUsadas.push(off[i].OfferId);
+                          }
+                          FilterOffers(PublicOffers,ofertasPrivadas,PrivateOffers,ofertasUsadas,Timezone,callback);
                         }
-                        FilterOffers(PublicOffers,ofertasPrivadas,PrivateOffers,ofertasUsadas,Timezone,callback);
-                      }
-                    });
+                      });
+                    }
             });
+          }
         });
 }
 
@@ -1125,102 +1172,156 @@ var IndexToRemove=[]
   }
 
     // Return JSON Object
-    callback(JSON.stringify(FinalOfferList));
+    return callback(JSON.stringify(FinalOfferList));
 }
 
 exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,Latitude,Longitude,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
+              db.load("./Models", function (err) {
+                      if (err)
+                      {
+                        console.log(err)
+                        db.close()
+                        return callback(JSON.stringify(emptyResponse))
+                      }
+                      else
+                      {
+                        // loaded!
+                        query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
+                                Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
+                                Offers.Instructions,Offers.Disclaimer, \
+                                Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+                                Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+                                Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
+                                Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+                                where Offers.OfferId=" +OfferId
+                                +" and Clients.ClientId=Offers.ClientId"
 
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
+                                db.driver.execQuery(query, function (err, offer) { 
 
-                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
-                            Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
-                            Offers.Instructions,Offers.Disclaimer, \
-                            Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
-                            Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                            Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
-                            Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                            where Offers.OfferId=" +OfferId
-                            +" and Clients.ClientId=Offers.ClientId"
+                                  if(err){
+                                    console.log(err);
+                                    db.close();
+                                    return callback(JSON.stringify(emptyResponse))
+                                  }else{
+                                    if(offer.length){
+                                    db.close();
+                                    return callback(JSON.stringify(offer));
+                                    console.log("");
+                                    UpdateOfferEvents(offer[0].ClientId,UserId,OfferId,"Viewed",Latitude,Longitude)
+                                    }else{
+                                      var msj= [{
+                                                  "State": "OfferId doesn't exist"
+                                                }]
+                                      return callback(JSON.stringify(msj));
+                                    }
+                                  }
 
-                            db.driver.execQuery(query, function (err, offer) { 
-
-                              if(err){
-                                console.log(err);
-                                db.close();
-                              }else{
-                                if(offer.length){
-                                db.close();
-                                callback(JSON.stringify(offer));
-                                console.log("");
-                                UpdateOfferEvents(offer[0].ClientId,UserId,OfferId,"Viewed",Latitude,Longitude)
-                                }else{
-                                  var msj= [{
-                                              "State": "OfferId doesn't exist"
-                                            }]
-                                  callback(JSON.stringify(msj));
-                                }
-                              }
-
-                            })
-            });
+                                })
+                        }
+              });
+            }
         });
 }
 
 exports.RedeemSingleOffer = function RedeemSingleOffer(UserId,OfferId,Latitude,Longitude,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
+              db.load("./Models", function (err) {
+                      if (err)
+                      {
+                        console.log(err)
+                        db.close()
+                        return callback(JSON.stringify(emptyResponse))
+                      }
+                      else
+                      {
+                        // loaded!
+                        query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
+                                Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+                                Offers.Instructions,Offers.Disclaimer, \
+                                Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+                                Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+                                Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
+                                Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+                                where Offers.OfferId=" +OfferId
+                                +" and Clients.ClientId=Offers.ClientId"
 
-            db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
+                                db.driver.execQuery(query, function (err, offer) { 
 
-                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
-                            Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
-                            Offers.Instructions,Offers.Disclaimer, \
-                            Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
-                            Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                            Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
-                            Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                            where Offers.OfferId=" +OfferId
-                            +" and Clients.ClientId=Offers.ClientId"
+                                  if(err){
+                                    console.log(err);
+                                    db.close();
+                                    return callback(JSON.stringify(emptyResponse))
+                                  }else{
 
-                            db.driver.execQuery(query, function (err, offer) { 
+                                    db.close(); 
 
-                              if(err){
-                                console.log(err);
-                                db.close();
-                              }else{
-                                if(offer.length){
-                                db.close();
-                                callback(JSON.stringify(offer));
-                                Redeem(offer[0].ClientId,UserId,OfferId,Latitude,Longitude)
-                                }else{
-                                  var msj= [{
-                                              "State": "OfferId doesn't exist"
-                                            }]
-                                  callback(JSON.stringify(msj));
-                                }
-                              }
+                                    if(offer.length){
+                                      Redeem(offer[0].ClientId,UserId,OfferId,Latitude,Longitude,function(successFlag){
 
-                            })
-            });
+                                          if(successFlag)
+                                          {
+                                          return callback(JSON.stringify(offer));
+                                          }
+                                          else
+                                          {
+                                          var msj= [{
+                                                    "State": "Error Redeeming Offer or Offer Already Redeemed"
+                                                  }]
+                                          return callback(JSON.stringify(msj))
+                                          }
+                                      })
+                                    }else{
+                                      var msj= [{
+                                                  "State": "OfferId doesn't exist"
+                                                }]
+                                      return callback(JSON.stringify(msj));
+                                    }
+                                  }
+
+                                })
+                      }
+              });
+            }
         });
 }
 
 
-function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
+function Redeem(ClientId,UserId,OfferId,Latitude,Longitude,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(false)
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(false)
+                    }
+                    else
+                    {
                     // loaded!
 
                     query="Select MultiUse from Offers Where OfferId=" +OfferId
@@ -1230,6 +1331,7 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
                         if(err){
                             console.log(err);
                             db.close();
+                            return callback(false)
                         }else{
 
                     var offerRedeemValidation = db.models.OfferRedemption;
@@ -1240,12 +1342,14 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
                             if(err){
                               console.log(err);
                               db.close();
+                              return callback(false)
                             }else{
                                 if(offval.length && OfferUseType==0){
                                   db.close();
                                   console.log("")
                                   console.log("UserId: " +UserId +" Already Redeemed OfferId: " +OfferId);
                                   console.log("")
+                                  return callback(false)
                                 }else{
 
                                   var offerRedeem = db.models.OfferRedemption();
@@ -1258,6 +1362,7 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
                                        if (err){
                                           console.log(err);
                                           db.close();
+                                          return callback(false)
                                        }else{
                                        console.log("")
                                        console.log("UserId: " +UserId +" - Redeemed OfferId: " +OfferId);
@@ -1269,6 +1374,7 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
                                           if(err){
                                             console.log(err);
                                             db.close();
+                                            return callback(false)
                                           }else{
                                             
                                             var ActualRedemption=off[0].ActualRedemption + 1;
@@ -1278,10 +1384,12 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
                                                  if (err){
                                                     console.log(err);
                                                     db.close();
+                                                    return callback(false)
                                                  }else{
                                                     db.close();
                                                     console.log("OfferId: "+OfferId +" - Actual Redemption: " +ActualRedemption)
                                                     UpdateOfferEvents(ClientId,UserId,OfferId,"Presented",Latitude,Longitude)
+                                                    return callback(true)
                                                  }
                                               })
                                             }
@@ -1293,40 +1401,53 @@ function Redeem(ClientId,UserId,OfferId,Latitude,Longitude){
                   }) // END OF offerRedeemValidation
                   }
                   }) // END OF MultiUse Flag
-
+                }
             });
-        });
+          }
+    });
 }
 
 function UpdateOfferEvents(ClientId,UserId,OfferId,Event,Latitude,Longitude){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var offer_event = db.models.OfferEvents();
-                    offer_event.ClientId=ClientId;
-                    offer_event.UserId=UserId;
-                    offer_event.OfferId=OfferId;
-                    offer_event.Event=Event;
-                    offer_event.Latitude=Latitude;
-                    offer_event.Longitude=Longitude;
-                    offer_event.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                    }
+                    else
+                    {
+                      // loaded!
+                      var offer_event = db.models.OfferEvents();
+                      offer_event.ClientId=ClientId;
+                      offer_event.UserId=UserId;
+                      offer_event.OfferId=OfferId;
+                      offer_event.Event=Event;
+                      offer_event.Latitude=Latitude;
+                      offer_event.Longitude=Longitude;
+                      offer_event.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
 
-                    offer_event.save(function (err) {
-                         if (err){
-                            console.log(err);
-                            db.close();
-                         }else{
-                         console.log("UserId: " +UserId +" - Event: " +Event +" - OfferId: " +OfferId);
-                         console.log("");
-                         db.close();
-                         }
-                     });
+                      offer_event.save(function (err) {
+                           if (err){
+                              console.log(err);
+                              db.close();
+                           }else{
+                           console.log("UserId: " +UserId +" - Event: " +Event +" - OfferId: " +OfferId);
+                           console.log("");
+                           db.close();
+                           }
+                       });
+                  }
             });
-        });
+          }
+      });
 }
 
 
@@ -1406,16 +1527,30 @@ exports.GetClosestLocations = function GetClosestLocations(Latitude,Longitude,Ra
 
 exports.IsOfferValid= function IsOfferValid(UserId,OfferId,ClientId,UserTime,callback){
 
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
+var msj= [{
+            "State": ""
+         }]
 
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
+          if (err)
+          {
+            console.log(err)
+            msj[0].State=0
+            return callback(JSON.stringify(msj))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      msj[0].State=0
+                      return callback(JSON.stringify(msj))
+                    }
+                    else
+                    {
                     // loaded!
-                    
-                    var msj= [{
-                                "State": ""
-                              }]
 
                     query="Select IsActive from Clients \
                            where ClientId=" +ClientId
@@ -1426,13 +1561,13 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,ClientId,UserTime,cal
                                 console.log(err);
                                 db.close();
                                 msj[0].State=0
-                                callback(JSON.stringify(msj))
+                                return callback(JSON.stringify(msj))
                            }else{
                               if(client[0]===undefined){
                                   //console.log("Offer Undefined");
                                   db.close();
                                   msj[0].State=0
-                                  callback(JSON.stringify(msj))
+                                  return callback(JSON.stringify(msj))
                                 }else{
 
                                 var ClientActive=client[0].IsActive
@@ -1448,14 +1583,14 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,ClientId,UserTime,cal
                                                     console.log(err);
                                                     db.close();
                                                     msj[0].State=0
-                                                    callback(JSON.stringify(msj))
+                                                    return callback(JSON.stringify(msj))
                                                   }else{
 
                                                     if(offer[0]===undefined){
                                                       //console.log("Offer Undefined");
                                                       db.close();
                                                       msj[0].State=0
-                                                      callback(JSON.stringify(msj))
+                                                      return callback(JSON.stringify(msj))
                                                     }else{
                                                     var OfferUseType=offer[0].IsPrivate
 
@@ -1487,16 +1622,15 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,ClientId,UserTime,cal
                                                                     console.log(err);
                                                                     db.close();
                                                                     msj[0].State=0
-                                                                    callback(JSON.stringify(msj))
+                                                                    return callback(JSON.stringify(msj))
                                                                   }else{
                                                                     db.close();
-
                                                                     if(offer.length){
                                                                         msj[0].State=1
-                                                                        callback(JSON.stringify(msj)) 
+                                                                        return callback(JSON.stringify(msj)) 
                                                                       }else{
                                                                         msj[0].State=0
-                                                                        callback(JSON.stringify(msj))
+                                                                        return callback(JSON.stringify(msj))
                                                                       }
                                                                   }
 
@@ -1528,16 +1662,16 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,ClientId,UserTime,cal
                                                                     console.log(err);
                                                                     db.close();
                                                                     msj[0].State=0
-                                                                    callback(JSON.stringify(msj))
+                                                                    return callback(JSON.stringify(msj))
                                                                   }else{
                                                                     db.close();
 
                                                                     if(offer.length){
                                                                         msj[0].State=1
-                                                                        callback(JSON.stringify(msj)) 
+                                                                        return callback(JSON.stringify(msj)) 
                                                                       }else{
                                                                         msj[0].State=0
-                                                                        callback(JSON.stringify(msj))
+                                                                        return callback(JSON.stringify(msj))
                                                                       }
                                                                   }
 
@@ -1551,13 +1685,15 @@ exports.IsOfferValid= function IsOfferValid(UserId,OfferId,ClientId,UserTime,cal
                                             }else{
                                               db.close();
                                               msj[0].State=0
-                                              callback(JSON.stringify(msj))
+                                              return callback(JSON.stringify(msj))
                                             } // Client is Inactive
                                         } // Valid Client Object
                                      } // Else No Mysql Client IsActive Error
-                              }) // Query Client IsActive Execution Execution
+                              }) // Query Client IsActive Execution
+                      } 
             });
-        });
+          }
+    });
 
 }
 

@@ -148,9 +148,24 @@ exports.Redeem= function Redeem(req,res){
         }else{
 
             DAL.RedeemSingleOffer(UserId,OfferId,Latitude,Longitude,function(output){
-              res.setHeader('Content-Type', 'application/json');
-              res.write(output);
-              res.end();
+              var tmp= JSON.parse(output)
+              if(tmp.length==0 || tmp[0].hasOwnProperty("State"))
+              {
+                res.setHeader('Content-Type', 'application/json');
+                res.statusCode=406
+                var msj= [{
+                    "State": "UserId: "+UserId +" - ClientId: " +ClientId +" - Status: Client Active/Inactive" +" - OfferId: " +OfferId +" - Status: Error Redeeming Offer"
+                }]
+                var response= JSON.stringify(msj)
+                res.write(response);
+                res.end();
+              }
+              else
+              {
+                res.setHeader('Content-Type', 'application/json');
+                res.write(output);
+                res.end();
+              }
             });
           }
       });
