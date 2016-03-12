@@ -464,7 +464,6 @@ exports.AddUser = function AddUser(UserId,DeviceToken,PhoneType,Timezone,Event,F
           if (err)
           {
             console.log(err);
-            db.close();
           }
           else
           {
@@ -565,7 +564,6 @@ exports.GeoEvent = function GeoEvent(UserId,LocationId,Event,Latitude,Longitude)
           if (err)
           {
             console.log(err);
-            db.close();
           }
           else
           {
@@ -605,7 +603,6 @@ function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event,Lati
           if (err)
           {
             console.log(err);
-            db.close();
           }
           else
           {
@@ -650,7 +647,6 @@ exports.UpdateAppEvents =function UpdateAppEvents(UserId,ClientId,Event,Latitude
           if (err)
           {
             console.log(err);
-            db.close();
           }
           else
           {
