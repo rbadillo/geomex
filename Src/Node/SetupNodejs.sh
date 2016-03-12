@@ -4,7 +4,7 @@ sudo npm install mocha@1.12.0
 sudo npm install redis@0.8.4
 sudo npm install hiredis@0.1.15
 sudo npm install express@3.3.4
-sudo npm install amqp@0.2.5
+sudo npm install amqp@0.2.4
 sudo npm install moment@2.1.0
 sudo npm install mysql@2.0.0-alpha7
 sudo npm install apn@1.4.3
