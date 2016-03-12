@@ -3,11 +3,11 @@ var DAL= require('./Database');
 
 exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,callback) {
 
-  var connection = amqp.createConnection({},{ reconnect: false });
+  var connection = amqp.createConnection({},{ defaultExchangeName: "amq.direct", reconnect: false });
 
   connection.on('ready', function () {
       // Prepare to Send Message to RabbitMQ
-      connection.queue(QueueName,{durable: true, autoDelete: false, defaultExchangeName: "amq.direct"},function(q){
+      connection.queue(QueueName,{durable: true, autoDelete: false},function(q){
 
           var msj= {
                   "OfferId": OfferId,
