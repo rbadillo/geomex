@@ -3,7 +3,7 @@ var DAL= require('./Database');
 
 exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,callback) {
 
-  var connection = amqp.createConnection({},{ defaultExchangeName: "amq.direct", reconnect: false });
+  var connection = amqp.createConnection({},{ reconnect: false });
 
   connection.on('ready', function () {
       // Prepare to Send Message to RabbitMQ
@@ -26,18 +26,12 @@ exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,Message
           console.log(msj);
           console.log("");
 
-          connection.publish(QueueName,msj,{},function(err){
-              if(err)
-              {
-                return callback("ERROR - Publishing to RabbitMQ")  
-              }
-              else
-              {
-                  console.log("Message Published Successfully to RabbitMQ");
-                  console.log("");
-                  connection.disconnect()
-                  return callback(null)
-              }     
+          connection.publish(QueueName,msj)
+          console.log("Message Published Successfully to RabbitMQ");
+          console.log("");
+          connection.disconnect()
+          return callback(null)
+          
           });
       });
   });
