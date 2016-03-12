@@ -7,7 +7,7 @@ exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,Message
 
   connection.on('ready', function () {
       // Prepare to Send Message to RabbitMQ
-      connection.queue(QueueName,{durable: true},function(q){
+      connection.queue(QueueName,{durable: true, autoDelete: false, defaultExchangeName: "amq.direct"},function(q){
 
           var msj= {
                   "OfferId": OfferId,
