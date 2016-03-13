@@ -12,6 +12,8 @@ exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,Message
 
     exchange.on('open', function () {
 
+            exchange.bind('Near.Messaging',QueueName)
+
             var msj= {
                     "OfferId": OfferId,
                     "Users": Devices,
