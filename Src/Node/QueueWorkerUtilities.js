@@ -35,10 +35,11 @@ exports.SendMessage = function SendMessage(req,res){
         else
         {
           //Sending Message to RabbitMQ
-          MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,function(err){
+          MQ.PublishMessage("Near.Messaging.PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,function(err){
               if(err)
               {
-                  return res.end("ERROR - Publishing To RabbitMQ")
+                  console.log(err)
+                  return res.end("ERROR - " +err)
               }
               else
               {

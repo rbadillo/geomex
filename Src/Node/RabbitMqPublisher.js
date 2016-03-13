@@ -6,39 +6,44 @@ exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,Message
   var connection = amqp.createConnection({},{ reconnect: false });
 
   connection.on('ready', function () {
-      // Prepare to Send Message to RabbitMQ
-      connection.queue(QueueName,{durable: true, autoDelete: false},function(q){
 
-          var msj= {
-                  "OfferId": OfferId,
-                  "Users": Devices,
-                  "MessageTitle": MessageTitle,
-                  "MessageSubtitle": MessageSubtitle,
-                  "ClientId": ClientId,
-                  "ClientName": ClientName,
-                  "ClientLogo": ClientLogo,
-                  "SendMessageOnly": SendMessageOnly
-            }
+    connection.exchange('Near.Messaging.*',{durable: true, type: topic, confirm: true}, function (exchange) {
+        // Prepare to Send Message to RabbitMQ
 
-          console.log("");
-          console.log("Msg Sent to Queue:");
-          console.log("");
-          console.log(msj);
-          console.log("");
-
-          connection.publish(QueueName,msj,{},function(err){
-              if(err)
-              {
-                return callback("ERROR - Publishing to RabbitMQ")  
+            var msj= {
+                    "OfferId": OfferId,
+                    "Users": Devices,
+                    "MessageTitle": MessageTitle,
+                    "MessageSubtitle": MessageSubtitle,
+                    "ClientId": ClientId,
+                    "ClientName": ClientName,
+                    "ClientLogo": ClientLogo,
+                    "SendMessageOnly": SendMessageOnly
               }
-              else
-              {
-                  console.log("Message Published Successfully to RabbitMQ");
-                  console.log("");
-                  connection.disconnect()
-                  return callback(null)
-              }     
-          });
-      });
+
+            console.log("");
+            console.log("Msg Sent to Queue:");
+            console.log("");
+            console.log(msj);
+            console.log("");
+
+            exchange.publish(QueueName,msj,{},function(err){
+                if(err)
+                {
+                  return callback("ERROR - Publishing to RabbitMQ")  
+                }
+                else
+                {
+                    console.log("Message Published Successfully to RabbitMQ");
+                    console.log("");
+                    connection.disconnect()
+                    return callback(null)
+                }     
+            });
+    });
+  });
+
+  connection.on('error', function () {
+    return callback("ERROR - Connecting to RabbitMQ")
   });
 }
