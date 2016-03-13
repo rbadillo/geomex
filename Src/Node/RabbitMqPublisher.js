@@ -7,8 +7,10 @@ exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,Message
 
   connection.on('ready', function () {
 
-    connection.exchange('Near.Messaging.*',{durable: true, type: topic, confirm: true}, function (exchange) {
+    var exchange= connection.exchange('Near.Messaging.*',{durable: true, type: topic, confirm: true})
         // Prepare to Send Message to RabbitMQ
+
+    exchange.on('open', function ()_{
 
             var msj= {
                     "OfferId": OfferId,
@@ -40,7 +42,7 @@ exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,Message
                     return callback(null)
                 }     
             });
-    });
+    })
   });
 
   connection.on('error', function () {
