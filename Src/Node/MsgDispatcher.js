@@ -5,16 +5,16 @@ var connection = amqp.createConnection();
 
 // Wait for connection to become established.
 connection.on('ready', function () {
-  console.log("MsjDispatcher - Connected to RabbitMQ")
+  console.log("MsgDispatcher - Connected to RabbitMQ")
   // Use the default 'amq.topic' exchange
   var options = { autoDelete: false, durable: true };
-  var q = connection.queue('PushMessages',options);
+  var q = connection.queue('Near.Messaging.PushMessages',options);
 
           // Receive messages
           q.subscribe(function (message) {
             console.log()
             console.log("Start - " +new Date());
-            console.log("MsjDispatcher - Got Message From RabbitMQ")
+            console.log("MsgDispatcher - Got Message From RabbitMQ")
             // Print messages to stdout
 
             if(message.hasOwnProperty('Users')){
@@ -25,10 +25,10 @@ connection.on('ready', function () {
                     //console.log(iOSPhones);
 
                     if(iOSPhones.length > 0){
-                      console.log("MsjDispatcher - Sending Push To iOS Devices")
+                      console.log("MsgDispatcher - Sending Push To iOS Devices")
                       Ios.PushMessage(message.MessageSubtitle,iOSPhones,message.ClientName,message.SendMessageOnly);
                     }else{
-                      console.log("MsjDispatcher - Not Active iOS Users To Send Push Notification")
+                      console.log("MsgDispatcher - Not Active iOS Users To Send Push Notification")
                     }
                 }
             
@@ -38,16 +38,16 @@ connection.on('ready', function () {
                     //console.log(AndroidPhones);
 
                     if(AndroidPhones.length > 0){
-                      console.log("MsjDispatcher - Sending Push To Android Devices")
+                      console.log("MsgDispatcher - Sending Push To Android Devices")
                       //MessageTitle,MessageSubtitle,Devices,OfferId,ClientName,ClientLogo
                       Android.PushMessage(message.MessageTitle,message.MessageSubtitle,AndroidPhones,message.OfferId,message.ClientName,message.ClientLogo,message.SendMessageOnly);
                     }else{
-                      console.log("MsjDispatcher - Not Active Android Users To Send Push Notification")
+                      console.log("MsgDispatcher - Not Active Android Users To Send Push Notification")
                     }
               }
 
           }else{
-            console.log("MsjDispatcher - Got Message Without Users Property From RabbitMQ")
+            console.log("MsgDispatcher - Got Message Without Users Property From RabbitMQ")
             console.log("Message Received: ");
             console.log("");
             console.log(message)
