@@ -7,12 +7,10 @@ exports.PublishMessage=function PublishMessage(QueueName,OfferId,Devices,Message
 
   connection.on('ready', function () {
 
-    var exchange= connection.exchange('Near.Messaging',{durable: true, type: 'topic', confirm: true, autoDelete: false})
+    var exchange= connection.exchange('Near.Messaging',{})
     // Prepare to Send Message to RabbitMQ
 
     exchange.on('open', function () {
-
-            exchange.bind('Near.Messaging',QueueName)
 
             var msj= {
                     "OfferId": OfferId,
