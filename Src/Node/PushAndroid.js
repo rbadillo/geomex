@@ -53,7 +53,7 @@ function SendGCMPush(Devices,Index,message,callback){
 
     if(Index >= Devices.length){
         console.log()
-        callback();
+        return callback();
     }else{
         // Auxiliary Array
         var aux=[];
