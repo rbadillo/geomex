@@ -687,7 +687,6 @@ exports.UpdateAppEvents =function UpdateAppEvents(UserId,ClientId,Event,Latitude
                       AppEvent.save(function (err) {
                            if (err){
                               console.log(err);
-                              console.log("");
                               db.close();
                            }else{
                            //console.log("AppEvent Added Sucessfully - UserId: " +UserId);
@@ -1568,27 +1567,42 @@ function UpdateOfferEvents(ClientId,UserId,OfferId,Event,Latitude,Longitude){
 exports.GetAllActiveClients = function GetAllActiveClients(callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(JSON.stringify(emptyResponse))
+                    }
+                    else
+                    {
+                      // loaded!
 
-                    query="Select ClientId,Name,Logo,ClientHexColor,IsGold,OfferClosestExpiration from Clients \
-                    where IsActive=1 and ActiveOffers>0 \
-                    Order by IsGold DESC,OfferClosestExpiration ASC,ClientId ASC"
+                      query="Select ClientId,Name,Logo,ClientHexColor,IsGold,OfferClosestExpiration from Clients \
+                      where IsActive=1 and ActiveOffers>0 \
+                      Order by IsGold DESC,OfferClosestExpiration ASC,ClientId ASC"
 
-                    db.driver.execQuery(query, function (err, clients) { 
+                      db.driver.execQuery(query, function (err, clients) { 
 
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                        callback(JSON.stringify(clients));
-                      }
-                    })
+                        if(err){
+                          console.log(err);
+                          db.close();
+                          return callback(JSON.stringify(emptyResponse))
+                        }else{
+                          db.close();
+                          return callback(JSON.stringify(clients));
+                        }
+                      })
+                    }
             });
+          }
         });
 }
 
@@ -1596,45 +1610,59 @@ exports.GetAllActiveClients = function GetAllActiveClients(callback){
 exports.GetClosestLocations = function GetClosestLocations(Latitude,Longitude,Radius,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(JSON.stringify(emptyResponse))
+                    }
+                    else
+                    {
+                      // loaded!
+                      query="SELECT Locations.Name,Locations.Latitude,Locations.Longitude,Clients.Logo as ClientLogo, \
+                             (6378.10 * ACOS(COS(RADIANS(latpoint)) \
+                                      * COS(RADIANS(latitude)) \
+                                      * COS(RADIANS(longpoint) - RADIANS(longitude)) \
+                                      + SIN(RADIANS(latpoint)) \
+                                      * SIN(RADIANS(latitude)))) AS DistanceInKm \
+                       FROM Locations,Clients \
+                       JOIN ( \
+                             SELECT "  +Latitude   +" AS latpoint, "  +Longitude +" AS longpoint \
+                         ) AS p \
+                       WHERE Locations.Latitude \
+                          BETWEEN latpoint  - (" +Radius +" / 111.045) \
+                              AND latpoint  + (" +Radius +" / 111.045) \
+                         AND Locations.Longitude \
+                          BETWEEN longpoint - (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
+                              AND longpoint + (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
+                         AND Locations.IsPrivate=0 \
+                         AND Locations.ClientId=Clients.ClientId \
+                         AND Clients.IsActive=1 \
+                       ORDER BY DistanceInKm \
+                       LIMIT 15"
 
-                    query="SELECT Locations.Name,Locations.Latitude,Locations.Longitude,Clients.Logo as ClientLogo, \
-                           (6378.10 * ACOS(COS(RADIANS(latpoint)) \
-                                    * COS(RADIANS(latitude)) \
-                                    * COS(RADIANS(longpoint) - RADIANS(longitude)) \
-                                    + SIN(RADIANS(latpoint)) \
-                                    * SIN(RADIANS(latitude)))) AS DistanceInKm \
-                     FROM Locations,Clients \
-                     JOIN ( \
-                           SELECT "  +Latitude   +" AS latpoint, "  +Longitude +" AS longpoint \
-                       ) AS p \
-                     WHERE Locations.Latitude \
-                        BETWEEN latpoint  - (" +Radius +" / 111.045) \
-                            AND latpoint  + (" +Radius +" / 111.045) \
-                       AND Locations.Longitude \
-                        BETWEEN longpoint - (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
-                            AND longpoint + (" +Radius +" / (111.045 * COS(RADIANS(latpoint)))) \
-                       AND Locations.IsPrivate=0 \
-                       AND Locations.ClientId=Clients.ClientId \
-                       AND Clients.IsActive=1 \
-                     ORDER BY DistanceInKm \
-                     LIMIT 15"
+                      db.driver.execQuery(query, function (err, locations) { 
 
-                    db.driver.execQuery(query, function (err, locations) { 
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                        callback(JSON.stringify(locations));
-                      }
-                    })
+                        if(err){
+                          console.log(err);
+                          db.close();
+                          return callback(JSON.stringify(emptyResponse))
+                        }else{
+                          db.close();
+                          return callback(JSON.stringify(locations));
+                        }
+                      })
+                    }
             });
+          }
         });
 }
 
@@ -1813,83 +1841,111 @@ var msj= [{
 
 exports.IsLocationActive= function IsLocationActive(LocationId,callback){
 
+  var msj= [{
+              "State": ""
+           }]
+
   orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            msj[0].State="Error";
+            return callback(JSON.stringify(msj))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      msj[0].State="Error";
+                      return callback(JSON.stringify(msj))
+                    }
+                    else
+                    {
+                        // loaded!
+                        query="Select Locations.IsActive as Location, Clients.IsActive as Client \
+                        from Locations,Clients \
+                        where LocationId=" +LocationId +" and Clients.ClientId=Locations.ClientId"
 
-                    var msj= [{
-                                "State": ""
-                              }]
+                        db.driver.execQuery(query, function (err, active) { 
 
-                    query="Select Locations.IsActive as Location, Clients.IsActive as Client \
-                    from Locations,Clients \
-                    where LocationId=" +LocationId +" and Clients.ClientId=Locations.ClientId"
-
-                    db.driver.execQuery(query, function (err, active) { 
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                        msj[0].State="Error";
-                        callback(JSON.stringify(msj))
-                      }else{
-                        //console.log(active)
-                        db.close();
-                        if(active.length){
-                            if(active[0].Location==1 && active[0].Client==1){
-                                msj[0].State=1;
+                          if(err){
+                            console.log(err);
+                            db.close();
+                            msj[0].State="Error";
+                            return callback(JSON.stringify(msj))
+                          }else{
+                            //console.log(active)
+                            db.close();
+                            if(active.length){
+                                if(active[0].Location==1 && active[0].Client==1){
+                                    msj[0].State=1;
+                                }else{
+                                  msj[0].State=0;
+                                }
+                                return callback(JSON.stringify(msj));
                             }else{
-                              msj[0].State=0;
+                              msj[0].State="Error";
+                              return callback(JSON.stringify(msj));
                             }
-                            callback(JSON.stringify(msj));
-                        }else{
-                          msj[0].State="Error";
-                          callback(JSON.stringify(msj));
-                        }
-                      }
-                    })
+                          }
+                        })
+                    }
             });
-        });
+          }
+      });
 }
 
 // LAST 20 Friend Activities
 exports.GetFriends = function GetFriends(FriendList,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(JSON.stringify(emptyResponse))
+                    }
+                    else
+                    {
+                        // loaded!
+                        if(FriendList==undefined || FriendList.length==0){
 
-                    if(FriendList==undefined || FriendList.length==0){
+                          db.close();
+                          return callback(JSON.stringify(emptyResponse))
 
-                      db.close();
-                      var friends= []
-                      callback(JSON.stringify(friends));
+                        }else{
 
-                    }else{
+                            query="SELECT distinct Users.UserId,Users.FbName,Users.FbLastName,Users.FbPhoto, \
+                             Users.LastRegister from Users \
+                             where Users.UserId in  (" +FriendList +") \
+                             order by Users.LastRegister Desc LIMIT 20"
 
-                    query="SELECT distinct Users.UserId,Users.FbName,Users.FbLastName,Users.FbPhoto, \
-                     Users.LastRegister from Users \
-                     where Users.UserId in  (" +FriendList +") \
-                     order by Users.LastRegister Desc LIMIT 20"
+                            db.driver.execQuery(query, function (err, friends) { 
 
-                    db.driver.execQuery(query, function (err, friends) { 
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                        callback(JSON.stringify(friends));
-                      }
-                    })
-                  }
+                              if(err){
+                                console.log(err);
+                                db.close();
+                                return callback(JSON.stringify(emptyResponse))
+                              }else{
+                                db.close();
+                                return callback(JSON.stringify(friends));
+                              }
+                            })
+                          }
+                    }
             });
+          }
         });
 }
 
@@ -1897,33 +1953,47 @@ exports.GetFriends = function GetFriends(FriendList,callback){
 exports.GetFriendActivity = function GetFriendActivity(FriendId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(JSON.stringify(emptyResponse))
+                    }
+                    else
+                    {
+                      // loaded!
+                      query="Select OfferRedemption.OfferId,Offers.Title,Offers.Subtitle,Offers.EndDate, \
+                      Offers.PrimaryImage,Offers.SecondaryImage,OfferRedemption.ClientId,Clients.Name as ClientName,Clients.Logo,Max(OfferRedemption.TimeCreated) as TimeCreated \
+                      from OfferRedemption,Offers,Clients \
+                      where \
+                      OfferRedemption.UserId=" +FriendId +" and Clients.ClientId=OfferRedemption.ClientId \
+                      and Offers.OfferId=OfferRedemption.OfferId \
+                      and Offers.IsPrivate=0 \
+                      Group by OfferRedemption.OfferId \
+                      Order by TimeCreated DESC LIMIT 5";
 
-                    query="Select OfferRedemption.OfferId,Offers.Title,Offers.Subtitle,Offers.EndDate, \
-                    Offers.PrimaryImage,Offers.SecondaryImage,OfferRedemption.ClientId,Clients.Name as ClientName,Clients.Logo,Max(OfferRedemption.TimeCreated) as TimeCreated \
-                    from OfferRedemption,Offers,Clients \
-                    where \
-                    OfferRedemption.UserId=" +FriendId +" and Clients.ClientId=OfferRedemption.ClientId \
-                    and Offers.OfferId=OfferRedemption.OfferId \
-                    and Offers.IsPrivate=0 \
-                    Group by OfferRedemption.OfferId \
-                    Order by TimeCreated DESC LIMIT 5";
+                      db.driver.execQuery(query, function (err, friendActivity) { 
 
-                    db.driver.execQuery(query, function (err, friendActivity) { 
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        db.close();
-                        callback(JSON.stringify(friendActivity));
-                      }
-                    })
+                        if(err){
+                          console.log(err);
+                          db.close();
+                          return callback(JSON.stringify(emptyResponse))
+                        }else{
+                          db.close();
+                          return callback(JSON.stringify(friendActivity));
+                        }
+                      })
+                    }
             });
+          }
         });
 }
 
@@ -1931,82 +2001,111 @@ exports.GetFriendActivity = function GetFriendActivity(FriendId,callback){
 exports.GetOffersId = function GetOffersId(UserTime,UserId,Timezone,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(JSON.stringify(emptyResponse))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var offer = db.models.Offers;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(JSON.stringify(emptyResponse))
+                    }
+                    else
+                    {
+                        // loaded!
+                        var offer = db.models.Offers;
 
-                    query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
-                            Offers.Name,Offers.Title,Offers.Subtitle, \
-                            Offers.Instructions,Offers.Disclaimer, \
-                            Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
-                            Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                            Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
-                            Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                            where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
-                            and Clients.IsActive=1 and Offers.IsActive=1 \
-                            and Clients.ClientId=Offers.ClientId"
+                        query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
+                                Offers.Name,Offers.Title,Offers.Subtitle, \
+                                Offers.Instructions,Offers.Disclaimer, \
+                                Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+                                Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+                                Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
+                                Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+                                where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
+                                and Clients.IsActive=1 and Offers.IsActive=1 \
+                                and Clients.ClientId=Offers.ClientId"
 
-                    db.driver.execQuery(query, function (err, offers) { 
+                        db.driver.execQuery(query, function (err, offers) { 
 
-                              if(err){
-                                console.log(err);
-                                db.close();
-                              }else{
-                                db.close();
-                                GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
-                              }
+                                  if(err){
+                                    console.log(err);
+                                    db.close();
+                                    return callback(JSON.stringify(emptyResponse))
+                                  }else{
+                                    db.close();
+                                    return GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
+                                  }
 
-                      })
-
-                    
+                          })
+                      }     
             });
-        });
+          }
+      });
 }
 
 // Helper Function For Messages Functionality
 exports.UnreadMessagesNumber = function UnreadMessagesNumber(UserId,Offerlist,callback){
 
         var msj= [{
-                      "State": ""
-                    }]
+                    "State": ""
+                 }]
 
         if(Offerlist.length==0){
           msj[0].State=0;
-          callback(JSON.stringify(msj))
+          return callback(JSON.stringify(msj))
         }else{
 
             orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-              if (err) throw err;
+              if (err)
+              {
+                console.log(err)
+                msj[0].State=0;
+                return callback(JSON.stringify(msj))
+              }
+              else
+              {
+                  db.load("./Models", function (err) {
+                          if (err)
+                          {
+                            console.log(err)
+                            db.close()
+                            msj[0].State=0;
+                            return callback(JSON.stringify(msj))
+                          }
+                          else
+                          {
+                              // loaded!
+                              var offer = db.models.Offers;
 
-                db.load("./Models", function (err) {
-                        if (err) throw err;
-                        // loaded!
-                        var offer = db.models.Offers;
+                              query="Select distinct UserId,MessageId \
+                              from SentMessages \
+                              where UserId=" +UserId
+                              +" and MessageRead=0 \
+                              and MessageId in (Select MessageId from Messages where IsPrivate=1 \
+                              and OfferId in (" +Offerlist +") );"
 
-                        query="Select distinct UserId,MessageId \
-                        from SentMessages \
-                        where UserId=" +UserId
-                        +" and MessageRead=0 \
-                        and MessageId in (Select MessageId from Messages where IsPrivate=1 \
-                        and OfferId in (" +Offerlist +") );"
+                              db.driver.execQuery(query, function (err, Messages) { 
 
-                        db.driver.execQuery(query, function (err, Messages) { 
-
-                                  if(err){
-                                    console.log(err);
-                                    db.close();
-                                    msj[0].State=0;
-                                    callback(JSON.stringify(msj))
-                                  }else{
-                                    db.close();
-                                    msj[0].State=Messages.length;
-                                    callback(JSON.stringify(msj))
-                                  }
-                          })
-                });
+                                        if(err){
+                                          console.log(err);
+                                          db.close();
+                                          msj[0].State=0;
+                                          return callback(JSON.stringify(msj))
+                                        }else{
+                                          db.close();
+                                          msj[0].State=Messages.length;
+                                          return callback(JSON.stringify(msj))
+                                        }
+                                })
+                          }
+                    });
+                }
             });
       }
 }
@@ -2014,41 +2113,53 @@ exports.UnreadMessagesNumber = function UnreadMessagesNumber(UserId,Offerlist,ca
 // Helper Function For Messages Functionality
 exports.GetMessages = function GetMessages(UserId,Offerlist,callback){
 
-        var msj= []
-
         if(Offerlist.length==0){
           //console.log("UserId: " +UserId +" - OfferList Is Empty")
-          callback(JSON.stringify(msj))
+          return callback(JSON.stringify(emptyResponse))
         }else{
 
             orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-              if (err) throw err;
+              if (err)
+              {
+                console.log(err)
+                return callback(JSON.stringify(emptyResponse))
+              }
+              else
+              {
+                    db.load("./Models", function (err) {
+                            if (err)
+                            {
+                              console.log(err)
+                              db.close()
+                              return callback(JSON.stringify(emptyResponse))
+                            }
+                            else
+                            {
+                                // loaded!
+                                var offer = db.models.Offers;
 
-                db.load("./Models", function (err) {
-                        if (err) throw err;
-                        // loaded!
-                        var offer = db.models.Offers;
+                                query="Select distinct MessageId \
+                                from SentMessages \
+                                where UserId=" +UserId
+                                +" and MessageId in (Select MessageId from Messages where IsPrivate=1 \
+                                and OfferId in (" +Offerlist +") );"
 
-                        query="Select distinct MessageId \
-                        from SentMessages \
-                        where UserId=" +UserId
-                        +" and MessageId in (Select MessageId from Messages where IsPrivate=1 \
-                        and OfferId in (" +Offerlist +") );"
+                                db.driver.execQuery(query, function (err, Messages) { 
 
-                        db.driver.execQuery(query, function (err, Messages) { 
-
-                                  if(err){
-                                    console.log(err);
-                                    db.close();
-                                    callback(JSON.stringify(msj))
-                                  }else{
-                                    db.close();
-                                    //console.log(Messages)
-                                    //callback(JSON.stringify(msj))
-                                    GetMessagesPrivate(UserId,Messages,callback)
-                                  }
-                          })
-                });
+                                          if(err){
+                                            console.log(err);
+                                            db.close();
+                                            return callback(JSON.stringify(emptyResponse))
+                                          }else{
+                                            db.close();
+                                            //console.log(Messages)
+                                            //callback(JSON.stringify(msj))
+                                            GetMessagesPrivate(UserId,Messages,callback)
+                                          }
+                                  })
+                              }
+                      });
+                }
             });
       }
 }
@@ -2061,43 +2172,54 @@ function GetMessagesPrivate(UserId,Messages,callback){
         MIds.push(Messages[i].MessageId)
       }
 
-      var msj= []
-
         if(MIds.length==0){
           //console.log("UserId: " +UserId +" - MessageList Is Empty")
-          callback(JSON.stringify(msj))
+          return callback(JSON.stringify(emptyResponse))
         }else{
 
             orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-              if (err) throw err;
+              if (err)
+              {
+                console.log(err)
+                return callback(JSON.stringify(emptyResponse))
+              }
+              else
+              {
+                    db.load("./Models", function (err) {
+                            if (err)
+                            {
+                              console.log(err)
+                              db.close()
+                              return callback(JSON.stringify(emptyResponse))
+                            }
+                            else
+                            {
+                                // loaded!
+                                query="Select Clients.ClientId, Clients.Name as ClientName,Clients.Logo,Clients.ClientHexColor, \
+                                Messages.MessageId,Messages.Message, Messages.OfferId,SentMessages.MessageRead, \
+                                Messages.TimeCreated \
+                                from Clients,Messages,SentMessages \
+                                where Messages.ClientId=Clients.ClientId \
+                                and SentMessages.UserId= " +UserId
+                                +" and Messages.MessageId in (" +MIds +")"
+                                +" and SentMessages.MessageId=Messages.MessageId" 
+                                +" Order by SentMessages.MessageRead,Messages.TimeCreated DESC"
 
-                db.load("./Models", function (err) {
-                        if (err) throw err;
-                        // loaded!
+                                db.driver.execQuery(query, function (err, Messages) { 
 
-                        query="Select Clients.ClientId, Clients.Name as ClientName,Clients.Logo,Clients.ClientHexColor, \
-                        Messages.MessageId,Messages.Message, Messages.OfferId,SentMessages.MessageRead, \
-                        Messages.TimeCreated \
-                        from Clients,Messages,SentMessages \
-                        where Messages.ClientId=Clients.ClientId \
-                        and SentMessages.UserId= " +UserId
-                        +" and Messages.MessageId in (" +MIds +")"
-                        +" and SentMessages.MessageId=Messages.MessageId" 
-                        +" Order by SentMessages.MessageRead,Messages.TimeCreated DESC"
-
-                        db.driver.execQuery(query, function (err, Messages) { 
-
-                                  if(err){
-                                    console.log(err);
-                                    db.close();
-                                    callback(JSON.stringify(msj))
-                                  }else{
-                                    db.close();
-                                    //console.log(Messages)
-                                    callback(JSON.stringify(Messages))
-                                  }
-                          })
-                });
+                                          if(err){
+                                            console.log(err);
+                                            db.close();
+                                            return callback(JSON.stringify(emptyResponse))
+                                          }else{
+                                            db.close();
+                                            //console.log(Messages)
+                                            return callback(JSON.stringify(Messages))
+                                          }
+                                  })
+                              }
+                      });
+                }
             });
       }
 
@@ -2106,36 +2228,51 @@ function GetMessagesPrivate(UserId,Messages,callback){
 // Helper Function For Messages Functionality
 exports.ReadMessage = function ReadMessage(UserId,MessageId,callback){
 
+        var msj= [{
+                    "State": ""
+                  }]
+
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            msj[0].State="Error";
+            return callback(JSON.stringify(msj))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      msj[0].State="Error";
+                      return callback(JSON.stringify(msj))
+                    }
+                    else
+                    {
+                        // loaded!
+                        query="Update SentMessages \
+                              Set MessageRead=1 \
+                              where UserId=" +UserId
+                             +" and MessageId=" +MessageId
 
-                    var msj= [{
-                      "State": ""
-                    }]
+                        db.driver.execQuery(query, function (err, friends) { 
 
-                    query="Update SentMessages \
-                          Set MessageRead=1 \
-                          where UserId=" +UserId
-                         +" and MessageId=" +MessageId
-
-                    db.driver.execQuery(query, function (err, friends) { 
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                        msj[0].State="Error";
-                        callback(JSON.stringify(msj))
-                      }else{
-                        db.close();
-                        msj[0].State=1;
-                        callback(JSON.stringify(msj))
-                      }
-                    })
-            });
+                          if(err){
+                            console.log(err);
+                            db.close();
+                            msj[0].State="Error";
+                            return callback(JSON.stringify(msj))
+                          }else{
+                            db.close();
+                            msj[0].State=1;
+                            return callback(JSON.stringify(msj))
+                          }
+                        })
+                    }
+              });
+            }
         });
 }
 
@@ -2322,45 +2459,60 @@ function AddPrivateOfferToUser(UserId,OfferId,ClientId,callback){
 
 
 exports.ShowGeoMessage= function ShowGeoMessage(LocationId,callback){
+                    
+  var msj= [{
+              "State": ""
+           }]
 
   orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            msj[0].State="Error";
+            return callback(JSON.stringify(msj))
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      msj[0].State="Error";
+                      return callback(JSON.stringify(msj))
+                    }
+                    else
+                    {
+                        // loaded!
+                        query="Select Locations.GeoMessage as LocationMsg,Locations.IsActive as LocationActive, \
+                        Clients.IsActive as Client from Locations,Clients \
+                        where LocationId=" +LocationId +" and Clients.ClientId=Locations.ClientId"
 
-                    var msj= [{
-                                "State": ""
-                              }]
+                        db.driver.execQuery(query, function (err, active) { 
 
-                    query="Select Locations.GeoMessage as LocationMsg,Locations.IsActive as LocationActive, \
-                    Clients.IsActive as Client from Locations,Clients \
-                    where LocationId=" +LocationId +" and Clients.ClientId=Locations.ClientId"
-
-                    db.driver.execQuery(query, function (err, active) { 
-
-                      if(err){
-                        console.log(err);
-                        db.close();
-                        msj[0].State="Error";
-                        callback(JSON.stringify(msj))
-                      }else{
-                        //console.log(active)
-                        db.close();
-                        if(active.length){
-                            if(active[0].LocationActive==1 && active[0].LocationMsg==1 && active[0].Client==1){
-                                msj[0].State=1;
+                          if(err){
+                            console.log(err);
+                            db.close();
+                            msj[0].State="Error";
+                            return callback(JSON.stringify(msj))
+                          }else{
+                            //console.log(active)
+                            db.close();
+                            if(active.length){
+                                if(active[0].LocationActive==1 && active[0].LocationMsg==1 && active[0].Client==1){
+                                    msj[0].State=1;
+                                }else{
+                                  msj[0].State=0;
+                                }
+                                return callback(JSON.stringify(msj));
                             }else{
-                              msj[0].State=0;
+                              msj[0].State="Error";
+                              return callback(JSON.stringify(msj));
                             }
-                            callback(JSON.stringify(msj));
-                        }else{
-                          msj[0].State="Error";
-                          callback(JSON.stringify(msj));
-                        }
-                      }
-                    })
-            });
+                          }
+                        })
+                    }
+              });
+            }
         });
 }

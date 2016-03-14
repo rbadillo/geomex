@@ -167,6 +167,10 @@ exports.ReadMessage= function ReadMessage(req,res){
 
     DAL.ReadMessage(UserId,MessageId, function (output){
       var tmp= JSON.parse(output)
+      if( tmp.length==0 || tmp[0].hasOwnProperty("State") && tmp[0].State=="Error")
+      {
+        res.statusCode=406
+      }
       res.setHeader('Content-Type', 'application/json');
       res.write(output);
       res.end();
@@ -255,7 +259,6 @@ exports.AppEvent = function AppEvent(req,res){
           console.log("Longitude: " +Longitude)
           console.log("");
         }else{
-
           console.log("");
           console.log("ERROR - Wrong AppEvent - UserId: " +UserId +" - Event: " +Event)
           console.log("");
