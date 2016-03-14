@@ -9,10 +9,18 @@ var emptyResponse = [];
 exports.AddClient = function AddClient(Name,Logo){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                    }
                     // loaded!
                     var cliente = db.models.Clients;
 
@@ -42,6 +50,7 @@ exports.AddClient = function AddClient(Name,Logo){
                       }
                     });
             });
+          }
         });
 }
 
@@ -49,128 +58,180 @@ exports.AddClient = function AddClient(Name,Logo){
 exports.AddLocation = function AddLocation(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var location = db.models.Locations;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                    }
+                    else
+                    {
+                        // loaded!
+                        var location = db.models.Locations;
 
-                    location.find({Name:Name, ClientId: ClientId, Latitude: Latitude, Longitude: Longitude,Address:Address,
-                    Country:Country, State:State, City:City, ZipCode:ZipCode },function (err, loc) {
+                        location.find({Name:Name, ClientId: ClientId, Latitude: Latitude, Longitude: Longitude,Address:Address,
+                        Country:Country, State:State, City:City, ZipCode:ZipCode },function (err, loc) {
 
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        if(loc.length){
-                            console.log("Existing Location - " +Name);
-                            GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId);
+                          if(err){
+                            console.log(err);
                             db.close();
                           }else{
-                            var location = db.models.Locations();
-                            location.Name=Name
-                            location.ClientId=ClientId
-                            location.IsActive=1
-                            location.IsPrivate=0
-                            location.Latitude=Latitude
-                            location.Longitude=Longitude
-                            location.Address=Address
-                            location.Country=Country
-                            location.State=State
-                            location.City=City
-                            location.ZipCode=ZipCode
-                            
-                            location.save(function (err) {
-                                 if (err){
-                                    console.log(err);
-                                    db.close();
-                                 }else{
-                                 console.log("Location Added Sucessfully - " +Name);
-                                 db.close();
-                                 GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId);
-                                 }
-                             });
+                            if(loc.length){
+                                console.log("Existing Location - " +Name);
+                                db.close();
+                                GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId);
+                              }else{
+                                var location = db.models.Locations();
+                                location.Name=Name
+                                location.ClientId=ClientId
+                                location.IsActive=1
+                                location.IsPrivate=0
+                                location.Latitude=Latitude
+                                location.Longitude=Longitude
+                                location.Address=Address
+                                location.Country=Country
+                                location.State=State
+                                location.City=City
+                                location.ZipCode=ZipCode
+                                
+                                location.save(function (err) {
+                                     if (err){
+                                        console.log(err);
+                                        db.close();
+                                     }else{
+                                     console.log("Location Added Sucessfully - " +Name);
+                                     db.close();
+                                     GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId);
+                                     }
+                                 });
+                              }
                           }
-                      }
-                    });
+                      });
+                    }
             });
-        });
+        }
+      });
 }
 
 function GetLocationId(Name,ClientId,Latitude,Longitude,Address,Country,State,City,ZipCode,OfferId){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var location = db.models.Locations;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                    }
+                    else
+                    {
+                        // loaded!
+                        var location = db.models.Locations;
 
-                    location.find({Name:Name, ClientId:ClientId, Latitude:Latitude, Longitude:Longitude,Address:Address,
-                    Country:Country, State:State, City:City, ZipCode:ZipCode },function (err, loc) {
+                        location.find({Name:Name, ClientId:ClientId, Latitude:Latitude, Longitude:Longitude,Address:Address,
+                        Country:Country, State:State, City:City, ZipCode:ZipCode },function (err, loc) {
 
-                      if(err){
-                        console.log(err);
-                        db.close();
-                      }else{
-                        //console.log("DB LocationId: " +loc[0].LocationId);
-                        db.close();
-                        AddGimbalGeofence(Name,Address,Latitude,Longitude,loc[0].LocationId,OfferId,ClientId);
-                      }
-                    });
+                          if(err){
+                            console.log(err);
+                            db.close();
+                          }else{
+                            //console.log("DB LocationId: " +loc[0].LocationId);
+                            db.close();
+                            AddGimbalGeofence(Name,Address,Latitude,Longitude,loc[0].LocationId,OfferId,ClientId);
+                          }
+                        });
+                    }
             });
+          }
         });
 }
 
 function GetOfferObject(OfferId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(null)
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var Offers = db.models.Offers;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(null)
+                    }
+                    else
+                    {
+                        // loaded!
+                        var Offers = db.models.Offers;
 
-                    Offers.find({OfferId:OfferId},function (err, offer) {
+                        Offers.find({OfferId:OfferId},function (err, offer) {
 
-                      if(err){
-                        console.log(err);
-                        db.close();
-                        callback(null)
-                      }else{
-                        db.close();
-                        callback(offer)
-                      }
-                    });
+                          if(err){
+                            console.log(err);
+                            db.close();
+                            callback(null)
+                          }else{
+                            db.close();
+                            return callback(offer)
+                          }
+                        });
+                    }
             });
+          }
         });
 }
 
 function GetClientObject(ClientId,callback){
 
         orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err) throw err;
-
+          if (err)
+          {
+            console.log(err)
+            return callback(null)
+          }
+          else
+          {
             db.load("./Models", function (err) {
-                    if (err) throw err;
-                    // loaded!
-                    var Client = db.models.Clients;
+                    if (err)
+                    {
+                      console.log(err)
+                      db.close()
+                      return callback(null)
+                    }
+                    else
+                    {
+                      // loaded!
+                      var Client = db.models.Clients;
 
-                    Client.find({ClientId:ClientId},function (err, client) {
+                      Client.find({ClientId:ClientId},function (err, client) {
 
-                      if(err){
-                        console.log(err);
-                        db.close();
-                        callback(null)
-                      }else{
-                        db.close();
-                        callback(client)
-                      }
-                    });
+                        if(err){
+                          console.log(err);
+                          db.close();
+                          callback(null)
+                        }else{
+                          db.close();
+                          callback(client)
+                        }
+                      });
+                    }
             });
+          }
         });
 }
 
@@ -428,6 +489,7 @@ exports.AddMessage = function AddMessage(Message,OfferId,ClientId,callback){
                     if (err)
                     {
                       console.log(err)
+                      db.close()
                       return callback(err)
                     }
                     else
