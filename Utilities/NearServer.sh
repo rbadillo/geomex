@@ -6,7 +6,7 @@ forever start -a -l /home/geomex/Logs/RegisterServer.log /home/geomex/Near/curre
 echo "Initiating QueueWorker"
 forever start -a -l /home/geomex/Logs/QueueWorker.log /home/geomex/Near/current/Src/Node/QueueWorker.js
 echo "Initiating MsjDispatcher"
-forever start -a -l /home/geomex/Logs/MsjDispatcher.log /home/geomex/Near/current/Src/Node/MsjDispatcher.js
+forever start -a -l /home/geomex/Logs/MsgDispatcher.log /home/geomex/Near/current/Src/Node/MsgDispatcher.js
 echo "Initiating FeatureServer"
 forever start -a -l /home/geomex/Logs/FeatureServer.log /home/geomex/Near/current/Src/Node/FeatureServer.js
 echo "Initiating OfferServer"
