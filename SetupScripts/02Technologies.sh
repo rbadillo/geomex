@@ -1,6 +1,8 @@
 #!/bin/bash
 sudo apt-get install -y python-software-properties
-sudo add-apt-repository -y ppa:chris-lea/node.js
+sudo apt-get update -y
+sudo apt-get install -y curl
+sudo curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 sudo apt-get update -y
 sudo apt-get install -y nodejs
 sudo apt-get install -y rabbitmq-server
