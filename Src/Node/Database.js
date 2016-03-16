@@ -1151,6 +1151,34 @@ exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callbac
         });
 }
 
+exports.GetOffers2 = function GetOffers2(req,UserTime,UserId,Timezone,ClientId,callback){
+
+  var offer = req.db.models.Offers;
+
+  query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
+         Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
+         Offers.Instructions,Offers.Disclaimer, \
+         Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+         Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+         Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
+         Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+         where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
+         and Clients.IsActive=1 and Offers.IsActive=1 \
+         and Clients.ClientId=Offers.ClientId and Offers.ClientId=" +ClientId
+         +" Order by Offers.IsPrivate DESC,Offers.Priority DESC,Offers.EndDate DESC"
+
+   req.db.driver.execQuery(query, function (err, offers) { 
+
+     if(err){
+        console.log(err);
+        return callback(JSON.stringify(emptyResponse))
+     }else{
+        GetPrivateOffers2(req,UserTime,UserId,offers,Timezone,callback);
+        }
+     })
+}
+
+
 
 function GetPrivateOffers(UserTime,UserId,PublicOffers,Timezone,callback){
 
@@ -1193,6 +1221,25 @@ function GetPrivateOffers(UserTime,UserId,PublicOffers,Timezone,callback){
             });     
           }
         });
+}
+
+function GetPrivateOffers2(req,UserTime,UserId,PublicOffers,Timezone,callback){
+
+  var privateOffer = req.db.models.UserPrivateOffers;
+
+  privateOffer.find({StartDate:req.db.tools.lte(UserTime), EndDate:req.db.tools.gte(UserTime), UserId:UserId  },function (err, off) {
+
+      if(err){
+          console.log(err);
+          return callback(JSON.stringify(emptyResponse))
+      }else{
+          //console.log(off.length);
+          //for(var i=0;i<off.length;i++){
+          //console.log("Private OfertaId: " +off[i].OfferId +" - UserId: " +off[i].UserId);
+          //}
+          GetUserRedemption2(req,UserId,PublicOffers,off,Timezone,callback);
+      }
+  }); 
 }
 
 
@@ -1252,6 +1299,37 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
         });
 }
 
+function GetUserRedemption2(req,UserId,PublicOffers,PrivateOffers,Timezone,callback){
+
+        var ofertas=[];
+
+        for(var i=0;i<PublicOffers.length;i++){
+          ofertas.push(PublicOffers[i].OfferId)
+        }
+
+        var ofertasPrivadas= []
+
+        for(var i=0;i<PrivateOffers.length;i++){
+          ofertasPrivadas.push(PrivateOffers[i].OfferId)
+        }
+
+                      var redemption = req.db.models.OfferRedemption;
+
+                      redemption.find( {OfferId: ofertas, UserId:UserId},function (err, off) {
+
+                        if(err){
+                          console.log(err);
+                          return callback(JSON.stringify(emptyResponse))
+                        }else{
+                          //console.log(off.length);
+                          var ofertasUsadas=[]
+                          for(var i=0;i<off.length;i++){
+                            ofertasUsadas.push(off[i].OfferId);
+                          }
+                          FilterOffers(PublicOffers,ofertasPrivadas,PrivateOffers,ofertasUsadas,Timezone,callback);
+                        }
+                      });
+}
 
 function FilterOffers(PublicOffers,PrivateOffers,PrivateOffersObject,RedemedOffers,Timezone,callback){
 

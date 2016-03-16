@@ -32,7 +32,7 @@ exports.Offers = function Offers(req,res){
       var Latitude= req.query.latitude
       var Longitude= req.query.longitude
   	  
-      DAL.GetOffers(LocalToUtc,UserId,Timezone,ClientId, function (output){
+      DAL.GetOffers2(req,LocalToUtc,UserId,Timezone,ClientId, function (output){
         res.setHeader('Content-Type', 'application/json');
         res.write(output);
         res.end();
