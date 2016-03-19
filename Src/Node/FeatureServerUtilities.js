@@ -344,7 +344,7 @@ exports.GetUnreadMessages= function GetUnreadMessages(req,res){
         var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
         var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
 
-        DAL.GetOffersId(LocalToUtc,UserId,Timezone,function (output){
+        DAL.GetOffersId(req.db,LocalToUtc,UserId,Timezone,function (output){
               var OfferIds=[]
               var tmp=JSON.parse(output);
               for(var i=0;i<tmp.length;i++){

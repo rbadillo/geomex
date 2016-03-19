@@ -584,7 +584,7 @@ exports.GetOffers = function GetOffers(db,UserTime,UserId,Timezone,ClientId,call
        else
        {
           GetPrivateOffers(db,UserTime,UserId,offers,Timezone,callback);
-        }
+       }
     })
 }
 
@@ -1246,55 +1246,32 @@ exports.GetFriendActivity = function GetFriendActivity(db,FriendId,callback){
 }
 
 // Helper Function For Messages Functionality
-exports.GetOffersId = function GetOffersId(UserTime,UserId,Timezone,callback){
+exports.GetOffersId = function GetOffersId(db,UserTime,UserId,Timezone,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback(JSON.stringify(emptyResponse))
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                      return callback(JSON.stringify(emptyResponse))
-                    }
-                    else
-                    {
-                        // loaded!
-                        var offer = db.models.Offers;
+  var offer = db.models.Offers;
 
-                        query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
-                                Offers.Name,Offers.Title,Offers.Subtitle, \
-                                Offers.Instructions,Offers.Disclaimer, \
-                                Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
-                                Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                                Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
-                                Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                                where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
-                                and Clients.IsActive=1 and Offers.IsActive=1 \
-                                and Clients.ClientId=Offers.ClientId"
+  query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId,Offers.ClientId, \
+          Offers.Name,Offers.Title,Offers.Subtitle, \
+          Offers.Instructions,Offers.Disclaimer, \
+          Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+          Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+          Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
+          Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+          where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
+          and Clients.IsActive=1 and Offers.IsActive=1 \
+          and Clients.ClientId=Offers.ClientId"
 
-                        db.driver.execQuery(query, function (err, offers) { 
-
-                                  if(err){
-                                    console.log(err);
-                                    db.close();
-                                    return callback(JSON.stringify(emptyResponse))
-                                  }else{
-                                    db.close();
-                                    return GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
-                                  }
-
-                          })
-                      }     
-            });
-          }
-      });
+  db.driver.execQuery(query, function (err, offers) { 
+      if(err)
+      {
+          console.log(err);
+          return callback(JSON.stringify(emptyResponse))
+      }
+      else
+      {
+          GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
+      }
+   })
 }
 
 // Helper Function For Messages Functionality
