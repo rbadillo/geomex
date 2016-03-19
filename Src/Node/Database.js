@@ -1269,7 +1269,7 @@ exports.GetOffersId = function GetOffersId(db,UserTime,UserId,Timezone,callback)
       }
       else
       {
-          GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
+          GetPrivateOffers(db,UserTime,UserId,offers,Timezone,callback);
       }
    })
 }
