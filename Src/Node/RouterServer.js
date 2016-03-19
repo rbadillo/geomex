@@ -36,7 +36,7 @@ app.get('/:UserId/:Timezone/GetOffers/:ClientId/Redeem/:OfferId',Utilities.Redee
 app.post('/:UserId/Register',Utilities.Register);
 app.post('/:UserId/GeoEvent',Utilities.GeoEvent);
 
-//QueueWorker
+//MessagingServer
 app.post('/SendMessage',Utilities.SendMessage);
 
 

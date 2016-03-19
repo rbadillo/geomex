@@ -1,5 +1,7 @@
 var express = require('express');
 var Utilities= require('./FeatureServerUtilities');
+var orm = require("orm");
+orm.settings.set("connection.reconnect", true);
 var app = express();
 
 app.configure(function(){

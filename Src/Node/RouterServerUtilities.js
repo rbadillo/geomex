@@ -97,7 +97,7 @@ exports.GeoEvent = function GeoEvent(req,res){
 }
 
 
-//QueueWorker
+//MessagingServer
 exports.SendMessage = function SendMessage(req,res){
 	RedirectUrl=req.originalUrl
 	request.post('http://127.0.0.1:7000'+RedirectUrl,{form:req.body}).pipe(res)
