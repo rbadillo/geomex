@@ -5,7 +5,7 @@ var app = express();
 app.configure(function(){
   app.set('port', 80);
   app.use(express.bodyParser());
-  app.use(express.logger());
+  app.use(express.logger('dev'));
   app.use(app.router);
   app.use(express.errorHandler());
 });

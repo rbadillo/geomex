@@ -7,7 +7,7 @@ var app = express();
 app.configure(function(){
   app.set('port', 4000);
   app.use(express.bodyParser());
-  app.use(express.logger());
+  app.use(express.logger('dev'));
   app.use(orm.express("mysql://root:EstaTrivialDb!@localhost/geomex",
   {
 	    define: function(db, models){
