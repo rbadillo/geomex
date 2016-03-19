@@ -720,46 +720,28 @@ function UpdateLocationEvents(UserId,ClientId,LocationId,LocationName,Event,Lati
         });
 }
 
-exports.UpdateAppEvents =function UpdateAppEvents(UserId,ClientId,Event,Latitude,Longitude){
+exports.UpdateAppEvents =function UpdateAppEvents(db,UserId,ClientId,Event,Latitude,Longitude){
 
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err);
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err);
-                      db.close();
-                    }
-                    else
-                    {
-                      // loaded!
-                      var AppEvent= db.models.AppEvents();
-                      AppEvent.UserId=UserId
-                      AppEvent.ClientId=ClientId
-                      AppEvent.Event=Event
-                      AppEvent.Latitude=Latitude
-                      AppEvent.Longitude=Longitude
-                      AppEvent.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                      
-                      AppEvent.save(function (err) {
-                           if (err){
-                              console.log(err);
-                              db.close();
-                           }else{
-                           //console.log("AppEvent Added Sucessfully - UserId: " +UserId);
-                           //console.log("");
-                           db.close();
-                           }
-                       });
-                  }
-            });
-          }
-        });
+  var AppEvent= db.models.AppEvents();
+  AppEvent.UserId=UserId
+  AppEvent.ClientId=ClientId
+  AppEvent.Event=Event
+  AppEvent.Latitude=Latitude
+  AppEvent.Longitude=Longitude
+  AppEvent.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+  
+  AppEvent.save(function (err) {
+       if (err)
+       {
+          console.log(err);
+       }
+       else
+       {
+          //console.log("AppEvent Added Sucessfully - UserId: " +UserId);
+          //console.log("");
+          return
+       }
+   });
 }
 
 
@@ -1099,61 +1081,9 @@ function DeleteSentMessage(UserId,MessageId){
     }
 
 
-exports.GetOffers = function GetOffers(UserTime,UserId,Timezone,ClientId,callback){
+exports.GetOffers = function GetOffers(db,UserTime,UserId,Timezone,ClientId,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback(JSON.stringify(emptyResponse))
-          }
-          else
-          {
-              db.load("./Models", function (err) {
-                      if (err)
-                      {
-                        console.log(err)
-                        db.close()
-                        return callback(JSON.stringify(emptyResponse))
-                      }
-                      else
-                      {
-                        // loaded!
-                        var offer = db.models.Offers;
-
-                          query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
-                                Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
-                                Offers.Instructions,Offers.Disclaimer, \
-                                Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
-                                Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                                Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
-                                Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                                where (Offers.PublishedDate <= '" +UserTime +"' and '" +UserTime +"' <= Offers.EndDate) \
-                                and Clients.IsActive=1 and Offers.IsActive=1 \
-                                and Clients.ClientId=Offers.ClientId and Offers.ClientId=" +ClientId
-                                +" Order by Offers.IsPrivate DESC,Offers.Priority DESC,Offers.EndDate DESC"
-
-                                db.driver.execQuery(query, function (err, offers) { 
-
-                                      if(err){
-                                        console.log(err);
-                                        db.close();
-                                        return callback(JSON.stringify(emptyResponse))
-                                      }else{
-                                        db.close();
-                                        GetPrivateOffers(UserTime,UserId,offers,Timezone,callback);
-                                      }
-
-                                })
-                      }
-              });
-          }
-        });
-}
-
-exports.GetOffers2 = function GetOffers2(req,UserTime,UserId,Timezone,ClientId,callback){
-
-  var offer = req.db.models.Offers;
+  var offer = db.models.Offers;
 
   query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
          Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
@@ -1167,83 +1097,42 @@ exports.GetOffers2 = function GetOffers2(req,UserTime,UserId,Timezone,ClientId,c
          and Clients.ClientId=Offers.ClientId and Offers.ClientId=" +ClientId
          +" Order by Offers.IsPrivate DESC,Offers.Priority DESC,Offers.EndDate DESC"
 
-   req.db.driver.execQuery(query, function (err, offers) { 
-
-     if(err){
-        console.log(err);
-        return callback(JSON.stringify(emptyResponse))
-     }else{
-        GetPrivateOffers2(req,UserTime,UserId,offers,Timezone,callback);
-        }
-     })
-}
-
-
-
-function GetPrivateOffers(UserTime,UserId,PublicOffers,Timezone,callback){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback(JSON.stringify(emptyResponse))
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                      return callback(JSON.stringify(emptyResponse))
-                    }
-                    else
-                    {
-                      // loaded!
-                      var privateOffer = db.models.UserPrivateOffers;
-
-                      privateOffer.find( {StartDate:orm.lte(UserTime), EndDate:orm.gte(UserTime), UserId:UserId  },function (err, off) {
-
-                        if(err){
-                          console.log(err);
-                          db.close();
-                          return callback(JSON.stringify(emptyResponse))
-                        }else{
-                          //console.log(off.length);
-                          //for(var i=0;i<off.length;i++){
-                              //console.log("Private OfertaId: " +off[i].OfferId +" - UserId: " +off[i].UserId);
-                          //}
-                          db.close();
-                          GetUserRedemption(UserId,PublicOffers,off,Timezone,callback);
-                        }
-                      });
-                    }
-            });     
-          }
-        });
-}
-
-function GetPrivateOffers2(req,UserTime,UserId,PublicOffers,Timezone,callback){
-
-  var privateOffer = req.db.models.UserPrivateOffers;
-
-  privateOffer.find({StartDate:req.db.tools.lte(UserTime), EndDate:req.db.tools.gte(UserTime), UserId:UserId  },function (err, off) {
-
-      if(err){
+    db.driver.execQuery(query, function (err, offers) { 
+       if(err)
+       {
           console.log(err);
           return callback(JSON.stringify(emptyResponse))
-      }else{
+       }
+       else
+       {
+          GetPrivateOffers(db,UserTime,UserId,offers,Timezone,callback);
+        }
+    })
+}
+
+function GetPrivateOffers(db,UserTime,UserId,PublicOffers,Timezone,callback){
+
+  var privateOffer = db.models.UserPrivateOffers;
+
+  privateOffer.find({StartDate:db.tools.lte(UserTime), EndDate:db.tools.gte(UserTime), UserId:UserId  },function (err, off) {
+
+      if(err)
+      {
+          console.log(err);
+          return callback(JSON.stringify(emptyResponse))
+      }
+      else
+      {
           //console.log(off.length);
           //for(var i=0;i<off.length;i++){
           //console.log("Private OfertaId: " +off[i].OfferId +" - UserId: " +off[i].UserId);
           //}
-          GetUserRedemption2(req,UserId,PublicOffers,off,Timezone,callback);
+          GetUserRedemption(db,UserId,PublicOffers,off,Timezone,callback);
       }
   }); 
 }
 
-
-function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
+function GetUserRedemption(db,UserId,PublicOffers,PrivateOffers,Timezone,callback){
 
         var ofertas=[];
 
@@ -1257,78 +1146,25 @@ function GetUserRedemption(UserId,PublicOffers,PrivateOffers,Timezone,callback){
           ofertasPrivadas.push(PrivateOffers[i].OfferId)
         }
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback(JSON.stringify(emptyResponse))
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                      return callback(JSON.stringify(emptyResponse))
-                    }
-                    else
-                    {
-                      // loaded!
-                      var redemption = db.models.OfferRedemption;
+        
+        var redemption = db.models.OfferRedemption;
 
-                      redemption.find( {OfferId: ofertas, UserId:UserId},function (err, off) {
-
-                        if(err){
-                          console.log(err);
-                          db.close();
-                          return callback(JSON.stringify(emptyResponse))
-                        }else{
-                          //console.log(off.length);
-                          db.close();
-                          var ofertasUsadas=[]
-                          for(var i=0;i<off.length;i++){
-                            ofertasUsadas.push(off[i].OfferId);
-                          }
-                          FilterOffers(PublicOffers,ofertasPrivadas,PrivateOffers,ofertasUsadas,Timezone,callback);
-                        }
-                      });
-                    }
-            });
-          }
+        redemption.find( {OfferId: ofertas, UserId:UserId},function (err, off) {
+              if(err)
+              {
+                console.log(err);
+                return callback(JSON.stringify(emptyResponse))
+              }
+              else
+              {
+                //console.log(off.length);
+                var ofertasUsadas=[]
+                for(var i=0;i<off.length;i++){
+                  ofertasUsadas.push(off[i].OfferId);
+                }
+                FilterOffers(PublicOffers,ofertasPrivadas,PrivateOffers,ofertasUsadas,Timezone,callback);
+              }
         });
-}
-
-function GetUserRedemption2(req,UserId,PublicOffers,PrivateOffers,Timezone,callback){
-
-        var ofertas=[];
-
-        for(var i=0;i<PublicOffers.length;i++){
-          ofertas.push(PublicOffers[i].OfferId)
-        }
-
-        var ofertasPrivadas= []
-
-        for(var i=0;i<PrivateOffers.length;i++){
-          ofertasPrivadas.push(PrivateOffers[i].OfferId)
-        }
-
-                      var redemption = req.db.models.OfferRedemption;
-
-                      redemption.find( {OfferId: ofertas, UserId:UserId},function (err, off) {
-
-                        if(err){
-                          console.log(err);
-                          return callback(JSON.stringify(emptyResponse))
-                        }else{
-                          //console.log(off.length);
-                          var ofertasUsadas=[]
-                          for(var i=0;i<off.length;i++){
-                            ofertasUsadas.push(off[i].OfferId);
-                          }
-                          FilterOffers(PublicOffers,ofertasPrivadas,PrivateOffers,ofertasUsadas,Timezone,callback);
-                        }
-                      });
 }
 
 function FilterOffers(PublicOffers,PrivateOffers,PrivateOffersObject,RedemedOffers,Timezone,callback){
@@ -1395,7 +1231,7 @@ var IndexToRemove=[]
       PublicOffers[i].PublishedDate=PublishedDateLocal;
       PublicOffers[i].StartDate=StartDateLocal;
       PublicOffers[i].EndDate=EndDateLocal;
-      }
+    }
 
 // Adjust UserTimezone
     var now=moment();
@@ -1412,7 +1248,7 @@ var IndexToRemove=[]
       PublicOffers[i].PublishedDate=PublicOffers[i].PublishedDate.add('hours',TimeDifference);
       PublicOffers[i].StartDate=PublicOffers[i].StartDate.add('hours',TimeDifference);
       PublicOffers[i].EndDate=PublicOffers[i].EndDate.add('hours',TimeDifference);;
-      }
+    }
 
 
 
@@ -1428,279 +1264,200 @@ var IndexToRemove=[]
     return callback(JSON.stringify(FinalOfferList));
 }
 
-exports.GetSingleOffer = function GetSingleOffer(UserId,OfferId,Latitude,Longitude,callback){
+exports.GetSingleOffer = function GetSingleOffer(db,UserId,OfferId,Latitude,Longitude,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback(JSON.stringify(emptyResponse))
-          }
-          else
-          {
-              db.load("./Models", function (err) {
-                      if (err)
-                      {
-                        console.log(err)
-                        db.close()
-                        return callback(JSON.stringify(emptyResponse))
-                      }
-                      else
-                      {
-                        // loaded!
-                        query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
-                                Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
-                                Offers.Instructions,Offers.Disclaimer, \
-                                Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
-                                Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                                Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
-                                Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                                where Offers.OfferId=" +OfferId
-                                +" and Clients.ClientId=Offers.ClientId"
+  query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
+        Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle, \
+        Offers.Instructions,Offers.Disclaimer, \
+        Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+        Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+        Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
+        Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+        where Offers.OfferId=" +OfferId
+        +" and Clients.ClientId=Offers.ClientId"
 
-                                db.driver.execQuery(query, function (err, offer) { 
-
-                                  if(err){
-                                    console.log(err);
-                                    db.close();
-                                    return callback(JSON.stringify(emptyResponse))
-                                  }else{
-                                    if(offer.length){
-                                    db.close();
-                                    return callback(JSON.stringify(offer));
-                                    console.log("");
-                                    UpdateOfferEvents(offer[0].ClientId,UserId,OfferId,"Viewed",Latitude,Longitude)
-                                    }else{
-                                      var msj= [{
-                                                  "State": "OfferId doesn't exist"
-                                                }]
-                                      return callback(JSON.stringify(msj));
-                                    }
-                                  }
-
-                                })
-                        }
-              });
-            }
-        });
+  db.driver.execQuery(query, function (err, offer) { 
+    if(err)
+    {
+      console.log(err);
+      return callback(JSON.stringify(emptyResponse))
+    }
+    else
+    {
+      if(offer.length)
+      {
+        UpdateOfferEvents(db,offer[0].ClientId,UserId,OfferId,"Viewed",Latitude,Longitude)
+        return callback(JSON.stringify(offer));
+      }
+      else
+      {
+        var msj=  [{
+                    "State": "OfferId doesn't exist"
+                  }]
+        return callback(JSON.stringify(msj));
+      }
+    }
+  })
 }
 
-exports.RedeemSingleOffer = function RedeemSingleOffer(UserId,OfferId,Latitude,Longitude,callback){
+exports.RedeemSingleOffer = function RedeemSingleOffer(db,UserId,OfferId,Latitude,Longitude,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback(JSON.stringify(emptyResponse))
-          }
-          else
-          {
-              db.load("./Models", function (err) {
-                      if (err)
-                      {
-                        console.log(err)
-                        db.close()
-                        return callback(JSON.stringify(emptyResponse))
-                      }
-                      else
-                      {
-                        // loaded!
-                        query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
-                                Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
-                                Offers.Instructions,Offers.Disclaimer, \
-                                Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
-                                Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
-                                Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
-                                Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
-                                where Offers.OfferId=" +OfferId
-                                +" and Clients.ClientId=Offers.ClientId"
+  query="Select Clients.Name as ClientName,Clients.Logo,Offers.OfferId, \
+          Offers.ClientId,Offers.Name,Offers.Title,Offers.Subtitle,Offers.Code, \
+          Offers.Instructions,Offers.Disclaimer, \
+          Offers.PublishedDate,Offers.StartDate,Offers.EndDate,Offers.Priority, \
+          Offers.ActualRedemption,Offers.TotalRedemption,Offers.MultiUse, \
+          Offers.IsPrivate,Offers.DynamicRedemptionMinutes, \
+          Offers.PrimaryImage,Offers.SecondaryImage from Offers,Clients \
+          where Offers.OfferId=" +OfferId
+          +" and Clients.ClientId=Offers.ClientId"
 
-                                db.driver.execQuery(query, function (err, offer) { 
+  db.driver.execQuery(query, function (err, offer){ 
+    if(err)
+    {
+      console.log(err);
+      return callback(JSON.stringify(emptyResponse))
+    }
+    else
+    {
+      if(offer.length)
+      {
+        Redeem(db,offer[0].ClientId,UserId,OfferId,Latitude,Longitude,function(successFlag){
 
-                                  if(err){
-                                    console.log(err);
-                                    db.close();
-                                    return callback(JSON.stringify(emptyResponse))
-                                  }else{
-
-                                    db.close(); 
-
-                                    if(offer.length){
-                                      Redeem(offer[0].ClientId,UserId,OfferId,Latitude,Longitude,function(successFlag){
-
-                                          if(successFlag)
-                                          {
-                                          return callback(JSON.stringify(offer));
-                                          }
-                                          else
-                                          {
-                                          var msj= [{
-                                                    "State": "Error Redeeming Offer or Offer Already Redeemed"
-                                                  }]
-                                          return callback(JSON.stringify(msj))
-                                          }
-                                      })
-                                    }else{
-                                      var msj= [{
-                                                  "State": "OfferId doesn't exist"
-                                                }]
-                                      return callback(JSON.stringify(msj));
-                                    }
-                                  }
-
-                                })
-                      }
-              });
+            if(successFlag)
+            {
+              return callback(JSON.stringify(offer));
             }
-        });
+            else
+            {
+              var msj=  [{
+                          "State": "Error Redeeming Offer or Offer Already Redeemed"
+                        }]
+              return callback(JSON.stringify(msj))
+            }
+        })
+      }
+      else
+      {
+        var msj=  [{
+                    "State": "OfferId doesn't exist"
+                  }]
+        return callback(JSON.stringify(msj));
+      }
+    }
+  })
 }
 
 
-function Redeem(ClientId,UserId,OfferId,Latitude,Longitude,callback){
+function Redeem(db,ClientId,UserId,OfferId,Latitude,Longitude,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
+  query="Select MultiUse from Offers Where OfferId=" +OfferId
+
+  db.driver.execQuery(query, function (err, offerFlag) { 
+
+    if(err)
+    {
+        console.log(err);
+        return callback(false)
+    }
+    else
+    {
+
+      var offerRedeemValidation = db.models.OfferRedemption;
+      var OfferUseType= offerFlag[0].MultiUse
+
+      offerRedeemValidation.find({ OfferId:OfferId, ClientId:ClientId, UserId:UserId },function (err, offval) {
+
+        if(err)
+        {
+          console.log(err);
+          return callback(false)
+        }
+        else
+        {
+          if(offval.length && OfferUseType==0)
           {
-            console.log(err)
+            console.log("")
+            console.log("UserId: " +UserId +" Already Redeemed OfferId: " +OfferId);
+            console.log("")
             return callback(false)
           }
           else
           {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                      return callback(false)
-                    }
-                    else
-                    {
-                    // loaded!
+            var offerRedeem = db.models.OfferRedemption();
+            offerRedeem.ClientId=ClientId;
+            offerRedeem.UserId=UserId;
+            offerRedeem.OfferId=OfferId;
+            offerRedeem.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
 
-                    query="Select MultiUse from Offers Where OfferId=" +OfferId
+            offerRedeem.save(function(err) {
+                 if (err)
+                 {
+                    console.log(err);
+                    return callback(false)
+                 }
+                 else
+                 {
+                    console.log("UserId: " +UserId +" - Redeemed OfferId: " +OfferId);
 
-                    db.driver.execQuery(query, function (err, offerFlag) { 
+                    var offer = db.models.Offers;
 
-                        if(err){
-                            console.log(err);
-                            db.close();
-                            return callback(false)
-                        }else{
+                    offer.find({ OfferId:OfferId },function (err, off) {
 
-                    var offerRedeemValidation = db.models.OfferRedemption;
-                    var OfferUseType= offerFlag[0].MultiUse
-
-                    offerRedeemValidation.find({ OfferId:OfferId, ClientId:ClientId, UserId:UserId },function (err, offval) {
-
-                            if(err){
-                              console.log(err);
-                              db.close();
-                              return callback(false)
-                            }else{
-                                if(offval.length && OfferUseType==0){
-                                  db.close();
-                                  console.log("")
-                                  console.log("UserId: " +UserId +" Already Redeemed OfferId: " +OfferId);
-                                  console.log("")
-                                  return callback(false)
-                                }else{
-
-                                  var offerRedeem = db.models.OfferRedemption();
-                                  offerRedeem.ClientId=ClientId;
-                                  offerRedeem.UserId=UserId;
-                                  offerRedeem.OfferId=OfferId;
-                                  offerRedeem.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-
-                                  offerRedeem.save(function (err) {
-                                       if (err){
-                                          console.log(err);
-                                          db.close();
-                                          return callback(false)
-                                       }else{
-                                       console.log("")
-                                       console.log("UserId: " +UserId +" - Redeemed OfferId: " +OfferId);
-
-                                       var offer = db.models.Offers;
-
-                                        offer.find({ OfferId:OfferId },function (err, off) {
-
-                                          if(err){
-                                            console.log(err);
-                                            db.close();
-                                            return callback(false)
-                                          }else{
-                                            
-                                            var ActualRedemption=off[0].ActualRedemption + 1;
-                                            off[0].ActualRedemption=ActualRedemption;
-
-                                              off[0].save(function (err) {
-                                                 if (err){
-                                                    console.log(err);
-                                                    db.close();
-                                                    return callback(false)
-                                                 }else{
-                                                    db.close();
-                                                    console.log("OfferId: "+OfferId +" - Actual Redemption: " +ActualRedemption)
-                                                    UpdateOfferEvents(ClientId,UserId,OfferId,"Presented",Latitude,Longitude)
-                                                    return callback(true)
-                                                 }
-                                              })
-                                            }
-                                        });
-                                       }
-                                   });
-                           }
+                      if(err)
+                      {
+                          console.log(err);
+                          return callback(false)
                       }
-                  }) // END OF offerRedeemValidation
+                      else
+                      {
+                        var ActualRedemption=off[0].ActualRedemption + 1;
+                        off[0].ActualRedemption=ActualRedemption;
+                        off[0].save(function(err){
+                             if (err)
+                             {
+                                console.log(err);
+                                return callback(false)
+                             }
+                             else
+                             {
+                                console.log("OfferId: "+OfferId +" - Actual Redemption: " +ActualRedemption)
+                                UpdateOfferEvents(db,ClientId,UserId,OfferId,"Presented",Latitude,Longitude)
+                                return callback(true)
+                             }
+                          })
+                      }
+                    });
                   }
-                  }) // END OF MultiUse Flag
-                }
             });
           }
-    });
+        }
+      }) // END OF offerRedeemValidation
+    }
+  }) // END OF MultiUse Flag
 }
 
-function UpdateOfferEvents(ClientId,UserId,OfferId,Event,Latitude,Longitude){
+function UpdateOfferEvents(db,ClientId,UserId,OfferId,Event,Latitude,Longitude){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                    }
-                    else
-                    {
-                      // loaded!
-                      var offer_event = db.models.OfferEvents();
-                      offer_event.ClientId=ClientId;
-                      offer_event.UserId=UserId;
-                      offer_event.OfferId=OfferId;
-                      offer_event.Event=Event;
-                      offer_event.Latitude=Latitude;
-                      offer_event.Longitude=Longitude;
-                      offer_event.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+  var offer_event = db.models.OfferEvents();
+  offer_event.ClientId=ClientId;
+  offer_event.UserId=UserId;
+  offer_event.OfferId=OfferId;
+  offer_event.Event=Event;
+  offer_event.Latitude=Latitude;
+  offer_event.Longitude=Longitude;
+  offer_event.TimeCreated=moment.utc().format("YYYY-MM-DD HH:mm:ss");
 
-                      offer_event.save(function (err) {
-                           if (err){
-                              console.log(err);
-                              db.close();
-                           }else{
-                           console.log("UserId: " +UserId +" - Event: " +Event +" - OfferId: " +OfferId);
-                           console.log("");
-                           db.close();
-                           }
-                       });
-                  }
-            });
-          }
-      });
+  offer_event.save(function (err){
+    if (err)
+    {
+      console.log(err);
+    }
+    else
+    {
+       console.log("UserId: " +UserId +" - Event: " +Event +" - OfferId: " +OfferId);
+    }
+  });
 }
 
 
@@ -1807,176 +1564,158 @@ exports.GetClosestLocations = function GetClosestLocations(Latitude,Longitude,Ra
 }
 
 
-exports.IsOfferValid= function IsOfferValid(UserId,OfferId,ClientId,UserTime,callback){
+exports.IsOfferValid= function IsOfferValid(db,UserId,OfferId,ClientId,UserTime,callback){
 
-var msj= [{
-            "State": ""
-         }]
+  var msj= [{
+              "State": ""
+           }]
 
-  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
+  query="Select IsActive from Clients \
+     where ClientId=" +ClientId
+
+  db.driver.execQuery(query, function (err, client){ 
+
+    if(err)
+    {
+      console.log(err);
+      msj[0].State=0
+      return callback(JSON.stringify(msj))
+     }
+     else
+     {
+        if(client[0]===undefined)
+        {
+            console.log("Client Undefined");
             msj[0].State=0
             return callback(JSON.stringify(msj))
-          }
-          else
+        }
+        else
+        {
+          var ClientActive=client[0].IsActive
+          if(client.length && ClientActive==1)
           {
-            db.load("./Models", function (err) {
-                    if (err)
+
+            query="Select IsPrivate from Offers \
+                         where OfferId=" +OfferId
+
+            db.driver.execQuery(query, function (err, offer) { 
+
+                if(err)
+                {
+                  console.log(err);
+                  msj[0].State=0
+                  return callback(JSON.stringify(msj))
+                }
+                else
+                {
+                  if(offer[0]===undefined)
+                  {
+                    console.log("Offer Undefined");
+                    msj[0].State=0
+                    return callback(JSON.stringify(msj))
+                  }
+                  else
+                  {
+                    var OfferUseType=offer[0].IsPrivate
+                    if(offer.length && OfferUseType==1)
                     {
-                      console.log(err)
-                      db.close()
-                      msj[0].State=0
-                      return callback(JSON.stringify(msj))
+                      // Private Offer 
+                      query="Select UserPrivateOffers.OfferId from UserPrivateOffers,Offers \
+                      where \
+                      UserPrivateOffers.OfferId= Offers.OfferId \
+                      and Offers.IsActive=1 \
+                      and UserPrivateOffers.OfferId=" +OfferId
+                      +" and UserPrivateOffers.StartDate<='" +UserTime +"'"
+                      +" and '" +UserTime +"' <=UserPrivateOffers.EndDate \
+                      and UserPrivateOffers.UserId=" +UserId
+                      +" and UserPrivateOffers.OfferId not in \
+                      (Select distinct OfferRedemption.OfferId \
+                      from OfferRedemption,Offers \
+                      where Offers.MultiUse=0 \
+                      and Offers.IsActive=1 \
+                      and OfferRedemption.UserId=" +UserId 
+                      +" and OfferRedemption.OfferId=Offers.OfferId"
+                      +" and OfferRedemption.OfferId="+OfferId+")";
+
+                      //console.log(query)
+
+                      db.driver.execQuery(query, function (err, offer) { 
+                          if(err)
+                          {
+                                console.log(err);
+                                msj[0].State=0
+                                return callback(JSON.stringify(msj))
+                          }
+                          else
+                          {
+                            if(offer.length)
+                            {
+                                msj[0].State=1
+                                return callback(JSON.stringify(msj)) 
+                            }
+                            else
+                            {
+                                msj[0].State=0
+                                return callback(JSON.stringify(msj))
+                            }
+                          }
+                      })
+
                     }
                     else
                     {
-                    // loaded!
+                      // Public Offer
+                      query="Select Offers.OfferId from Offers \
+                      where \
+                      Offers.OfferId=" +OfferId
+                      +" and Offers.IsActive=1"
+                      +" and Offers.StartDate<='" +UserTime +"'"
+                      +" and '" +UserTime +"' <=Offers.EndDate \
+                      and Offers.OfferId not in \
+                      (Select distinct OfferRedemption.OfferId \
+                      from OfferRedemption,Offers \
+                      where Offers.MultiUse=0 \
+                      and Offers.IsActive=1 \
+                      and OfferRedemption.UserId=" +UserId 
+                      +" and OfferRedemption.OfferId=Offers.OfferId"
+                      +" and OfferRedemption.OfferId="+OfferId+")";
 
-                    query="Select IsActive from Clients \
-                           where ClientId=" +ClientId
+                      //console.log(query)
 
-                    db.driver.execQuery(query, function (err, client) { 
-
-                          if(err){
-                                console.log(err);
-                                db.close();
+                      db.driver.execQuery(query, function (err, offer) { 
+                        if(err)
+                        {
+                          console.log(err);
+                          msj[0].State=0
+                          return callback(JSON.stringify(msj))
+                        }
+                        else
+                        {
+                            if(offer.length)
+                            {
+                                msj[0].State=1
+                                return callback(JSON.stringify(msj)) 
+                            }
+                            else
+                            {
                                 msj[0].State=0
                                 return callback(JSON.stringify(msj))
-                           }else{
-                              if(client[0]===undefined){
-                                  //console.log("Offer Undefined");
-                                  db.close();
-                                  msj[0].State=0
-                                  return callback(JSON.stringify(msj))
-                                }else{
-
-                                var ClientActive=client[0].IsActive
-
-                                if(client.length && ClientActive==1){
-
-                                        query="Select IsPrivate from Offers \
-                                               where OfferId=" +OfferId
-
-                                                db.driver.execQuery(query, function (err, offer) { 
-
-                                                  if(err){
-                                                    console.log(err);
-                                                    db.close();
-                                                    msj[0].State=0
-                                                    return callback(JSON.stringify(msj))
-                                                  }else{
-
-                                                    if(offer[0]===undefined){
-                                                      //console.log("Offer Undefined");
-                                                      db.close();
-                                                      msj[0].State=0
-                                                      return callback(JSON.stringify(msj))
-                                                    }else{
-                                                    var OfferUseType=offer[0].IsPrivate
-
-                                                    if(offer.length && OfferUseType==1){
-                                                      // Private Offer 
-
-                                                      query="Select UserPrivateOffers.OfferId from UserPrivateOffers,Offers \
-                                                      where \
-                                                      UserPrivateOffers.OfferId= Offers.OfferId \
-                                                      and Offers.IsActive=1 \
-                                                      and UserPrivateOffers.OfferId=" +OfferId
-                                                      +" and UserPrivateOffers.StartDate<='" +UserTime +"'"
-                                                      +" and '" +UserTime +"' <=UserPrivateOffers.EndDate \
-                                                      and UserPrivateOffers.UserId=" +UserId
-                                                      +" and UserPrivateOffers.OfferId not in \
-                                                      (Select distinct OfferRedemption.OfferId \
-                                                      from OfferRedemption,Offers \
-                                                      where Offers.MultiUse=0 \
-                                                      and Offers.IsActive=1 \
-                                                      and OfferRedemption.UserId=" +UserId 
-                                                      +" and OfferRedemption.OfferId=Offers.OfferId"
-                                                      +" and OfferRedemption.OfferId="+OfferId+")";
-
-                                                      //console.log(query)
-
-                                                          db.driver.execQuery(query, function (err, offer) { 
-
-                                                                  if(err){
-                                                                    console.log(err);
-                                                                    db.close();
-                                                                    msj[0].State=0
-                                                                    return callback(JSON.stringify(msj))
-                                                                  }else{
-                                                                    db.close();
-                                                                    if(offer.length){
-                                                                        msj[0].State=1
-                                                                        return callback(JSON.stringify(msj)) 
-                                                                      }else{
-                                                                        msj[0].State=0
-                                                                        return callback(JSON.stringify(msj))
-                                                                      }
-                                                                  }
-
-                                                          })
-
-                                                    }else{
-                                                      // Public Offer
-
-                                                          query="Select Offers.OfferId from Offers \
-                                                          where \
-                                                          Offers.OfferId=" +OfferId
-                                                          +" and Offers.IsActive=1"
-                                                          +" and Offers.StartDate<='" +UserTime +"'"
-                                                          +" and '" +UserTime +"' <=Offers.EndDate \
-                                                          and Offers.OfferId not in \
-                                                          (Select distinct OfferRedemption.OfferId \
-                                                          from OfferRedemption,Offers \
-                                                          where Offers.MultiUse=0 \
-                                                          and Offers.IsActive=1 \
-                                                          and OfferRedemption.UserId=" +UserId 
-                                                          +" and OfferRedemption.OfferId=Offers.OfferId"
-                                                          +" and OfferRedemption.OfferId="+OfferId+")";
-
-                                                          //console.log(query)
-
-                                                          db.driver.execQuery(query, function (err, offer) { 
-
-                                                                  if(err){
-                                                                    console.log(err);
-                                                                    db.close();
-                                                                    msj[0].State=0
-                                                                    return callback(JSON.stringify(msj))
-                                                                  }else{
-                                                                    db.close();
-
-                                                                    if(offer.length){
-                                                                        msj[0].State=1
-                                                                        return callback(JSON.stringify(msj)) 
-                                                                      }else{
-                                                                        msj[0].State=0
-                                                                        return callback(JSON.stringify(msj))
-                                                                      }
-                                                                  }
-
-                                                          })
-                                                        } // End Public Offers
-                                                     } // End Valid Offer
-                                                  } // Else No Mysql Offer Private Error
-
-                                                }) // Query IsPrivate Execution
-
-                                            }else{
-                                              db.close();
-                                              msj[0].State=0
-                                              return callback(JSON.stringify(msj))
-                                            } // Client is Inactive
-                                        } // Valid Client Object
-                                     } // Else No Mysql Client IsActive Error
-                              }) // Query Client IsActive Execution
-                      } 
-            });
+                            }
+                        }
+                      })
+                    } // End Public Offers
+                  } // End Valid Offer
+                } // Else No Mysql Offer Private Error
+            }) // Query IsPrivate Execution
           }
-    });
-
+          else
+          {
+             msj[0].State=0
+             return callback(JSON.stringify(msj))
+          } // Client is Inactive
+        } // Valid Client Object
+      } // Else No Mysql Client IsActive Error
+  }) // Query Client IsActive Execution
 }
 
 exports.IsLocationActive= function IsLocationActive(LocationId,callback){

@@ -16,8 +16,8 @@ app.configure(function(){
 	        	if (err)
                 {
                 	console.log(err)
-                    db.close()
-                    process.exit(1)
+                  db.close()
+                  process.exit(1)
                 }
 	        });
 	    }
