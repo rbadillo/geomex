@@ -58,7 +58,7 @@ exports.AddMessage = function AddMessage(db,Message,OfferId,ClientId,callback){
 }
 
 
-exports.AddUser = function AddUser(db,UserId,DeviceToken,PhoneType,Timezone,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude){
+exports.AddUser = function AddUser(db,UserId,DeviceToken,PhoneType,Timezone,Event,FbName,FbLastName,FbAge,FbBirthday,FbEmail,FbGender,FbSchool,FbWork,FbLink,FbPhoto,Latitude,Longitude,callback){
 
     var User= db.models.Users;
 
@@ -147,7 +147,6 @@ exports.AddUser = function AddUser(db,UserId,DeviceToken,PhoneType,Timezone,Even
              });
           }
     });
-
 }
 
 
