@@ -26,7 +26,7 @@ exports.GetAllActiveClients = function GetAllActiveClients(req,res){
     }
     else
     {
-      DAL.GetAllActiveClients(db,function (err,output){
+      DAL.GetAllActiveClients(req.db,function (err,output){
 
         if(err)
         {
