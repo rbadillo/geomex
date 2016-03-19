@@ -17,19 +17,18 @@ exports.SendMessage = function SendMessage(req,res){
   var UserQuery=req.body.user_query
   var SendMessageOnly=req.body.send_message_only.toLowerCase()
 
-  DAL.GetUsersDeviceToken(UserQuery,OfferId,ClientId,SendMessageOnly,function(err,ActiveUsers){
-
+  DAL.GetUsersDeviceToken(req.db,UserQuery,OfferId,ClientId,SendMessageOnly,function(err,ActiveUsers){
     if(err)
     {
+        res.statusCode=406
         return res.end('ERROR - ' +err);
     }
     else
     {
-
-      DAL.AddMessage(MessageSubtitle,OfferId,ClientId,function(err){
-
+      DAL.AddMessage(req.db,MessageSubtitle,OfferId,ClientId,function(err){
         if(err)
         {
+          res.statusCode=406
           return res.end('ERROR - ' +err);
         }
         else
@@ -38,7 +37,7 @@ exports.SendMessage = function SendMessage(req,res){
           MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,function(err){
               if(err)
               {
-                  console.log(err)
+                  res.statusCode=406
                   return res.end("ERROR - " +err)
               }
               else
@@ -49,6 +48,5 @@ exports.SendMessage = function SendMessage(req,res){
         }
       });
     }
-
   });
 }

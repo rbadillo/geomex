@@ -204,7 +204,7 @@ exports.Redeem= function Redeem(req,res){
                 res.end();
               }
             });
-          }
+        }
       });
     }
 }
