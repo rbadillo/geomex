@@ -360,11 +360,12 @@ exports.GetUnreadMessages= function GetUnreadMessages(req,res){
               else
               {
                 DAL.UnreadMessagesNumber(req.db,UserId,OfferIds,function(output){
+
+                  var tmp=JSON.parse(output);
+
                   console.log("");
                   console.log("GetUnreadMessages - UserId: " +UserId +" - UnreadMessages: " +tmp[0].State)
                   console.log("");
-
-                  var tmp=JSON.parse(output);
 
                   res.setHeader('Content-Type', 'application/json');
                   res.write(output);
