@@ -8,7 +8,7 @@ exports.Test = function Test(req,res){
 
 exports.Offers = function Offers(req,res){
 
-  orm.connect("mysql://username:password@host/database", function (err, db) {
+  orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
 
     if (err)
     {
@@ -70,7 +70,7 @@ exports.Offers = function Offers(req,res){
         });
       }  
     }  
-  }
+  })
 }
 
 exports.SingleOffer = function SingleOffer(req,res){
