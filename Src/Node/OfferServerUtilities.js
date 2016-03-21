@@ -1,5 +1,6 @@
 var DAL= require('./Database');
 var moment = require('moment');
+var orm = require("orm");
 
 exports.Test = function Test(req,res){
 	res.end('Offer Server - OK');
@@ -7,51 +8,69 @@ exports.Test = function Test(req,res){
 
 exports.Offers = function Offers(req,res){
 
-    var UserId=req.params.UserId
+  orm.connect("mysql://username:password@host/database", function (err, db) {
 
-    if(UserId == null || UserId=="null" ||  UserId == undefined || UserId=="undefined" || UserId=="(null)")
+    if (err)
     {
-      console.log("");
-      console.log("ERROR - UserId can't be NULL or Undefined");
-      console.log("");
-
-      res.setHeader('Content-Type', 'application/json');
+      console.log(err)
       res.statusCode=406
-      var msj=  [{
-                  "State": "UserId can't be NULL or Undefined"
-                }]
-      var response= JSON.stringify(msj)
-      res.write(response);
       res.end();
     }
     else
     {
-      var Timezone=req.params.Timezone
-      var LocalTime= moment.utc().zone(Timezone);
-      var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
-      var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
-      var ClientId= req.params.ClientId
-      var Latitude= req.query.latitude
-      var Longitude= req.query.longitude
-  	  
-      DAL.GetOffers(req.db,LocalToUtc,UserId,Timezone,ClientId, function (output){
+      var UserId=req.params.UserId
 
-        // Create ViewedClientOffers Analytic Record
-        DAL.UpdateAppEvents(req.db,UserId,ClientId,"ViewedClientOffers",Latitude,Longitude);
-        
+      if(UserId == null || UserId=="null" ||  UserId == undefined || UserId=="undefined" || UserId=="(null)")
+      {
+        db.close()
         console.log("");
-        console.log("UserId: " +UserId);
-        console.log("Timezone: " +Timezone);
-        console.log("LocalTimeForUser: " +LocalTime.format("YYYY-MM-DD HH:mm:ss"));
-        console.log("UTCTimeForUser: " +LocalToUtc);
-        console.log("ClientId: " +ClientId);
+        console.log("ERROR - UserId can't be NULL or Undefined");
         console.log("");
 
         res.setHeader('Content-Type', 'application/json');
-        res.write(output);
+        res.statusCode=406
+        var msj=  [{
+                    "State": "UserId can't be NULL or Undefined"
+                  }]
+        var response= JSON.stringify(msj)
+        res.write(response);
         res.end();
-      });
-    }    
+      }
+      else
+      {
+        var Timezone=req.params.Timezone
+        var LocalTime= moment.utc().zone(Timezone);
+        var LocalToUtc= moment([LocalTime.year(),LocalTime.month(),LocalTime.date(),LocalTime.hour(),LocalTime.minutes(),LocalTime.seconds()]).utc();
+        var LocalToUtc= LocalToUtc.format("YYYY-MM-DD HH:mm:ss");
+        var ClientId= req.params.ClientId
+        var Latitude= req.query.latitude
+        var Longitude= req.query.longitude
+    	  
+        // db assign Models
+        db.models = req.db.models
+        DAL.GetOffers(db,LocalToUtc,UserId,Timezone,ClientId, function (output){
+
+          // Close DB
+          db.close()
+          
+          // Create ViewedClientOffers Analytic Record
+          DAL.UpdateAppEvents(db,UserId,ClientId,"ViewedClientOffers",Latitude,Longitude);
+          
+          console.log("");
+          console.log("UserId: " +UserId);
+          console.log("Timezone: " +Timezone);
+          console.log("LocalTimeForUser: " +LocalTime.format("YYYY-MM-DD HH:mm:ss"));
+          console.log("UTCTimeForUser: " +LocalToUtc);
+          console.log("ClientId: " +ClientId);
+          console.log("");
+
+          res.setHeader('Content-Type', 'application/json');
+          res.write(output);
+          res.end();
+        });
+      }  
+    }  
+  }
 }
 
 exports.SingleOffer = function SingleOffer(req,res){
