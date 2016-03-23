@@ -39,6 +39,6 @@ app.post('/:UserId/GeoEvent',Utilities.GeoEvent);
 //MessagingServer
 app.post('/SendMessage',Utilities.SendMessage);
 
-
+// Server Initialization
 app.listen(app.get('port'));
 console.log("Router Server - Listening Port: " +app.get('port'));

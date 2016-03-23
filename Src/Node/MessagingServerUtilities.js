@@ -3,7 +3,7 @@ var http= require('http');
 var MQ= require('./RabbitMqPublisher');
 
 exports.Test = function Test(req,res){
-  res.end('Queue Worker Server - OK');
+  res.end('Messaging Server - OK');
 }
 
 exports.SendMessage = function SendMessage(req,res){

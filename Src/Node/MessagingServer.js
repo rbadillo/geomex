@@ -33,4 +33,4 @@ app.get('/',Utilities.Test);
 app.post('/SendMessage',Utilities.SendMessage);
 
 app.listen(app.get('port'));
-console.log("Queue Worker Server - Listening Port: " +app.get('port'));
+console.log("Messaging Server - Listening Port: " +app.get('port'));

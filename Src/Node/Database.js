@@ -1,6 +1,4 @@
-var orm = require("orm");
 var moment = require('moment');
-var https= require('https');
 
 //Global Variables
 var emptyResponse = [];
@@ -223,340 +221,193 @@ exports.UpdateAppEvents =function UpdateAppEvents(db,UserId,ClientId,Event,Latit
 }
 
 
-exports.UpdateSentMessageRecursive= function UpdateSentMessageRecursive(DeviceTokens,Index,Message,Action,callback){
+exports.UpdateSentMessageRecursive= function UpdateSentMessageRecursive(db,DeviceTokens,Index,Message,Action,callback){
 
   if(Index >= DeviceTokens.length){
       console.log()
       return callback();
   }else{
-      UpdateSentMessageSerial(DeviceTokens[Index],Message,Action,function(){
+      UpdateSentMessageSerial(db,DeviceTokens[Index],Message,Action,function(){
           Index=Index+1;
-          exports.UpdateSentMessageRecursive(DeviceTokens,Index,Message,Action,callback)
+          exports.UpdateSentMessageRecursive(db,DeviceTokens,Index,Message,Action,callback)
       })
   }
 }
 
 //GetUserIdSerial
-function UpdateSentMessageSerial(DeviceToken,Message,Action,callback){
+function UpdateSentMessageSerial(db,DeviceToken,Message,Action,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback()
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                      return callback()
-                    }
-                    else
-                    {
-                      // loaded!
-                      query="Select UserId,DeviceToken,PhoneType from Users where DeviceToken= '" +DeviceToken +"'"
+  query="Select UserId,DeviceToken,PhoneType from Users where DeviceToken= '" +DeviceToken +"'"
 
-                              db.driver.execQuery(query, function (err, user) { 
-
-                                    if(err){
-                                      console.log(err);
-                                      db.close();
-                                      return callback();
-                                    }else{
-                                      db.close();
-                                      GetMessageIdSerial(user[0].UserId,Message,Action,callback);
-                                    }
-
-                              })
-                    }
-            });
-          }
-        });
+  db.driver.execQuery(query,function (err, user){ 
+    if(err)
+    {
+      console.log(err);
+      return callback();
     }
-
-
-function GetMessageIdSerial(UserId,Message,Action,callback){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback()
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                      return callback()
-                    }
-                    else
-                    {
-                      // loaded!
-                      var Msj = db.models.Messages;  
-                      Msj.find({ Message: Message}, function (err,msj) {
-                          if(err){
-                              console.log(err);
-                              db.close();
-                              return callback();
-                          }else{
-                              //console.log(msj[0].MessageId);
-                              db.close();  
-                              if(Action=="Add"){
-                                AddSentMessageSerial(UserId,msj[0].MessageId,callback);
-                              }else if (Action=="Delete"){
-                                 DeleteSentMessageSerial(UserId,msj[0].MessageId,callback);
-                              }
-                               
-                          }
-                      });
-                   }
-                });
-          }
-        });
+    else
+    {
+      GetMessageIdSerial(db,user[0].UserId,Message,Action,callback);
     }
-
-
-function AddSentMessageSerial(UserId,MessageId,callback){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback()
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                      return callback()
-                    }
-                    else
-                    {
-                      // loaded!
-                      var SentMessage = db.models.SentMessages();
-                      SentMessage.UserId=UserId
-                      SentMessage.MessageId=MessageId
-                      SentMessage.MessageRead=0
-                      SentMessage.TimeSent=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                      
-                      SentMessage.save(function (err) {
-                           if (err){
-                              console.log(err);
-                              db.close();
-                              return callback();
-                           }else{
-                           //console.log("SentMessage Added Sucessfully");
-                           db.close();
-                           return callback();
-                           }
-                       });
-                    }
-            });
-          }
-        });
+  })
 }
 
 
-function DeleteSentMessageSerial(UserId,MessageId,callback){
+function GetMessageIdSerial(db,UserId,Message,Action,callback){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-            return callback()
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                      return callback()
-                    }
-                    else
-                    {
-                      // loaded!
-                      var SentMessage = db.models.SentMessages;
-                      
-                      SentMessage.find({ UserId: UserId, MessageId: MessageId }).remove(function (err) {
-                          if(err){
-                              console.log(err);
-                              db.close();
-                              return callback();
-                          }else{
-                              //console.log("SentMessage Deleted Sucessfully");
-                              db.close();
-                              return callback();
-                          }
-                      });
-                    }
-                });
-          }
-        });
+  var Msj = db.models.Messages;  
+  Msj.find({ Message: Message},function (err,msj){
+    if(err)
+    {
+          console.log(err);
+          return callback();
     }
+    else
+    {
+      //console.log(msj[0].MessageId);
+      if(Action=="Add")
+      {
+        AddSentMessageSerial(db,UserId,msj[0].MessageId,callback);
+      }
+      else if(Action=="Delete")
+      {
+        DeleteSentMessageSerial(db,UserId,msj[0].MessageId,callback);
+      }
+      else
+      {
+        return callback();
+      }      
+    }
+  });
+}
+
+
+function AddSentMessageSerial(db,UserId,MessageId,callback){
+
+  var SentMessage = db.models.SentMessages();
+  SentMessage.UserId=UserId
+  SentMessage.MessageId=MessageId
+  SentMessage.MessageRead=0
+  SentMessage.TimeSent=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+  
+  SentMessage.save(function (err){
+    if (err)
+    {
+      console.log(err);
+      return callback();
+    }
+    else
+    {
+      //console.log("SentMessage Added Sucessfully");
+      return callback();
+    }
+  });
+}
+
+
+function DeleteSentMessageSerial(db,UserId,MessageId,callback){
+
+  var SentMessage = db.models.SentMessages;
+  
+  SentMessage.find({ UserId: UserId, MessageId: MessageId }).remove(function (err){
+      if(err)
+      {
+        console.log(err);
+        return callback();
+      }
+      else
+      {
+        //console.log("SentMessage Deleted Sucessfully");
+        return callback();
+      }
+  });
+}
 
 
 //GetUserId Async
-exports.UpdateSentMessage = function UpdateSentMessage(DeviceToken,Message,Action){
+exports.UpdateSentMessage = function UpdateSentMessage(db,DeviceToken,Message,Action){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                    }
-                    else
-                    {
-                    // loaded!
-                    query="Select UserId,DeviceToken,PhoneType from Users where DeviceToken= '" +DeviceToken +"'"
+  query="Select UserId,DeviceToken,PhoneType from Users where DeviceToken= '" +DeviceToken +"'"
 
-                            db.driver.execQuery(query, function (err, user) { 
-
-                                  if(err){
-                                    console.log(err);
-                                    db.close();
-                                  }else{
-                                    db.close();
-                                    GetMessageId(user[0].UserId,Message,Action);
-                                  }
-
-                            })
-                    }
-                });
-          }
-        });
+  db.driver.execQuery(query,function(err, user){ 
+    if(err)
+    {
+        console.log(err);
     }
-
-
-function GetMessageId(UserId,Message,Action){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                    }
-                    else
-                    {
-                      // loaded!
-                      var Msj = db.models.Messages;
-                      
-                      Msj.find({ Message: Message}, function (err,msj) {
-                          if(err){
-                              console.log(err);
-                              db.close();
-                          }else{
-                              //console.log(msj[0].MessageId);
-                              db.close();  
-                              if(Action=="Add"){
-                                AddSentMessage(UserId,msj[0].MessageId);
-                              }else if (Action=="Delete"){
-                                 DeleteSentMessage(UserId,msj[0].MessageId);
-                              }
-                               
-                          }
-                      });
-                    }
-                });
-          }
-        });
+    else
+    {
+        GetMessageId(db,user[0].UserId,Message,Action);
     }
-
-function AddSentMessage(UserId,MessageId){
-
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                    }
-                    else
-                    {
-                      // loaded!
-                      var SentMessage = db.models.SentMessages();
-                      SentMessage.UserId=UserId
-                      SentMessage.MessageId=MessageId
-                      SentMessage.MessageRead=0
-                      SentMessage.TimeSent=moment.utc().format("YYYY-MM-DD HH:mm:ss");
-                      
-                      SentMessage.save(function (err) {
-                           if (err){
-                              console.log(err);
-                              db.close();
-                           }else{
-                           //console.log("SentMessage Added Sucessfully");
-                           db.close();
-                           }
-                       });
-                    }
-            });
-          }
-        });
+  })
 }
 
 
-function DeleteSentMessage(UserId,MessageId){
+function GetMessageId(db,UserId,Message,Action){
 
-        orm.connect("mysql://root:EstaTrivialDb!@localhost/geomex", function (err, db) {
-          if (err)
-          {
-            console.log(err)
-          }
-          else
-          {
-            db.load("./Models", function (err) {
-                    if (err)
-                    {
-                      console.log(err)
-                      db.close()
-                    }
-                    // loaded!
-                    var SentMessage = db.models.SentMessages;
-                    
-                    SentMessage.find({ UserId: UserId, MessageId: MessageId }).remove(function (err) {
-                        if(err){
-                            console.log(err);
-                            db.close();
-                        }else{
-                            //console.log("SentMessage Deleted Sucessfully");
-                            db.close();
-                        }
-                    });
-                });
-          }
-        });
+  var Msj = db.models.Messages;
+  
+  Msj.find({ Message: Message},function(err,msj){
+    if(err)
+    {
+      console.log(err);
     }
+    else
+    {
+      //console.log(msj[0].MessageId);
+      if(Action=="Add")
+      {
+        AddSentMessage(db,UserId,msj[0].MessageId);
+      }
+      else if (Action=="Delete")
+      {
+        DeleteSentMessage(db,UserId,msj[0].MessageId);
+      }
+      else
+      {
+        return
+      }
+    }
+  });
+}
+
+function AddSentMessage(db,UserId,MessageId){
+
+  var SentMessage = db.models.SentMessages();
+  SentMessage.UserId=UserId
+  SentMessage.MessageId=MessageId
+  SentMessage.MessageRead=0
+  SentMessage.TimeSent=moment.utc().format("YYYY-MM-DD HH:mm:ss");
+  
+  SentMessage.save(function(err){
+    if (err)
+    {
+      console.log(err);
+    }
+    else
+    {
+       //console.log("SentMessage Added Sucessfully");
+       return
+    }
+  });
+}
+
+
+function DeleteSentMessage(db,UserId,MessageId){
+
+  var SentMessage = db.models.SentMessages;
+  
+  SentMessage.find({ UserId: UserId, MessageId: MessageId }).remove(function(err){
+    if(err)
+    {
+      console.log(err);
+    }
+    else
+    {
+      //console.log("SentMessage Deleted Sucessfully");
+      return
+    }
+  });
+}
 
 
 exports.GetOffers = function GetOffers(db,UserTime,UserId,Timezone,ClientId,callback){
