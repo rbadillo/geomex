@@ -1,27 +1,60 @@
-import urllib2
-import base64
+import requests
 import datetime
+import json
 
 print ""
 print "Start: " +str(datetime.datetime.now())
 
-myurl = "near.noip.me"
-username = "beto_best@hotmail.com"
-password = "b3t0SaTuRn01"
+nearDomain = "descubrenear.com"
 
-web_page = urllib2.urlopen("http://iptools.bizhat.com/ipv4.php")
-myip = web_page.read()
+baseUrl = 'https://api.dnsimple.com/v1/domains'
 
-print "Your IP is " + myip
+headers = {'User-Agent': 'Near DNS Update Client Linux/1.0',
+		 'X-DNSimple-Token':'beto_best@hotmail.com:XvNcde0DxrRkXFtlMuVbo2br7qmGflGC',
+		 'Accept' : 'application/json',
+		 'Content-type': 'application/json'}
 
-update_url = "https://dynupdate.no-ip.com/nic/update?hostname=" + myurl + "&myip=" + myip
+try:
+	r = requests.get('http://iptools.bizhat.com/ipv4.php')
 
-req = urllib2.Request(update_url)
-req.add_header('Authorization', 'Basic '+base64.encodestring(username+":"+password).replace("\n",""))
-req.add_header('User-Agent', 'Near Update Client Linux/1.0  descubrenear@gmail.com')
-resp = urllib2.urlopen(req)
-content = resp.read()
-print content
+	if(r.status_code == 200):
+		serverPublicIp=r.text
+
+		print "Your Server Public is: " + serverPublicIp
+
+		r = requests.get(baseUrl, headers=headers)
+		if(r.status_code == 200):
+			response=json.loads(r.text)[0]
+			responseDomainName = response.get('domain').get('name')
+			if(responseDomainName == nearDomain):
+				recordDomainUrl = baseUrl+'/'+str(responseDomainName)+'/records?name=api'
+
+				r = requests.get(recordDomainUrl, headers=headers)
+
+				if(r.status_code == 200):
+					response = 	json.loads(r.text)[0]
+					responseRecordId = response.get('record').get('id')
+
+					payload = {'record': {'content': str(serverPublicIp), 'ttl':'60'}}
+					updateRecordUrl = baseUrl+'/'+str(responseDomainName)+'/records/'+str(responseRecordId)
+					r = requests.put(updateRecordUrl, headers=headers,data=json.dumps(payload))
+
+					if(r.status_code == 200):
+						print "DNS Simple Was Updated Successfully"
+						print r.text
+					else:
+						print "Error Updating A Record in DNS Simple"
+				else:
+					print "Error Requestion A Records For Domain in DNS Simple"
+			else:
+				print "Error - Domain in DNS Simple does not match descubrenear.com"
+		else:
+			print "Error Requesting Domains in DNS Simple"
+	else:
+		print "Error Requestion Public IP"
+except:
+	print "Error Updating DNS Simple"
 
 print "End: " +str(datetime.datetime.now())
 print ""
+
