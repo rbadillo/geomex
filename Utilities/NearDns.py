@@ -41,7 +41,6 @@ try:
 
 					if(r.status_code == 200):
 						print "DNS Simple Was Updated Successfully"
-						print r.text
 					else:
 						print "Error Updating A Record in DNS Simple"
 				else:
