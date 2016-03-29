@@ -283,11 +283,13 @@ exports.IsLocationActive= function IsLocationActive(req,res){
       else
       {
         DAL.IsLocationActive(req.db,LocationId,function(output){
+
+          var tmp= JSON.parse(output)
+
           console.log("");
           console.log("IsLocationActive - UserId: " +UserId +" - LocationId: " +LocationId +" - Active State: " +tmp[0].State)
           console.log("");
 
-          var tmp= JSON.parse(output)
           res.setHeader('Content-Type', 'application/json');
           if(tmp[0].State=="Error")
           {
