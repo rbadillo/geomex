@@ -1,6 +1,8 @@
 package com.geomex.near;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Path;
@@ -56,6 +58,7 @@ public class OfferDetailsFragment extends Fragment {
     private boolean offerImageSet = false;
     private boolean isConfirmed = false;
     private String redeemCode = null;
+    private String isMulti = null;
 
     public static OfferDetailsFragment newInstance(String clientId, String offerId, String offerImage) {
         OfferDetailsFragment fragment = new OfferDetailsFragment();
@@ -89,35 +92,81 @@ public class OfferDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (isConfirmed) {
-                    String clientId = getArgsClientId();
-                    String offerId = getArgsOfferId();
+                    final String clientId = getArgsClientId();
+                    final  String offerId = getArgsOfferId();
 
                     if (callbacks != null) {
                         callbacks.onDemandDownloadPriority();
                     }
-                    RemoteContentFetcher.Callbacks fetcherCallbacks = new RemoteContentFetcher.Callbacks() {
-                        @Override
-                        public void onRemoteContentFetched(JSONArray content) {
-                            if (content == null) {
-                                getActivity().getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .remove(OfferDetailsFragment.this)
-                                        .commit();
-                            } else {
-                                showRedeemCode(content);
+                    if (isMulti != null && isMulti.equalsIgnoreCase("0")) {
+                        //show single use alert dialog here
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                        alertDialogBuilder.setMessage("Esta oferta solo puede ser utilizada 1 una vez, ¿Deseas continuar?");
+
+                        alertDialogBuilder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                RemoteContentFetcher.Callbacks fetcherCallbacks = new RemoteContentFetcher.Callbacks() {
+                                    @Override
+                                    public void onRemoteContentFetched(JSONArray content) {
+                                        if (content == null) {
+                                            getActivity().getSupportFragmentManager()
+                                                    .beginTransaction()
+                                                    .remove(OfferDetailsFragment.this)
+                                                    .commit();
+                                        } else {
+                                            showRedeemCode(content);
+                                        }
+                                        if (callbacks != null) {
+                                            callbacks.onDropDownloadPriority();
+                                            callbacks.onFlowFinished();
+                                        }
+                                    }
+                                };
+                                RedeemCodeFetcher redeemCodeFetcher = new RedeemCodeFetcher(getActivity(),
+                                        clientId,
+                                        offerId);
+                                redeemCodeFetcher.setCallbacks(fetcherCallbacks);
+                                redeemCodeFetcher.execute();
+                                redeem.setOnClickListener(null);
                             }
-                            if (callbacks != null) {
-                                callbacks.onDropDownloadPriority();
-                                callbacks.onFlowFinished();
+                        });
+
+                        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //do nothing
                             }
-                        }
-                    };
-                    RedeemCodeFetcher redeemCodeFetcher = new RedeemCodeFetcher(getActivity(),
-                                                                                clientId,
-                                                                                offerId);
-                    redeemCodeFetcher.setCallbacks(fetcherCallbacks);
-                    redeemCodeFetcher.execute();
-                    redeem.setOnClickListener(null);
+                        });
+
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+                    } else {
+                        RemoteContentFetcher.Callbacks fetcherCallbacks = new RemoteContentFetcher.Callbacks() {
+                            @Override
+                            public void onRemoteContentFetched(JSONArray content) {
+                                if (content == null) {
+                                    getActivity().getSupportFragmentManager()
+                                            .beginTransaction()
+                                            .remove(OfferDetailsFragment.this)
+                                            .commit();
+                                } else {
+                                    showRedeemCode(content);
+                                }
+                                if (callbacks != null) {
+                                    callbacks.onDropDownloadPriority();
+                                    callbacks.onFlowFinished();
+                                }
+                            }
+                        };
+                        RedeemCodeFetcher redeemCodeFetcher = new RedeemCodeFetcher(getActivity(),
+                                clientId,
+                                offerId);
+                        redeemCodeFetcher.setCallbacks(fetcherCallbacks);
+                        redeemCodeFetcher.execute();
+                        redeem.setOnClickListener(null);
+                    }
+
                 } else {
                     String confirm = getResources().getString(R.string.action_confirm_redeem);
                     redeem.setText(confirm);
@@ -143,6 +192,7 @@ public class OfferDetailsFragment extends Fragment {
             }
         }
     }
+
 
     @Override
     public void onStart() {
@@ -236,6 +286,7 @@ public class OfferDetailsFragment extends Fragment {
                 String offerSubtitle = json.getString("Subtitle");
                 String offerInstructions = json.getString("Instructions");
                 String offerDisclaimer = json.getString("Disclaimer");
+                isMulti = json.getString("MultiUse");
 
                 offerImage.setVisibility(View.VISIBLE);
                 title.setText(offerTitle);
@@ -319,7 +370,7 @@ public class OfferDetailsFragment extends Fragment {
             String userTimeZone = Preferences.getUserTimeZone(context);
             double latitude = Preferences.getUserLocationLatitude(context);
             double longitude = Preferences.getUserLocationLongitude(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId +
                                       "/" + userTimeZone +
                                       "/GetOffers/" + clientId +
                                       "/OfferDetails/" + offerId +
@@ -355,7 +406,7 @@ public class OfferDetailsFragment extends Fragment {
             String userTimeZone = Preferences.getUserTimeZone(context);
             double latitude = Preferences.getUserLocationLatitude(context);
             double longitude = Preferences.getUserLocationLongitude(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId +
                                       "/" +userTimeZone +
                                       "/GetOffers/" + clientId +
                                       "/Redeem/" + offerId +

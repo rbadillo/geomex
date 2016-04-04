@@ -271,7 +271,7 @@ public class ClientsFragment extends Fragment {
         protected JSONArray fetchRemoteContent() throws IOException, JSONException {
             HttpClient client = new DefaultHttpClient();
             String userId = Preferences.getUserFacebookId(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId + "/GetAllActiveClients");
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId + "/GetAllActiveClients");
 
             HttpResponse response = client.execute(get);
             InputStream stream = response.getEntity().getContent();

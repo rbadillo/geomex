@@ -259,7 +259,7 @@ public class MapsFragment extends SupportMapFragment {
             String userId = Preferences.getUserFacebookId(context);
             double latitude = Preferences.getUserLocationLatitude(context);
             double longitude = Preferences.getUserLocationLongitude(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId +
                                       "/GetClosestLocations/" + latitude +
                                       "/" + longitude);
 

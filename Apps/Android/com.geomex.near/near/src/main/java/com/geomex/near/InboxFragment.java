@@ -321,7 +321,7 @@ public class InboxFragment extends Fragment {
             HttpClient client = new DefaultHttpClient();
             String userId = Preferences.getUserFacebookId(context);
             String userTimeZone = Preferences.getUserTimeZone(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId +
                                       "/" + userTimeZone + "/GetMessages");
 
             HttpResponse response = client.execute(get);
@@ -346,7 +346,7 @@ public class InboxFragment extends Fragment {
         protected Void doInBackground(Void... params) {
             HttpClient client = new DefaultHttpClient();
             String userId = Preferences.getUserFacebookId(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId +
                     "/ReadMessage/" + messageId);
 
             try {

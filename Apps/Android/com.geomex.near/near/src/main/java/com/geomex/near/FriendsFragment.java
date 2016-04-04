@@ -249,7 +249,7 @@ public class FriendsFragment extends Fragment {
         protected JSONArray fetchRemoteContent() throws IOException, JSONException {
             HttpClient client = new DefaultHttpClient();
             String userId = Preferences.getUserFacebookId(context);
-            HttpPost post = new HttpPost("http://near.noip.me/" + userId + "/GetFriends");
+            HttpPost post = new HttpPost("http://api.descubrenear.com/" + userId + "/GetFriends");
 
             String userFriends = Preferences.getUserFacebookFriends(context);
             String body = "{\"friend_list\":[" + userFriends + "]}";

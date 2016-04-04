@@ -544,7 +544,7 @@ public class OffersActivity extends ApplicationSessionActivity {
             String userTimeZone = Preferences.getUserTimeZone(context);
             double latitude = Preferences.getUserLocationLatitude(context);
             double longitude = Preferences.getUserLocationLongitude(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId +
                                       "/" + userTimeZone +
                                       "/GetOffers/" + clientId +
                                       "?latitude=" + latitude +

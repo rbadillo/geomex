@@ -457,7 +457,7 @@ public class UserOffersActivity extends ApplicationSessionActivity {
         protected JSONArray fetchRemoteContent() throws IOException, JSONException {
             HttpClient client = new DefaultHttpClient();
             String appUserId = Preferences.getUserFacebookId(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + appUserId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + appUserId +
                                       "/GetFriendActivity/" + userId);
 
             HttpResponse response = client.execute(get);

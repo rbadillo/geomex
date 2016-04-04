@@ -454,7 +454,7 @@ public class MainActivity extends ApplicationSessionActivity {
         protected Void doInBackground(Void... params) {
             String userId = Preferences.getUserFacebookId(context);
             HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost("http://near.noip.me/" + userId + "/Register");
+            HttpPost post = new HttpPost("http://api.descubrenear.com/" + userId + "/Register");
             String userProfile = Preferences.getUserFacebookProfile(context);
             String userTimeZone = Preferences.getUserTimeZone(context);
             String gcmRegId = Preferences.getGcmRegistrationId(context);

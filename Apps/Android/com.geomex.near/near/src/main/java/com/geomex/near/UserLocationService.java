@@ -266,7 +266,7 @@ public class UserLocationService extends Service implements PlaceEventListener, 
             HttpClient client = new DefaultHttpClient();
             String userId = Preferences.getUserFacebookId(context);
             String userTimeZone = Preferences.getUserTimeZone(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId +
                                       "/" + userTimeZone +
                                       "/ShowGeoMessage/" + clientId +
                                       "/LocationId/" + locationId +
@@ -294,7 +294,7 @@ public class UserLocationService extends Service implements PlaceEventListener, 
         protected JSONArray fetchRemoteContent() throws IOException, JSONException {
             HttpClient client = new DefaultHttpClient();
             String userId = Preferences.getUserFacebookId(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId +
                                       "/IsLocationActive/" + locationId);
 
             HttpResponse response = client.execute(get);
@@ -321,7 +321,7 @@ public class UserLocationService extends Service implements PlaceEventListener, 
         protected Void doInBackground(Void... params) {
             String userId = Preferences.getUserFacebookId(context);
             HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost("http://near.noip.me/" + userId + "/GeoEvent");
+            HttpPost post = new HttpPost("http://api.descubrenear.com/" + userId + "/GeoEvent");
             double latitude = Preferences.getUserLocationLatitude(context);
             double longitude = Preferences.getUserLocationLongitude(context);
 

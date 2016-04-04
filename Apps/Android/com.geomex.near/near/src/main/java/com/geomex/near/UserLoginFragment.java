@@ -67,6 +67,8 @@ public class UserLoginFragment extends Fragment {
         permissions.add("user_birthday");
         permissions.add("user_education_history");
         permissions.add("user_work_history");
+        permissions.add("user_friends");
+
 
         LoginButton login = (LoginButton) view.findViewById(R.id.action_login);
         login.setFragment(this);

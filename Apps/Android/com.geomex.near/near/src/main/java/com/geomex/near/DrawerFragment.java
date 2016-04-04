@@ -453,7 +453,7 @@ public class DrawerFragment extends Fragment {
             HttpClient client = new DefaultHttpClient();
             String userId = Preferences.getUserFacebookId(context);
             String userTimeZone = Preferences.getUserTimeZone(context);
-            HttpGet get = new HttpGet("http://near.noip.me/" + userId +
+            HttpGet get = new HttpGet("http://api.descubrenear.com/" + userId +
                                       "/" + userTimeZone + "/GetUnreadMessages");
 
             HttpResponse response = client.execute(get);

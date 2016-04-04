@@ -44,7 +44,7 @@ public class AppEventSender extends AsyncTask<Void, Void, Void> {
         if (userId == null) return null;
 
         HttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://near.noip.me/" + userId + "/AppEvent");
+        HttpPost post = new HttpPost("http://api.descubrenear.com/" + userId + "/AppEvent");
         double latitude = Preferences.getUserLocationLatitude(context);
         double longitude = Preferences.getUserLocationLongitude(context);
 
