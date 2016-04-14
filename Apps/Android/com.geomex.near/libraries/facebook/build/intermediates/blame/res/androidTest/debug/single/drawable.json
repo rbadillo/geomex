@@ -112,12 +112,12 @@
         "source": "/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/libraries/facebook/build/intermediates/bundles/debug/res/drawable/com_facebook_loginbutton_silver.xml"
     },
     {
-        "merged": "/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/libraries/facebook/build/intermediates/res/merged/androidTest/debug/drawable/com_facebook_inverse_icon.png",
-        "source": "/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/libraries/facebook/build/intermediates/bundles/debug/res/drawable/com_facebook_inverse_icon.png"
-    },
-    {
         "merged": "/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/libraries/facebook/build/intermediates/res/merged/androidTest/debug/drawable/com_facebook_place_default_icon.png",
         "source": "/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/libraries/facebook/build/intermediates/bundles/debug/res/drawable/com_facebook_place_default_icon.png"
+    },
+    {
+        "merged": "/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/libraries/facebook/build/intermediates/res/merged/androidTest/debug/drawable/com_facebook_inverse_icon.png",
+        "source": "/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/libraries/facebook/build/intermediates/bundles/debug/res/drawable/com_facebook_inverse_icon.png"
     },
     {
         "merged": "/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/libraries/facebook/build/intermediates/res/merged/androidTest/debug/drawable/com_facebook_usersettingsfragment_background_gradient.xml",

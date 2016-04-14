@@ -101,7 +101,7 @@ public class OfferDetailsFragment extends Fragment {
                     if (isMulti != null && isMulti.equalsIgnoreCase("0")) {
                         //show single use alert dialog here
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                        alertDialogBuilder.setMessage("Esta oferta solo puede ser utilizada 1 una vez, ¿Deseas continuar?");
+                        alertDialogBuilder.setMessage("Esta oferta solo puede ser utilizada 1 vez, ¿Deseas continuar?");
 
                         alertDialogBuilder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             @Override

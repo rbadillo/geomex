@@ -2,74 +2,74 @@
 <items version="2" >
 
     <item
-        jar="/Users/Girish/Library/Android/sdk/extras/android/m2repository/com/android/support/support-v4/19.1.0/support-v4-19.1.0.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/support-v4-19.1.0_322fe7e7e5d4f91184b1e1cfabbd6c1784396cee.jar" />
-    </item>
-    <item
-        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/jars/classes.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/com.android.support-appcompat-v7-19.1.0_17818fbe2faf961c8da88c5f4902d4d72fd98818.jar" />
-    </item>
-    <item
-        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/exploded-aar/com.geomex.near.libraries/facebook/unspecified/jars/classes.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="e8744710d04b45dc09d11bec70d9517e00a39c0a">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/com.geomex.near.libraries-facebook-unspecified_8796e9e24223c29d8b6a3831f6e15cb26b5b3a78.jar" />
-    </item>
-    <item
         jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/exploded-aar/com.google.android.gms/play-services/4.3.23/jars/classes.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="7676c0cb230efa6ac41c47867d372ed5913029d4">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/com.google.android.gms-play-services-4.3.23_4dfe7f488d744911870fa6aa63faf6736596db18.jar" />
-    </item>
-    <item
-        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/spring-android-core-1.0.1.RELEASE.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="e68f0e8e4b636ee30c4de58953be38d9b72a5e3b">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/spring-android-core-1.0.1.RELEASE_f1a0eeb1175e2d7a906d5257a80dce5ca72eb3c4.jar" />
-    </item>
-    <item
-        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/android-logging.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="2fac1d9933b4aacd6737cfb2a701fa2676ecf721">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/android-logging_118abf79c1506c76a26f6a49de99ccfcc6ee0b3e.jar" />
-    </item>
-    <item
-        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/Context-Interests.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="f4ffd4582160ebc6ead9d0a13aed843800d2a08b">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/Context-Interests_350b50c4c6ba5f2fb2654611bfb8784d55460956.jar" />
-    </item>
-    <item
-        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/spring-android-rest-template-1.0.1.RELEASE.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="e132d929bd181941f79b0d63edafb8a86ae6fd33">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/spring-android-rest-template-1.0.1.RELEASE_e6dc2da3621c5baea7ec98721ac21a26f3a1ec2b.jar" />
-    </item>
-    <item
-        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/Context-Core.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="267475eaa9d3c0844802287dd8f2e63eb245adff">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/Context-Core_05ac9472bae64bf71bb8d22ee9bc3d477bbe6c6f.jar" />
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/com.google.android.gms-play-services-4.3.23_4dfe7f488d744911870fa6aa63faf6736596db18.jar" />
     </item>
     <item
         jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/Context-Location.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="2d4e587481dbbdc5f80076e85bc52d5bb28fd37f">
-        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/debug/Context-Location_a54b299cb64bff3715f11f7f2c09bf647425aec5.jar" />
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/Context-Location_a54b299cb64bff3715f11f7f2c09bf647425aec5.jar" />
+    </item>
+    <item
+        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/exploded-aar/com.geomex.near.libraries/facebook/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="b7662fe10eaa54fbe680967abe10a2d18798cb0b">
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/com.geomex.near.libraries-facebook-unspecified_8796e9e24223c29d8b6a3831f6e15cb26b5b3a78.jar" />
+    </item>
+    <item
+        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28">
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/com.android.support-appcompat-v7-19.1.0_17818fbe2faf961c8da88c5f4902d4d72fd98818.jar" />
+    </item>
+    <item
+        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/spring-android-core-1.0.1.RELEASE.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="e68f0e8e4b636ee30c4de58953be38d9b72a5e3b">
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/spring-android-core-1.0.1.RELEASE_f1a0eeb1175e2d7a906d5257a80dce5ca72eb3c4.jar" />
+    </item>
+    <item
+        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/spring-android-rest-template-1.0.1.RELEASE.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="e132d929bd181941f79b0d63edafb8a86ae6fd33">
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/spring-android-rest-template-1.0.1.RELEASE_e6dc2da3621c5baea7ec98721ac21a26f3a1ec2b.jar" />
+    </item>
+    <item
+        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/android-logging.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="2fac1d9933b4aacd6737cfb2a701fa2676ecf721">
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/android-logging_118abf79c1506c76a26f6a49de99ccfcc6ee0b3e.jar" />
+    </item>
+    <item
+        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/Context-Interests.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="f4ffd4582160ebc6ead9d0a13aed843800d2a08b">
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/Context-Interests_350b50c4c6ba5f2fb2654611bfb8784d55460956.jar" />
+    </item>
+    <item
+        jar="/Users/Girish/Library/Android/sdk/extras/android/m2repository/com/android/support/support-v4/19.1.0/support-v4-19.1.0.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67">
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/support-v4-19.1.0_322fe7e7e5d4f91184b1e1cfabbd6c1784396cee.jar" />
+    </item>
+    <item
+        jar="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/src/main/libs/Context-Core.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="267475eaa9d3c0844802287dd8f2e63eb245adff">
+        <dex dex="/Users/Girish/Desktop/girish-near/Apps/Android/com.geomex.near/near/build/intermediates/pre-dexed/defaultFlavor/release/Context-Core_05ac9472bae64bf71bb8d22ee9bc3d477bbe6c6f.jar" />
     </item>
 
 </items>
