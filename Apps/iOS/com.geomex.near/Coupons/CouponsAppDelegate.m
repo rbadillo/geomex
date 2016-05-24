@@ -9,14 +9,7 @@
 #import "CouponsAppDelegate.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import "OffersViewController.h"
-//#import "ActiveClientsViewController.h"
 #import "SidebarViewController.h"
-/* Gimbal
-#import <ContextCore/QLContextCoreConnector.h>
-#import <ContextLocation/QLPlaceEvent.h>
-#import <ContextLocation/QLPlace.h>
-#import <ContextLocation/QLContentDescriptor.h>
- */
 
 @implementation CouponsAppDelegate
 
@@ -26,7 +19,31 @@
     // Override point for customization after application launch.
     
     //Register for remote notifications with APNS
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    
+#if !TARGET_IPHONE_SIMULATOR
+    
+    //-- Set Notification
+    if ([[UIApplication sharedApplication]respondsToSelector:@selector(isRegisteredForRemoteNotifications)])
+    {
+        // iOS 8 Notifications
+        [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+        
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+        
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
+        
+        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+    }
+    else
+    {
+        // iOS < 8 Notifications
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+         (UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert)];
+    }
+    
+#endif
+    
+    
     
     application.applicationIconBadgeNumber = 0;
     
@@ -42,6 +59,7 @@
                                           barMetrics:UIBarMetricsDefault];
     
     [[UINavigationBar appearance] setShadowImage:[[UIImage alloc] init]];
+    
     
     return YES;
 }
@@ -164,7 +182,7 @@
         NSError *e = nil;
         NSData* jsonData = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&e];
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-        NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/AppEvent", _userId];
+        NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/AppEvent", _userId];
         //NSLog(@"url: %@", url);
         [request setURL: [NSURL URLWithString:url]];
         [request setHTTPMethod:@"POST"];

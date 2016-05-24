@@ -62,7 +62,7 @@
 
 /*
 - (void)updateUnreadMessages{
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/GetUnreadMessages", _userId, _timeZone];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/%@/GetUnreadMessages", _userId, _timeZone];
     NSData *offers = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
     NSError *error;
     NSArray *response = [NSJSONSerialization
@@ -80,14 +80,31 @@
 
 -(void)updateUnreadMessages{
     NSURLSession *session = [NSURLSession sharedSession];
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/GetUnreadMessages", _userId, _timeZone];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/%@/GetUnreadMessages", _userId, _timeZone];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSArray *messages = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         
-        NSInteger unread = [[[messages objectAtIndex:0] objectForKey:@"State"] integerValue];
-        if (unread > 0) {
-            _messagesLabel.text = [NSString stringWithFormat:@"Mensajes (%i)", unread];
-        } else {
+        if(data)
+        {
+            NSArray *messages = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        
+            NSInteger unread = 0;
+        
+            if([messages count])
+            {
+                unread = [[[messages objectAtIndex:0] objectForKey:@"State"] integerValue];
+            }
+        
+            if (unread > 0)
+            {
+                _messagesLabel.text = [NSString stringWithFormat:@"Mensajes (%i)", unread];
+            }
+            else
+            {
+                _messagesLabel.text = [NSString stringWithFormat:@"Mensajes"];
+            }
+        }
+        else
+        {
             _messagesLabel.text = [NSString stringWithFormat:@"Mensajes"];
         }
     }];

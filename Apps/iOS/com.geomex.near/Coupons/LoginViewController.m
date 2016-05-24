@@ -11,11 +11,6 @@
 #import "CouponsAppDelegate.h"
 #import "SidebarViewController.h"
 
-#import <ContextLocation/QLPlace.h>
-#import <ContextLocation/QLPlaceEvent.h>
-#import <ContextLocation/QLContentDescriptor.h>
-#import <ContextProfiling/PRProfile.h>
-
 @interface LoginViewController ()
 
 @end
@@ -40,7 +35,7 @@ static dispatch_once_t once;
     [super viewDidLoad];
     //NSLog( @"### running FB sdk version: %@", [FBSettings sdkVersion] );
 
-    FBLoginView *loginView = [[FBLoginView alloc] initWithReadPermissions:@[@"user_birthday", @"user_education_history", @"user_work_history", @"email"]];
+    FBLoginView *loginView = [[FBLoginView alloc] initWithReadPermissions:@[@"user_birthday", @"user_education_history", @"user_work_history", @"email", @"user_friends"]];
     loginView.delegate = self;
     loginView.frame = CGRectMake(40, 117, 241, 58);
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -59,6 +54,22 @@ static dispatch_once_t once;
     //Init latitude and longitude and call Location Update
     _latitude = @"null";
     _longitude = @"null";
+    
+    if(self.placeManager == nil)
+    {
+        NSLog(@"Initializing GMBLPlaceManager - viewDidLoad");
+        self.placeManager = [GMBLPlaceManager new];
+        self.placeManager.delegate = self;
+    }
+    
+    if(self.communicationManager == nil)
+    {
+        NSLog(@"Initializing GMBLCommunicationManager - viewDidLoad");
+        self.communicationManager = [GMBLCommunicationManager new];
+        self.communicationManager.delegate = self;
+    }
+    
+    
     [self startStandardUpdates];
 }
 
@@ -68,6 +79,7 @@ static dispatch_once_t once;
         _locationManager = [[CLLocationManager alloc] init];
     _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
     _locationManager.delegate = self;
+    [_locationManager requestAlwaysAuthorization];
     [_locationManager startUpdatingLocation];
     
     CLLocation *location = [_locationManager location];
@@ -80,13 +92,6 @@ static dispatch_once_t once;
 - (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
     NSLog(@"Facebook not logged in!");
     once = 0;
-    [_contextCoreConnector deleteAllUserDataAndOnSuccess:^{
-        NSLog(@"User data deletion SUCCESS");
-    }
-    failure:^(NSError *error) {
-        NSLog(@"User data deletion FAILURE: %@", error );
-    }];
-
 }
 
 // This method will be called when the user information has been fetched
@@ -113,6 +118,8 @@ static dispatch_once_t once;
             NSLog(@"Error loginViewShowingLoggedInUser");
             // An error occurred, we need to handle the error
             // See: https://developers.facebook.com/docs/ios/errors
+            //[FBSession.activeSession closeAndClearTokenInformation];
+            //[self dismissViewControllerAnimated:YES completion:nil];
         }
     }];
     
@@ -141,7 +148,7 @@ static dispatch_once_t once;
     NSString *alertTitle;
     if ([FBErrorUtility shouldNotifyUserForError:error] == YES){
         // Error requires people using you app to make an action outside your app to recover
-        alertTitle = @"Algo salió mal";
+        alertTitle = @"Near";
         alertText = [FBErrorUtility userMessageForError:error];
         [self showMessage:alertText withTitle:alertTitle];
         
@@ -149,21 +156,21 @@ static dispatch_once_t once;
         // You need to find more information to handle the error within your app
         if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
             //The user refused to log in into your app, either ignore or...
-            alertTitle = @"Login cancelado";
-            alertText = @"Necesitas hacer login para entrar a la aplicación";
+            alertTitle = @"Near";
+            alertText = @"Necesitas hacer login para utilizar la aplicación";
             [self showMessage:alertText withTitle:alertTitle];
             
         } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
             // We need to handle session closures that happen outside of the app
-            alertTitle = @"Error de sesión";
+            alertTitle = @"Near";
             alertText = @"Tu sesión ya no es válida. Por favor entra otra vez.";
             [self showMessage:alertText withTitle:alertTitle];
             
         } else {
             // All other errors that can happen need retries
             // Show the user a generic error message
-            alertTitle = @"Algo salió mal";
-            alertText = @"Por favor reintenta";
+            alertTitle = @"Near";
+            alertText = @"Hubo un error con el servidor, por favor intenta de nuevo";
             [self showMessage:alertText withTitle:alertTitle];
         }
     }
@@ -184,7 +191,7 @@ static dispatch_once_t once;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&e];
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/Register", _userId];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/Register", _userId];
     [request setURL:[NSURL URLWithString:url]];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
@@ -207,79 +214,63 @@ static dispatch_once_t once;
     // Dispose of any resources that can be recreated.
 }
 
-- (void)didGetPlaceEvent:(QLPlaceEvent *)placeEvent
+- (void)placeManager:(GMBLPlaceManager *)manager didBeginVisit:(GMBLVisit *)visit
 {
-    NSLog(@"Registro lugar");
-    NSString *placeId = [(NSDictionary *) placeEvent.place.placeAttributes valueForKey:@"location_id"];
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/IsLocationActive/%@", _userId, placeId];
+    //NSLog(@"Gimbal - didBeginVisit");
+    NSString *placeId = [visit.place.attributes stringForKey:@"location_id"];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/IsLocationActive/%@", _userId, placeId];
     //NSLog(@"%@", url);
+    //NSLog(@"Sending Request - didBeginVisit");
     NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
     NSError *error;
+    //NSLog(@"Reading Response - didBeginVisit");
     NSArray *response = [NSJSONSerialization
                          JSONObjectWithData:data
                          options:NSJSONReadingMutableContainers
                          error:&error];
     //Check if Location is active
+    //NSLog(@"Checking Location is Active - didBeginVisit");
     if ([[[response objectAtIndex:0] objectForKey:@"State"] boolValue]) {
         [self startStandardUpdates];
-        [self registerGeoEvent:placeEvent placeId:placeId];
+        //NSLog(@"Calling Function registerGeoEvent AT - didBeginVisit");
+        [self registerGeoEvent:@"at" placeId:placeId];
     }
 }
 
-- (void)didGetContentDescriptors:(NSArray *)contentDescriptors{
-    //Get timezone
-    NSDate *date = [NSDate date];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"ZZZZZ"];
-    _timeZone = [[dateFormat stringFromDate:date] stringByReplacingOccurrencesOfString:@":" withString:@""];
-    
-    QLContentAttributes* content=[[contentDescriptors lastObject] contentAttributes];
-    NSString *offerId = [content stringForKey:@"offer_id"];
-    NSString *locationId = [content stringForKey:@"location_id"];
-    NSString *clientId = [content stringForKey:@"client_id"];
-    
-    if (offerId != NULL && locationId != NULL) {
-        NSURLSession *session = [NSURLSession sharedSession];
-        NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/ShowGeoMessage/%@/LocationId/%@/OfferId/%@", _userId, _timeZone, clientId, locationId, offerId];
-        NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-            NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
-            if ([httpResponse statusCode] == 200) {
-                NSArray *response = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-                if ([[[response objectAtIndex:0] objectForKey:@"State"] boolValue]) {
-                    [self postOneContentDescriptorLocalNotification:[contentDescriptors lastObject]];
-                }
-            }
-        }];
-        [dataTask resume];
-    }
-}
-            
-       //AQUI EMPIEZA
-        /*
-        NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/ShowGeoMessage/%@/LocationId/%@/OfferId/%@", _userId, _timeZone, clientId, locationId, offerId];
-        NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
-        NSError *error;
-        NSArray *response = [NSJSONSerialization
-                             JSONObjectWithData:data
-                             options:NSJSONReadingMutableContainers
-                             error:&error];
-        //Check if Location is active
-        if ([[[response objectAtIndex:0] objectForKey:@"State"] boolValue]) {
-            [self postOneContentDescriptorLocalNotification:[contentDescriptors lastObject]];
-        }
-         */
-
-- (void)postOneContentDescriptorLocalNotification:(QLContentDescriptor *)contentDescriptor
+- (void)placeManager:(GMBLPlaceManager *)manager didEndVisit:(GMBLVisit *)visit
 {
+    //NSLog(@"Gimbal - didEndVisit");
+    NSString *placeId = [visit.place.attributes stringForKey:@"location_id"];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/IsLocationActive/%@", _userId, placeId];
+    //NSLog(@"%@", url);
+    //NSLog(@"Sending Request - didEndVisit");
+    NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
+    NSError *error;
+    //NSLog(@"Reading Response - didEndVisit");
+    NSArray *response = [NSJSONSerialization
+                         JSONObjectWithData:data
+                         options:NSJSONReadingMutableContainers
+                         error:&error];
+    //Check if Location is active
+    //NSLog(@"Checking Location is Active - didEndVisit");
+    if ([[[response objectAtIndex:0] objectForKey:@"State"] boolValue]) {
+        [self startStandardUpdates];
+        //NSLog(@"Calling Function registerGeoEvent LEFT - didEndVisit");
+        [self registerGeoEvent:@"left" placeId:placeId];
+    }
+}
+
+- (void)postOneContentDescriptorLocalNotification:(GMBLCommunication *)communication
+{
+    //NSLog(@"Inside postOneContentDescriptorLocalNotification");
     [UIApplication sharedApplication].applicationIconBadgeNumber++;
-    QLContentAttributes *attributes = [contentDescriptor contentAttributes];
-    NSString *clientName = [attributes stringForKey:@"client_name"];
-    NSString *offerTitle = [attributes stringForKey:@"offer_title"];
-    NSString *offerSubtitle = [attributes stringForKey:@"offer_subtitle"];
+    NSString *clientName = [communication.attributes stringForKey:@"client_name"];
+    NSString *offerTitle = [communication.attributes stringForKey:@"offer_title"];
+    NSString *offerSubtitle = [communication.attributes stringForKey:@"offer_subtitle"];
     //NSString *offerId = [attributes stringForKey:@"offer_id"];
-    NSString *clientId  = [attributes stringForKey:@"client_id"];
-    NSString *clientHexColor = [attributes stringForKey:@"client_hex_color"];
-    NSString *clientUrl = [attributes stringForKey:@"client_logo"];
+    NSString *clientId  = [communication.attributes stringForKey:@"client_id"];
+    NSString *clientHexColor = [communication.attributes stringForKey:@"client_hex_color"];
+    NSString *clientUrl = [communication.attributes stringForKey:@"client_logo"];
     NSString *alertBody = [NSString stringWithFormat:@"%@: %@ - %@", clientName, offerTitle, offerSubtitle];
     NSString* newString = [alertBody stringByReplacingOccurrencesOfString:@"%" withString:@"\uFF05"];
     NSMutableDictionary *notificationInfo = [NSMutableDictionary new];
@@ -299,35 +290,103 @@ static dispatch_once_t once;
     NSLog(@"Notification scheduled. %@", alertBody);
 }
 
--(void)registerGeoEvent:(QLPlaceEvent *)placeEvent placeId:(NSString*)placeId{
-    NSMutableDictionary *geoData = [NSMutableDictionary new];
-    switch (placeEvent.eventType)
+-(void)filterCommunications:(NSArray *)communications
+{
+    //NSLog(@"Inside filterCommunications");
+    for(GMBLCommunication *communication in communications)
     {
-        case QLPlaceEventTypeAt:
-            [geoData setValue:@"at" forKey:@"event"];
-            break;
-        case QLPlaceEventTypeLeft:
-            [geoData setValue:@"left" forKey:@"event"];
-            break;
+        //Get timezone
+        NSDate *date = [NSDate date];
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"ZZZZZ"];
+        _timeZone = [[dateFormat stringFromDate:date] stringByReplacingOccurrencesOfString:@":" withString:@""];
+        
+        NSString *offerId = [communication.attributes stringForKey:@"offer_id"];
+        NSString *locationId = [communication.attributes stringForKey:@"location_id"];
+        NSString *clientId = [communication.attributes stringForKey:@"client_id"];
+        
+        if (offerId != NULL && locationId != NULL)
+        {
+            NSURLSession *session = [NSURLSession sharedSession];
+            
+            NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/%@/ShowGeoMessage/%@/LocationId/%@/OfferId/%@", _userId, _timeZone, clientId, locationId, offerId];
+            
+            //NSLog(@"URL: %@",url);
+            
+            NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+                
+                //NSLog(@"Got Response From ShowGeoMessage API");
+                
+                NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
+                if ([httpResponse statusCode] == 200)
+                {
+                    NSArray *response = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+                    if ([[[response objectAtIndex:0] objectForKey:@"State"] boolValue])
+                    {
+                        // Add Communication To Display
+                        //NSLog(@"Calling postOneContentDescriptorLocalNotification");
+                        if(communication == nil)
+                        {
+                            NSLog(@"communication is NIL");
+                        }
+                        [self postOneContentDescriptorLocalNotification: communication];
+                    }
+                }
+            }];
+            [dataTask resume];
+        }
     }
+    
+}
+
+- (NSArray *)communicationManager:(GMBLCommunicationManager *)manager
+presentLocalNotificationsForCommunications:(NSArray *)communications
+                         forVisit:(GMBLVisit *)visit
+{
+    // This will be invoked when a user has a communication for the place that was entered or exited.
+    // Return an array of communications you would like presented as local notifications.
+    //NSLog(@"Inside presentLocalNotificationsForCommunications");
+    //NSLog(@"Inside presentLocalNotificationsForCommunications - Calling filterCommunications");
+    [self filterCommunications:communications];
+    return nil;
+}
+
+
+- (UILocalNotification *)communicationManager:(GMBLCommunicationManager *)manager
+                prepareNotificationForDisplay: (UILocalNotification *)notification
+                             forCommunication:(GMBLCommunication *)communication
+
+{
+    //NSLog(@"Inside prepareNotificationForDisplay");
+    UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+    return localNotification;
+}
+
+
+-(void)registerGeoEvent:(NSString *)placeEvent placeId:(NSString*)placeId{
+    
+    //NSLog(@"Inside registerGeoEvent function");
+    NSMutableDictionary *geoData = [NSMutableDictionary new];
+    [geoData setValue:placeEvent forKey:@"event"];
     [geoData setValue:_userId forKey:@"id"];
     [geoData setValue:placeId forKey:@"location_id"];
     [geoData setValue:_latitude forKey:@"latitude"];
     [geoData setValue:_longitude forKey:@"longitude"];
     //NSLog(@"Register GeoEvent latitude: %@, longitude: %@", _latitude, _longitude);
     
-    
     NSError *e = nil;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:geoData options:kNilOptions error:&e];
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/GeoEvent", _userId];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/GeoEvent", _userId];
+    //NSLog(@"URL: %@",url);
     [request setURL:[NSURL URLWithString:url]];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [request setHTTPBody:jsonData];
     
+    //NSLog(@"Making Request - registerGeoEvent");
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     [connection start];
     if (!e) {
@@ -340,41 +399,49 @@ static dispatch_once_t once;
 
 -(void) enableGimbal{
     //Check Gimbal status
-    self.contextCoreConnector = [QLContextCoreConnector new];
+    [Gimbal setAPIKey:@"9d0edc61-5ea6-4e6c-aa35-a02873ef7e36" options:nil];
     
-    [_contextCoreConnector checkStatusAndOnEnabled: ^(QLContextConnectorPermissions *contextConnectorPermissions) {
-        NSLog(@"Already enabled");
+    if(![Gimbal isStarted])
+    {
+        
+        if(![GMBLPlaceManager isMonitoring])
+        {
+            
+            if(self.placeManager == nil)
+            {
+                NSLog(@"Initializing GMBLPlaceManager - enableGimbal");
+                self.placeManager = [GMBLPlaceManager new];
+                self.placeManager.delegate = self;
+            }
+            [GMBLPlaceManager startMonitoring];
+            NSLog(@"Gimbal Place Manager Enabled Successfully");
+        }
+        else
+        {
+            NSLog(@"Gimbal Place Manager Already Enabled");
+        }
+        
+        if(![GMBLCommunicationManager isReceivingCommunications])
+        {
+            
+            if(self.communicationManager == nil)
+            {
+                NSLog(@"Initializing GMBLCommunicationManager - enableGimbal");
+                self.communicationManager = [GMBLCommunicationManager new];
+                self.communicationManager.delegate = self;
+            }
+            [GMBLCommunicationManager startReceivingCommunications];
+            NSLog(@"Gimbal Communication Manager Enabled Successfully");
+        }
+        else
+        {
+            NSLog(@"Gimbal Communication Manager Already Enabled");
+        }
     }
-     disabled:^(NSError *error) {
-         NSLog(@"Is not enabled");
-         [self.contextCoreConnector enableFromViewController:self.navigationController
-         success:^{
-             NSLog(@"Gimbal enabled");
-         }
-         failure:^(NSError *error) {
-             NSLog(@"Failed to initialize gimbal %@", error);
-         }];
-         
-         self.contextCoreConnector = [[QLContextCoreConnector alloc] init];
-         self.contextCoreConnector.permissionsDelegate = self;
-         
-         self.contextPlaceConnector = [[QLContextPlaceConnector alloc] init];
-         self.contextPlaceConnector.delegate = self;
-         
-         self.contextInterestsConnector = [[PRContextInterestsConnector alloc] init];
-         self.contextInterestsConnector.delegate = self;
-         
-         self.contentConnector = [[QLContentConnector alloc] init];
-         self.contentConnector.delegate = self;
-     }];
+    else
+    {
+        NSLog(@"Gimbal Manager Already Enabled");
+    }
 }
 
-/*
-- (IBAction)debug:(id)sender {
-    NSLog(@"Entra debug");
-    [_contextCoreConnector showPermissionsFromViewController:self success:NULL failure:^(NSError *error) {
-        NSLog(@"%@", error);
-    }];
-}
- */
 @end

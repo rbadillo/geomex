@@ -9,24 +9,20 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import <FacebookSDK/FacebookSDK.h>
+#import <Gimbal/Gimbal.h>
 
-#import <ContextCore/QLContextCore.h>
-#import <ContextLocation/QLContextPlaceConnector.h>
-#import <ContextProfiling/PRContextInterestsConnector.h>
-
-@interface LoginViewController : UIViewController <FBLoginViewDelegate, CLLocationManagerDelegate, QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate, QLTimeContentDelegate>
+@interface LoginViewController : UIViewController <FBLoginViewDelegate, CLLocationManagerDelegate,GMBLPlaceManagerDelegate, GMBLCommunicationManagerDelegate>
 
 @property (nonatomic , strong) CLLocationManager *locationManager;
 @property (strong, nonatomic) NSString *latitude;
 @property (strong, nonatomic) NSString *longitude;
 @property (strong, nonatomic) NSString *userId;
 @property (strong, nonatomic) NSString *timeZone;
-
-
-@property (nonatomic, strong) QLContextCoreConnector *contextCoreConnector;
-@property (nonatomic, strong) QLContextPlaceConnector *contextPlaceConnector;
-@property (nonatomic, strong) PRContextInterestsConnector *contextInterestsConnector;
-@property (nonatomic, strong) QLContentConnector *contentConnector;
+@property (nonatomic) GMBLPlaceManager *placeManager;
+@property (nonatomic) GMBLCommunicationManager *communicationManager;
 @property (strong, nonatomic) IBOutlet UILabel *nearLabel;
+
+- (void)postOneContentDescriptorLocalNotification:(GMBLCommunication *)communication;
+-(void)filterCommunications:(NSArray *)communications;
 
 @end

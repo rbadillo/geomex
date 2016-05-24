@@ -88,7 +88,7 @@
 }
 
 -(void) viewWillAppear:(BOOL)animated{
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:133/255.0 green:168/255.0 blue:25/255.0 alpha:1.0];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:140/255.0 green:197/255.0 blue:65/255.0 alpha:1.0];
 }
 
 - (void)didReceiveMemoryWarning
@@ -105,7 +105,7 @@
     
     if (FBSession.activeSession.isOpen) {
         //NSLog(@"FBSession is Open");
-        FBRequest* friendsRequest = [FBRequest requestForMyFriends];
+        FBRequest* friendsRequest = [FBRequest requestForGraphPath:@"/me/friends"];
         [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
                                                       NSDictionary* result,
                                                       NSError *error) {
@@ -122,7 +122,7 @@
                 
                 NSError *error=nil;
                 NSData *result=[NSJSONSerialization dataWithJSONObject:Body options:0 error:&error];
-                NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/GetFriends", _userId];
+                NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/GetFriends", _userId];
                 NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString:url]];
                 [request setHTTPMethod:@"POST"];
                 [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
@@ -135,7 +135,7 @@
             } else {
                 NSLog(@"Not connected to Internet");
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Internet" message:@"No se pudo conectar con el servidor. Intenta más tarde" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Near" message:@"No se pudo conectar con el servidor. Intenta más tarde." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                     [alert show];
                     [activityView stopAnimating];
                 });
@@ -165,14 +165,14 @@
 
         if ([_friendsArray count] == 0) {
             UIView *view = [[UIView alloc] initWithFrame:self.view.frame];
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(70,100,200,48)];
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(view.center.x-80,view.center.y-250,200,48)];
             [label setTextColor:[UIColor darkGrayColor]];
             [label setNumberOfLines:2];
             [label setTextAlignment:NSTextAlignmentCenter];
             [label setFont:[UIFont systemFontOfSize:13]];
             label.text = @"Por el momento, no hay contenido para mostrar.";
             UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_about.png"]];
-            [image setFrame:CGRectMake(50, 105, 40, 40)];
+            [image setFrame:CGRectMake(view.center.x-100, view.center.y-245, 40, 40)];
             //[image setCenter:view.center];
             [view addSubview:label];
             [view addSubview:image];
@@ -186,7 +186,7 @@
 - (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
     NSLog(@"Not connected to Internet");
     dispatch_async(dispatch_get_main_queue(), ^{
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Internet" message:@"No se pudo conectar con el servidor. Intenta más tarde" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Near" message:@"No se pudo conectar con el servidor. Intenta más tarde." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [alert show];
         [activityView stopAnimating];
     });

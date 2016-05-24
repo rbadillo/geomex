@@ -84,27 +84,9 @@
 }
 
 -(void) viewWillAppear:(BOOL)animated{
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:133/255.0 green:168/255.0 blue:25/255.0 alpha:1.0];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:140/255.0 green:197/255.0 blue:65/255.0 alpha:1.0];
     [self getMessages];
 }
-
-/*
-- (void)getMessages{
-    //Call the API to get the data
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/GetMessages", _userId, _timeZone];
-    //NSLog(@"Messages url: %@", url);
-    NSData *offers = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
-    NSError *error;
-    _messagesArray = [NSJSONSerialization
-                      JSONObjectWithData:offers
-                      options:NSJSONReadingMutableContainers
-                      error:&error];
-    
-    if (error) {
-        NSLog(@"Error getting messages data: %@", error);
-    }
-}
-*/
 
 -(void)getMessages{
     UIActivityIndicatorView *activityView=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle: UIActivityIndicatorViewStyleGray];
@@ -113,12 +95,12 @@
     [self.view addSubview:activityView];
     
     NSURLSession *session = [NSURLSession sharedSession];
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/GetMessages", _userId, _timeZone];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/%@/GetMessages", _userId, _timeZone];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error != nil) {
             NSLog(@"Not connected to Internet");
             dispatch_async(dispatch_get_main_queue(), ^{
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Internet" message:@"No se pudo conectar con el servidor. Intenta más tarde" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Near" message:@"No se pudo conectar con el servidor. Intenta más tarde." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                 [activityView stopAnimating];
                 [alert show];
             });
@@ -130,14 +112,14 @@
                 [activityView stopAnimating];
                 if ([_messagesArray count] == 0) {
                     UIView *view = [[UIView alloc] initWithFrame:self.view.frame];
-                    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(70,100,200,48)];
+                    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(view.center.x-80,view.center.y-250,200,48)];
                     [label setTextColor:[UIColor darkGrayColor]];
                     [label setNumberOfLines:2];
                     [label setTextAlignment:NSTextAlignmentCenter];
                     [label setFont:[UIFont systemFontOfSize:13]];
                     label.text = @"Por el momento, no hay contenido para mostrar.";
                     UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_about.png"]];
-                    [image setFrame:CGRectMake(50, 105, 40, 40)];
+                    [image setFrame:CGRectMake(view.center.x-100, view.center.y-245, 40, 40)];
                     //[image setCenter:view.center];
                     [view addSubview:label];
                     [view addSubview:image];
@@ -206,6 +188,8 @@
     cell.backgroundColor = [UIColor clearColor];
     title.text = [[_messagesArray objectAtIndex:indexPath.row] objectForKey:@"ClientName"];
     subtitle.text = [[_messagesArray objectAtIndex:indexPath.row] objectForKey:@"Message"];
+    subtitle.lineBreakMode = NSLineBreakByWordWrapping;
+    subtitle.numberOfLines = 0;
     
     
     NSString *expiredDate = [[_messagesArray objectAtIndex:indexPath.row] objectForKey:@"TimeCreated"];
@@ -254,7 +238,7 @@
 }
 
 -(void)readMessage:(NSString*)messageId{
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/ReadMessage/%@", _userId, messageId];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/ReadMessage/%@", _userId, messageId];
     //NSLog(@"%@", url);
     NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
     NSError *error;

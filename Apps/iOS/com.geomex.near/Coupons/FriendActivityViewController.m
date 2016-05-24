@@ -7,7 +7,7 @@
 //
 
 #import "FriendActivityViewController.h"
-#import <SDWebImage/UIImageView+WebCache.h>
+#import "SDWebImage/UIImageView+WebCache.h"
 #import "OfferDetailsViewController.h"
 #import "SWRevealViewController.h"
 #import "UIView+convertViewToImage.h"
@@ -58,23 +58,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-- (void)getFriendActivity{
-    //Call the API to get the data
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/GetFriendActivity/%@", _userId, _friendId];
-    NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
-    NSError *error;
-    _friendDataArray = [NSJSONSerialization
-                        JSONObjectWithData:data
-                        options:NSJSONReadingMutableContainers
-                        error:&error];
-    
-    if (error) {
-        NSLog(@"Error getting offers data: %@", error);
-    }
-}
- */
-
 -(void)getFriendActivity{
     UIActivityIndicatorView *activityView=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle: UIActivityIndicatorViewStyleGray];
     activityView.center=self.view.center;
@@ -82,9 +65,18 @@
     [self.view addSubview:activityView];
     
     NSURLSession *session = [NSURLSession sharedSession];
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/GetFriendActivity/%@", _userId, _friendId];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/GetFriendActivity/%@", _userId, _friendId];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        _friendDataArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        
+        
+        if(data)
+        {
+            _friendDataArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        }
+        else
+        {
+            _friendDataArray = @[];
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [activityView stopAnimating];
@@ -93,27 +85,30 @@
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Actividad reciente" message:@"Por el momento no hay contenido para mostrar" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
                 [alert show];
                 */
+                CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+                CGFloat headerHeight = 53;
                 UIView *view = [[UIView alloc] initWithFrame:self.view.frame];
-                UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(70,100,200,48)];
+                UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(view.center.x-80,view.center.y-250 + headerHeight,200,48)];
                 [label setTextColor:[UIColor darkGrayColor]];
                 [label setNumberOfLines:2];
                 [label setTextAlignment:NSTextAlignmentCenter];
                 [label setFont:[UIFont systemFontOfSize:13]];
                 label.text = @"Por el momento, no hay contenido para mostrar.";
                 UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_about.png"]];
-                [image setFrame:CGRectMake(50, 105, 40, 40)];
+                [image setFrame:CGRectMake(view.center.x-100, view.center.y-245+headerHeight, 40, 40)];
                 //[image setCenter:view.center];
                 [view addSubview:label];
                 [view addSubview:image];
                 [self.tableView removeFromSuperview];
                 [self.view addSubview:view];
                 
-                UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 53 )];
+                
+                UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 53 )];
                 [header setBackgroundColor:[UIColor colorWithRed:59/255.0 green:89/255.0 blue:152/255.0 alpha:1.0]];
                 UIImageView *userImage = [[UIImageView alloc] initWithFrame:CGRectMake(80, 4, 45, 45)];
                 [userImage setContentMode:UIViewContentModeScaleAspectFit];
                 [userImage setImageWithURL:_imageUrl];
-                UILabel *userName = [[UILabel alloc] initWithFrame:CGRectMake(132, 27, 116, 21)];
+                UILabel *userName = [[UILabel alloc] initWithFrame:CGRectMake(132, 27, 136, 21)];
                 userName.text = _friendName;
                 [userName setTextColor:[UIColor whiteColor]];
                 [userName setFont:[UIFont boldSystemFontOfSize:15]];
@@ -129,6 +124,7 @@
                 [self.tableView reloadData];
             }
         });
+        
     }];
     [dataTask resume];
 }

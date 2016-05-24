@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface OfferDetailsViewController : UIViewController <CLLocationManagerDelegate>
+@interface OfferDetailsViewController : UIViewController <CLLocationManagerDelegate,UIAlertViewDelegate>
 - (IBAction)redeem:(id)sender;
 @property (strong, nonatomic) IBOutlet UIButton *redeem;
 @property (strong, nonatomic) IBOutlet UILabel *instructions;

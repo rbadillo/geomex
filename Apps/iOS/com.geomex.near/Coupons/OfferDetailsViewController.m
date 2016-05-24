@@ -64,40 +64,6 @@
     [_locationManager stopUpdatingLocation];
 }
 
-/*
-- (void)locationManager:(CLLocationManager *)manager
-     didUpdateLocations:(NSArray *)locations {
-    NSLog(@"Update location");
-    // If it's a relatively recent event, turn off updates to save power.
-    CLLocation* location = [locations lastObject];
-    NSDate* eventDate = location.timestamp;
-    NSTimeInterval howRecent = [eventDate timeIntervalSinceNow];
-    if (abs(howRecent) < 15.0) {
-        _latitude = [[NSNumber numberWithDouble:location.coordinate.latitude] stringValue];
-        _longitude = [[NSNumber numberWithDouble:location.coordinate.longitude] stringValue];
-        
-    }
-    [_locationManager stopUpdatingLocation];
-}
-*/
-
-/*
-- (void) getOfferData{
-    //Call the API to get the data
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/GetOffers/%@/OfferDetails/%@?latitude=%@&longitude=%@", _userId, _timeZone, _clientId, _offerId, _latitude, _longitude];
-    NSLog(@"OfferDetails url: %@", url);
-    NSData *details = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
-    NSError *error;
-    _offerDetails = [NSJSONSerialization
-                     JSONObjectWithData:details
-                     options:NSJSONReadingMutableContainers
-                     error:&error];
-    if (error) {
-        NSLog(@"Error getting offers details: %@", error);
-    }
-}
- */
-
 -(void)getOfferData{
     UIActivityIndicatorView *activityView=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle: UIActivityIndicatorViewStyleGray];
     activityView.center=self.view.center;
@@ -105,12 +71,12 @@
     [self.view addSubview:activityView];
     
     NSURLSession *session = [NSURLSession sharedSession];
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/GetOffers/%@/OfferDetails/%@?latitude=%@&longitude=%@", _userId, _timeZone, _clientId, _offerId, _latitude, _longitude];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/%@/GetOffers/%@/OfferDetails/%@?latitude=%@&longitude=%@", _userId, _timeZone, _clientId, _offerId, _latitude, _longitude];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error != nil) {
             NSLog(@"Not connected to Internet");
             dispatch_async(dispatch_get_main_queue(), ^{
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Internet" message:@"No se pudo conectar con el servidor. Intenta más tarde" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Near" message:@"No se pudo conectar con el servidor. Intenta más tarde." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                 [activityView stopAnimating];
                 [alert show];
             });
@@ -122,8 +88,14 @@
                     _offerDetails = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
                     _redeem.hidden = NO;
                     _offerTitle.text = [[_offerDetails objectAtIndex:0] objectForKey:@"Title"];
+                    _offerTitle.lineBreakMode = NSLineBreakByWordWrapping;
+                    _offerTitle.numberOfLines = 0;
                     _offerSubtitle.text = [[_offerDetails objectAtIndex:0] objectForKey:@"Subtitle"];
+                    _offerSubtitle.lineBreakMode = NSLineBreakByWordWrapping;
+                    _offerSubtitle.numberOfLines = 0;
                     _instructions.text = [[_offerDetails objectAtIndex:0] objectForKey:@"Instructions"];
+                    _instructions.lineBreakMode = NSLineBreakByWordWrapping;
+                    _instructions.numberOfLines = 0;
                     _disclaimer.text = [[_offerDetails objectAtIndex:0] objectForKey:@"Disclaimer"];
                     NSURL *url = [NSURL URLWithString:[[_offerDetails objectAtIndex:0] objectForKey:@"PrimaryImage"]];
                     [_offerImage setImageWithURL:url];
@@ -149,23 +121,62 @@
 }
 
 - (IBAction)redeem:(id)sender {
-    if (!_buttonState) {
+    if (!_buttonState)
+    {
         _buttonState = TRUE;
         NSString *text = [NSString stringWithFormat:@"Confirmar"];
         [_redeem setTitle:text forState:UIControlStateNormal];
-    } else {
-        //Call the API to get the data
-        NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/GetOffers/%@/Redeem/%@?latitude=%@&longitude=%@", _userId, _timeZone, _clientId, _offerId, _latitude, _longitude];
-        NSData *details = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
-        NSError *error;
-        NSArray *redeemResponse = [NSJSONSerialization
-                                   JSONObjectWithData:details
-                                   options:NSJSONReadingMutableContainers
-                                   error:&error];
-        if (error) {
-            NSLog(@"Error with redeem: %@", error);
+    }
+    else
+    {
+        NSString *tempOfferMultiUse = [[_offerDetails objectAtIndex:0] objectForKey:@"MultiUse"];
+        int offerMultiUse = [tempOfferMultiUse intValue];
+        if(offerMultiUse==0)
+        {
+            //Single Use Offer
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                        message:@"Esta oferta solo puede ser utilizada 1 vez, ¿Deseas continuar?"
+                                                       delegate:self
+                                              cancelButtonTitle:@"No"
+                                              otherButtonTitles:@"Si", nil];
+            [alert show];
         }
-        
+        else
+        {
+            // Multi Use Offer
+            [self redeemOffer];
+        }
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch(buttonIndex) {
+        case 0: //"No" pressed
+            break;
+        case 1: //"Yes" pressed
+            //Call the API to get the data
+            [self redeemOffer];
+            break;
+    }
+}
+
+-(void) redeemOffer
+{
+    //Call the API to get the data
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/%@/GetOffers/%@/Redeem/%@?latitude=%@&longitude=%@", _userId, _timeZone, _clientId, _offerId, _latitude, _longitude];
+    NSData *details = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
+    NSError *error;
+    NSArray *redeemResponse = [NSJSONSerialization
+                               JSONObjectWithData:details
+                               options:NSJSONReadingMutableContainers
+                               error:&error];
+    if (error)
+    {
+        NSLog(@"Error with redeem: %@", error);
+    }
+    else
+    {
         NSString *code = [[redeemResponse objectAtIndex:0] objectForKey:@"Code"];
         NSDate *currentDate = [NSDate date];
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];

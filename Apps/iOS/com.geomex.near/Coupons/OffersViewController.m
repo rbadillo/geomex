@@ -100,23 +100,6 @@
     [_locationManager stopUpdatingLocation];
 }
 
-/*
-- (void)getOffersData{
-    //Call the API to get the data
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/GetOffers/%@", _userId, _timeZone, _clientId];
-    NSData *offers = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
-    NSError *error;
-    _offersArray = [NSJSONSerialization
-                    JSONObjectWithData:offers
-                    options:NSJSONReadingMutableContainers
-                    error:&error];
-    
-    if (error) {
-        NSLog(@"Error getting offers data: %@", error);
-    }
-}
- */
-
 -(void)getOffersData{
     UIActivityIndicatorView *activityView=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle: UIActivityIndicatorViewStyleGray];
     activityView.center=self.view.center;
@@ -124,12 +107,12 @@
     [self.view addSubview:activityView];
     
     NSURLSession *session = [NSURLSession sharedSession];
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/%@/GetOffers/%@?latitude=%@&longitude=%@", _userId, _timeZone, _clientId, _latitude, _longitude];
+    NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/%@/GetOffers/%@?latitude=%@&longitude=%@", _userId, _timeZone, _clientId, _latitude, _longitude];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error != nil) {
             NSLog(@"Not connected to Internet");
             dispatch_async(dispatch_get_main_queue(), ^{
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Internet" message:@"No se pudo conectar con el servidor. Intenta más tarde" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Near" message:@"No se pudo conectar con el servidor. Intenta más tarde." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                 [activityView stopAnimating];
                 [alert show];
             });
@@ -153,13 +136,15 @@
                     [self.tableView removeFromSuperview];
                     [self.view addSubview:view];
                     
-                    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 53 )];
+                    CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+                    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 53 )];
                     [header setBackgroundColor:[self colorWithHexString:_clientHexColor]];
                     UIImageView *clientImage = [[UIImageView alloc] initWithFrame:CGRectMake(80, 4, 45, 45)];
                     [clientImage setContentMode:UIViewContentModeScaleAspectFit];
                     [clientImage setImageWithURL:_clientUrl];
                     UILabel *clientName = [[UILabel alloc] initWithFrame:CGRectMake(132, 27, 116, 21)];
                     clientName.text = [_clientName uppercaseString];
+                    
                     [clientName setTextColor:[UIColor whiteColor]];
                     [clientName setFont:[UIFont boldSystemFontOfSize:15]];
                     UILabel *offer = [[UILabel alloc] initWithFrame:CGRectMake(132, 6, 59, 21)];
@@ -178,6 +163,22 @@
         }
     }];
     [dataTask resume];
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *yourText = [[_offersArray objectAtIndex:indexPath.row] objectForKey:@"Title"];
+    return 60 + [self heightForText:yourText];
+}
+
+-(CGFloat)heightForText:(NSString *)text
+{
+    NSInteger MAX_HEIGHT = 2000;
+    UITextView * textView = [[UITextView alloc] initWithFrame: CGRectMake(0, 0, 197, MAX_HEIGHT)];
+    textView.text = text;
+    textView.font = [UIFont systemFontOfSize:12];
+    [textView sizeToFit];
+    return textView.frame.size.height;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -208,7 +209,11 @@
     UILabel *destacado = (UILabel *)[cell viewWithTag:104];
     UIView *bgView = (UIView *) [cell viewWithTag:50];
     title.text = [[_offersArray objectAtIndex:indexPath.row] objectForKey:@"Title"];
+    title.lineBreakMode = NSLineBreakByWordWrapping;
+    title.numberOfLines = 0;
     subtitle.text = [[_offersArray objectAtIndex:indexPath.row] objectForKey:@"Subtitle"];
+    subtitle.lineBreakMode = NSLineBreakByWordWrapping;
+    subtitle.numberOfLines = 0;
     
     //If start date is in the future, mark and disable interaction
     NSDate *currentDate = [NSDate date];

@@ -94,43 +94,25 @@
 }
 
 -(void) viewWillAppear:(BOOL)animated{
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:133/255.0 green:168/255.0 blue:25/255.0 alpha:1.0];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:140/255.0 green:197/255.0 blue:65/255.0 alpha:1.0];
 }
-
-/*
-- (void)getClosestLocations: (CLLocationCoordinate2D) coordiante{
-    //Call the API to get the data
-    NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/GetClosestLocations/%f/%f", _userId, coordiante.latitude, coordiante.longitude];
-    NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
-    NSError *error;
-    _locationsArray = [NSJSONSerialization
-                        JSONObjectWithData:data
-                        options:NSJSONReadingMutableContainers
-                        error:&error];
-    
-    if (error) {
-        NSLog(@"Error getting offers data: %@", error);
-    }
-    [self addAnnotations];
-}
- */
 
 - (void)getClosestLocations: (NSString*) latitude longitue:(NSString*) longitude{
      NSURLSession *session = [NSURLSession sharedSession];
-     NSString *url = [NSString stringWithFormat:@"http://near.noip.me/%@/GetClosestLocations/%@/%@", _userId, latitude, longitude];
+     NSString *url = [NSString stringWithFormat:@"http://api.descubrenear.com/%@/GetClosestLocations/%@/%@", _userId, latitude, longitude];
      //NSLog(@"URL: %@", url);
      NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
          dispatch_async(dispatch_get_main_queue(), ^{
              if (error != nil) {
                  NSLog(@"Not connected to Internet");
-                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Internet" message:@"No se pudo conectar con el servidor. Intenta más tarde" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Near" message:@"No se pudo conectar con el servidor. Intenta más tarde." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                      [alert show];
              } else {
                  _locationsArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
                  if ([_locationsArray count] != 0) {
                      [self addAnnotations];
                  } else {
-                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Lugares cercanos" message:@"Por el momento no hay lugares participantes" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Near" message:@"Por el momento no hay lugares participantes." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                      [alert show];
                  }
              }
