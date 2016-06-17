@@ -163,5 +163,41 @@ app.get('/totalUsersAppOpenByGenderUnique', function (req, res) {
   })
 })
 
+app.get('/clientReportIndex', function (req, res) {
+
+  dbReports.clientReports(function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+
+      var clientIds = ""
+      var clientNames = ""
+
+      for(var i=0; i<rows.length;i++)
+      {
+        clientIds = clientIds +rows[i].ClientId +","
+        clientNames = clientNames +"'" +rows[i].Name.replace(/'/g, "\\'") +"'" +","
+      }
+
+      clientIds = clientIds.slice(0, -1);
+      clientNames = clientNames.slice(0, -1);
+
+      clientIds = clientIds.split(",");
+      clientNames = clientNames.split(",");
+
+      res.render('clientReportIndex', { reportClientIds : clientIds,
+          reportClientNames : clientNames
+        })      
+    }
+  })
+})
+
+app.get('/clientReport/:clientId', function (req, res) {
+  var clientId = req.params.clientId
+  res.render('clientReport', { reportClientId : clientId })
+})
 
 app.listen(3000)

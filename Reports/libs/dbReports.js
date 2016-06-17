@@ -292,3 +292,35 @@ exports.totalUsersAppOpenByGenderUnique = function totalUsersAppOpenByGenderUniq
 		});
 	});
 }
+
+exports.clientReports = function clientReports(callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var queryString="Select ClientId,Name from Clients WHERE isActive=1"
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+

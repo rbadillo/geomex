@@ -1,0 +1,24 @@
+doctype
+html
+  head
+    title Near
+  body
+    script(type='text/javascript').
+        var clientId=#{reportClientId};
+
+        var url = "http://reports.descubrenear.com:3000/clientReport/"+clientId+"/totalClicks";
+        var html = "<p><a href=" +url +"> Total Clicks </a></p>";
+        document.write(html);
+
+        var url = "http://reports.descubrenear.com:3000/clientReport/"+clientId+"/totalClicksUnique";
+        var html = "<p><a href=" +url +"> Total Clicks - Unique </a></p>";
+        document.write(html);
+
+        var url = "http://reports.descubrenear.com:3000/clientReport/"+clientId+"/totalClicksByGender";
+        var html = "<p><a href=" +url +"> Total Clicks - By Gender </a></p>";
+        document.write(html);
+
+        var url = "http://reports.descubrenear.com:3000/clientReport/"+clientId+"/totalClicksByGenderUnique";
+        var html = "<p><a href=" +url +"> Total Clicks - By Gender Unique </a></p>";
+        document.write(html);
+
