@@ -324,3 +324,322 @@ exports.clientReports = function clientReports(callback){
 	});
 }
 
+
+exports.clientReportTotalClicks = function clientReportTotalClicks(clientId, callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var dateRange = []
+
+	  // Last 14 days
+	  for(var i=0;i<14;i++)
+	  {
+	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
+	  }
+
+	  var queryString="SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,COUNT(*) AS totalClicks FROM AppEvents,Clients WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.ClientId =" +clientId
+	  queryString = queryString.replace(/__DATE__/g,dateRange[0])
+
+	  for(var i=1;i<dateRange.length;i++)
+	  {
+	  	queryString = queryString + " UNION SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,COUNT(*) AS totalClicks FROM AppEvents,Clients WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.ClientId =" +clientId
+	  	queryString = queryString.replace(/__DATE__/g,dateRange[i])
+	  }
+
+	  queryString = queryString + " ORDER BY Date ASC";
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows,dateRange)
+		});
+	});
+}
+
+
+exports.clientReportTotalClicksUnique = function clientReportTotalClicksUnique(clientId, callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var dateRange = []
+
+	  // Last 14 days
+	  for(var i=0;i<14;i++)
+	  {
+	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
+	  }
+
+	  var queryString="SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,COUNT(distinct UserId) AS totalClicksUnique FROM AppEvents,Clients WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.ClientId =" +clientId
+	  queryString = queryString.replace(/__DATE__/g,dateRange[0])
+
+	  for(var i=1;i<dateRange.length;i++)
+	  {
+	  	queryString = queryString + " UNION SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,COUNT(distinct UserId) AS totalClicksUnique FROM AppEvents,Clients WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.ClientId =" +clientId
+	  	queryString = queryString.replace(/__DATE__/g,dateRange[i])
+	  }
+
+	  queryString = queryString + " ORDER BY Date ASC";
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows,dateRange)
+		});
+	});
+}
+
+exports.clientReportTotalClicksByGender = function clientReportTotalClicksByGender(clientId, callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var dateRange = []
+
+	  // Last 14 days
+	  for(var i=0;i<14;i++)
+	  {
+	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
+	  }
+
+	  var queryString="Select Male.Date,Male.Name,Male.Event,Male.totalClicksMale,Female.totalClicksFemale FROM ("
+	  
+	  var maleQueryString="SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,AppEvents.Event,COUNT(*) AS totalClicksMale FROM AppEvents,Clients,Users WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.UserId = Users.UserId AND Users.FbGender = 'male' AND AppEvents.ClientId = " +clientId
+	  maleQueryString = maleQueryString.replace(/__DATE__/g,dateRange[0])
+
+	  for(var i=1;i<dateRange.length;i++)
+	  {
+	  	maleQueryString = maleQueryString + " UNION SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,AppEvents.Event,COUNT(*) AS totalClicksMale FROM AppEvents,Clients,Users WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.UserId = Users.UserId AND Users.FbGender = 'male' AND AppEvents.ClientId = " +clientId
+	  	maleQueryString = maleQueryString.replace(/__DATE__/g,dateRange[i])
+	  }
+
+	  queryString = queryString + maleQueryString +" ) Male JOIN ("
+
+	  var femaleQueryString="SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,AppEvents.Event,COUNT(*) AS totalClicksFemale FROM AppEvents,Clients,Users WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.UserId = Users.UserId AND Users.FbGender = 'female' AND AppEvents.ClientId = " +clientId
+
+	  femaleQueryString = femaleQueryString.replace(/__DATE__/g,dateRange[0])
+
+	  for(var i=1;i<dateRange.length;i++)
+	  {
+	  	femaleQueryString = femaleQueryString + " UNION SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,AppEvents.Event,COUNT(*) AS totalClicksFemale FROM AppEvents,Clients,Users WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.UserId = Users.UserId AND Users.FbGender = 'female' AND AppEvents.ClientId = " +clientId
+	  	femaleQueryString = femaleQueryString.replace(/__DATE__/g,dateRange[i])
+	  }
+
+	  queryString = queryString + femaleQueryString +" ) Female ON Male.Date=Female.Date ORDER BY Date ASC"
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows,dateRange)
+		});
+	});
+}
+
+exports.clientReportTotalClicksByGenderUnique = function clientReportTotalClicksByGenderUnique(clientId, callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var dateRange = []
+
+	  // Last 14 days
+	  for(var i=0;i<14;i++)
+	  {
+	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
+	  }
+
+	  var queryString="Select Male.Date,Male.Name,Male.Event,Male.totalClicksMaleUnique,Female.totalClicksFemaleUnique FROM ("
+	  
+	  var maleQueryString="SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,AppEvents.Event,COUNT(distinct AppEvents.UserId) AS totalClicksMaleUnique FROM AppEvents,Clients,Users WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.UserId = Users.UserId AND Users.FbGender = 'male' AND AppEvents.ClientId = " +clientId
+	  maleQueryString = maleQueryString.replace(/__DATE__/g,dateRange[0])
+
+	  for(var i=1;i<dateRange.length;i++)
+	  {
+	  	maleQueryString = maleQueryString + " UNION SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,AppEvents.Event,COUNT(distinct AppEvents.UserId) AS totalClicksMaleUnique FROM AppEvents,Clients,Users WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.UserId = Users.UserId AND Users.FbGender = 'male' AND AppEvents.ClientId = " +clientId
+	  	maleQueryString = maleQueryString.replace(/__DATE__/g,dateRange[i])
+	  }
+
+	  queryString = queryString + maleQueryString +" ) Male JOIN ("
+
+	  var femaleQueryString="SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,AppEvents.Event,COUNT(distinct AppEvents.UserId) AS totalClicksFemaleUnique FROM AppEvents,Clients,Users WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.UserId = Users.UserId AND Users.FbGender = 'female' AND AppEvents.ClientId = " +clientId
+
+	  femaleQueryString = femaleQueryString.replace(/__DATE__/g,dateRange[0])
+
+	  for(var i=1;i<dateRange.length;i++)
+	  {
+	  	femaleQueryString = femaleQueryString + " UNION SELECT '__DATE__' AS Date,Clients.ClientId,Clients.Name,AppEvents.Event,COUNT(distinct AppEvents.UserId) AS totalClicksFemaleUnique FROM AppEvents,Clients,Users WHERE AppEvents.Event = 'ViewedClientOffers' AND AppEvents.ClientId = Clients.ClientId AND DATE(AppEvents._Created) = '__DATE__' AND AppEvents.UserId = Users.UserId AND Users.FbGender = 'female' AND AppEvents.ClientId = " +clientId
+	  	femaleQueryString = femaleQueryString.replace(/__DATE__/g,dateRange[i])
+	  }
+
+	  queryString = queryString + femaleQueryString +" ) Female ON Male.Date=Female.Date ORDER BY Date ASC"
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows,dateRange)
+		});
+	});
+}
+
+
+exports.clientOffers = function clientOffers(clientId, callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var queryString="Select OfferId,Name,Title,Subtitle FROM Offers WHERE ClientId=" +clientId
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
+exports.offerReportTotalViews = function offerReportTotalViews(clientId,offerId,callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var queryString="Select COUNT(*) as totalViews from OfferEvents where ClientId=" +clientId +" and OfferId=" +offerId +" and Event='Viewed'"
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
+
+exports.offerReportTotalViewsUnique = function offerReportTotalViewsUnique(clientId,offerId,callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var queryString="Select COUNT(distinct UserId) as totalViewsUnique from OfferEvents where ClientId=" +clientId +" and OfferId=" +offerId +" and Event='Viewed'"
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
+
+

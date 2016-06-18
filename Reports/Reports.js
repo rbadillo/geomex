@@ -10,6 +10,10 @@ app.get('/', function (req, res) {
   res.render('index')
 })
 
+app.get('/internalReports', function (req, res) {
+  res.render('internalReports')
+})
+
 app.get('/totalUsers', function (req, res) {
 
   dbReports.totalUsers(function(err,rows){
@@ -198,6 +202,209 @@ app.get('/clientReportIndex', function (req, res) {
 app.get('/clientReport/:clientId', function (req, res) {
   var clientId = req.params.clientId
   res.render('clientReport', { reportClientId : clientId })
+})
+
+app.get('/clientReport/:clientId/totalClicks', function (req, res) {
+  var clientId = req.params.clientId
+
+  dbReports.clientReportTotalClicks(clientId, function(err,rows,dateRange){
+
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    { 
+      var dateRange = dateRange.reverse(); 
+      var dateRangeTemp="";
+      var totalClicks="";
+
+      for(var i=0;i<rows.length;i++)
+      {
+        dateRangeTemp = dateRangeTemp +"'" +dateRange[i] +"'" +","
+        totalClicks = totalClicks +rows[i].totalClicks +","
+      }
+
+      dateRangeTemp = dateRangeTemp.slice(0, -1);
+      totalClicks = totalClicks.slice(0, -1);
+
+      res.render('clientReportTotalClicks', { reportDateRange : dateRangeTemp, 
+          reportTotalClicks : totalClicks })        
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/totalClicksUnique', function (req, res) {
+  var clientId = req.params.clientId
+
+  dbReports.clientReportTotalClicksUnique(clientId, function(err,rows,dateRange){
+
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    { 
+      var dateRange = dateRange.reverse(); 
+      var dateRangeTemp="";
+      var totalClicksUnique="";
+
+      for(var i=0;i<rows.length;i++)
+      {
+        dateRangeTemp = dateRangeTemp +"'" +dateRange[i] +"'" +","
+        totalClicksUnique = totalClicksUnique +rows[i].totalClicksUnique +","
+      }
+
+      dateRangeTemp = dateRangeTemp.slice(0, -1);
+      totalClicksUnique = totalClicksUnique.slice(0, -1);
+
+      res.render('clientReportTotalClicksUnique', { reportDateRange : dateRangeTemp, 
+          reportTotalClicksUnique : totalClicksUnique })        
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/totalClicksByGender', function (req, res) {
+  var clientId = req.params.clientId
+
+  dbReports.clientReportTotalClicksByGender(clientId, function(err,rows,dateRange){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    { 
+      var dateRange = dateRange.reverse(); 
+      var dateRangeTemp="";
+      var totalClicksByMale="";
+      var totalClicksByFemale="";
+
+      for(var i=0;i<rows.length;i++)
+      {
+        dateRangeTemp = dateRangeTemp +"'" +dateRange[i] +"'" +","
+        totalClicksByMale = totalClicksByMale +rows[i].totalClicksMale +","
+        totalClicksByFemale = totalClicksByFemale +rows[i].totalClicksFemale +","
+      }
+
+      dateRangeTemp = dateRangeTemp.slice(0, -1);
+      totalClicksByMale = totalClicksByMale.slice(0, -1);
+      totalClicksByFemale = totalClicksByFemale.slice(0, -1);
+
+      res.render('clientReportTotalClicksByGender', { reportDateRange : dateRangeTemp, 
+          reportTotalClicksByMale : totalClicksByMale,
+          reportTotalClicksyFemale : totalClicksByFemale })        
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/totalClicksByGenderUnique', function (req, res) {
+  var clientId = req.params.clientId
+
+  dbReports.clientReportTotalClicksByGenderUnique(clientId, function(err,rows,dateRange){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    { 
+      var dateRange = dateRange.reverse(); 
+      var dateRangeTemp="";
+      var totalClicksByMaleUnique="";
+      var totalClicksByFemaleUnique="";
+
+      for(var i=0;i<rows.length;i++)
+      {
+        dateRangeTemp = dateRangeTemp +"'" +dateRange[i] +"'" +","
+        totalClicksByMaleUnique = totalClicksByMaleUnique +rows[i].totalClicksMaleUnique +","
+        totalClicksByFemaleUnique = totalClicksByFemaleUnique +rows[i].totalClicksFemaleUnique +","
+      }
+
+      dateRangeTemp = dateRangeTemp.slice(0, -1);
+      totalClicksByMaleUnique = totalClicksByMaleUnique.slice(0, -1);
+      totalClicksByFemaleUnique = totalClicksByFemaleUnique.slice(0, -1);
+
+      res.render('clientReportTotalClicksByGenderUnique', { reportDateRange : dateRangeTemp, 
+          reportTotalClicksByMaleUnique : totalClicksByMaleUnique,
+          reportTotalClicksyFemaleUnique : totalClicksByFemaleUnique })        
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/offerReport', function (req, res) {
+
+  var clientId = req.params.clientId
+
+  dbReports.clientOffers(clientId, function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var clientOffers = "";
+      var clientOffersTitle = "";
+      var clientOffersSubtitle = "";
+
+      for(var i=0;i<rows.length;i++)
+      {
+        clientOffers = clientOffers +rows[i].OfferId +","
+        clientOffersTitle = clientOffersTitle +"'" +rows[i].Title +"'" +","
+        clientOffersSubtitle = clientOffersSubtitle +"'"  +rows[i].Subtitle +"'" +","
+      }
+
+      clientOffers = clientOffers.slice(0,-1);
+      clientOffersTitle = clientOffersTitle.slice(0,-1);
+      clientOffersSubtitle = clientOffersSubtitle.slice(0,-1);
+
+      res.render('clientOffers',{ reportClientId: clientId, reportClientOffers: clientOffers, 
+        reportClientOffersTitle: clientOffersTitle, reportClientOffersSubtitle: clientOffersSubtitle })      
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/offerReport/:offerId', function (req, res) {
+
+  var clientId = req.params.clientId
+  var offerId = req.params.offerId
+
+  res.render('offerReport', { reportClientId : clientId, reportOfferId : offerId })
+
+})
+
+app.get('/clientReport/:clientId/offerReport/:offerId/totalViews', function (req, res) {
+
+  var clientId = req.params.clientId
+  var offerId = req.params.offerId
+
+  dbReports.offerReportTotalViews(clientId, offerId, function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var totalViews = rows[0].totalViews
+      res.render('offerReportTotalViews', {reportTotalViews: totalViews})      
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/offerReport/:offerId/totalViewsUnique', function (req, res) {
+
+  var clientId = req.params.clientId
+  var offerId = req.params.offerId
+
+  dbReports.offerReportTotalViewsUnique(clientId, offerId, function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var totalViewsUnique = rows[0].totalViewsUnique
+      res.render('offerReportTotalViewsUnique', {reportTotalViewsUnique: totalViewsUnique})      
+    }
+  })
 })
 
 app.listen(3000)
