@@ -12,3 +12,4 @@ sudo npm install winston@0.7.2
 sudo npm install forever@0.15.1 -g
 sudo npm install node-gcm@0.9.6
 sudo npm install request@2.34.0
+sudo npm install morgan@1.7.0

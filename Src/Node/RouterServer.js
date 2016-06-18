@@ -1,19 +1,15 @@
 var express = require('express');
+var morgan = require('morgan');
 var Utilities= require('./RouterServerUtilities');
 var app = express();
 
 app.configure(function(){
   app.set('port', 80);
   app.use(express.bodyParser());
-  app.use(express.logger('dev'));
+  app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time'));
   app.use(app.router);
   app.use(express.errorHandler());
 });
-
-express.logger.token('date', function(){
-  return new Date();
-});
-
 
 //FeatureServer
 app.get('/:UserId/GetAllActiveClients',Utilities.GetAllActiveClients);
