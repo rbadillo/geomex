@@ -641,5 +641,231 @@ exports.offerReportTotalViewsUnique = function offerReportTotalViewsUnique(clien
 	});
 }
 
+exports.offerReportTotalViewsByGender = function offerReportTotalViewsByGender(clientId,offerId,callback){
 
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var tempQueryString = "Select Male.totalViewsByMale,Female.totalViewsByFemale FROM ("
+
+	  var maleQueryString = "SELECT COUNT(OfferEvents.UserId) as totalViewsByMale FROM OfferEvents,Users WHERE OfferEvents.ClientId=" +clientId +" AND OfferEvents.OfferId=" +offerId +" AND OfferEvents.Event='Viewed' AND OfferEvents.UserId = Users.UserId AND Users.FbGender='male'"
+	  
+	  var tempQueryString2 = " ) Male JOIN ( "
+
+	  var femaleQueryString = "SELECT COUNT(OfferEvents.UserId) as totalViewsByFemale FROM OfferEvents,Users WHERE OfferEvents.ClientId=" +clientId +" AND OfferEvents.OfferId=" +offerId +" AND OfferEvents.Event='Viewed' AND OfferEvents.UserId = Users.UserId AND Users.FbGender='female'"
+
+	  var tempQueryString3 = " ) Female"
+
+	  var queryString= tempQueryString +maleQueryString +tempQueryString2 +femaleQueryString +tempQueryString3
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
+exports.offerReportTotalViewsByGenderUnique = function offerReportTotalViewsByGenderUnique(clientId,offerId,callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var tempQueryString = "Select Male.totalViewsByMaleUnique,Female.totalViewsByFemaleUnique FROM ("
+
+	  var maleQueryString = "SELECT COUNT(distinct OfferEvents.UserId) as totalViewsByMaleUnique FROM OfferEvents,Users WHERE OfferEvents.ClientId=" +clientId +" AND OfferEvents.OfferId=" +offerId +" AND OfferEvents.Event='Viewed' AND OfferEvents.UserId = Users.UserId AND Users.FbGender='male'"
+	  
+	  var tempQueryString2 = " ) Male JOIN ( "
+
+	  var femaleQueryString = "SELECT COUNT(distinct OfferEvents.UserId) as totalViewsByFemaleUnique FROM OfferEvents,Users WHERE OfferEvents.ClientId=" +clientId +" AND OfferEvents.OfferId=" +offerId +" AND OfferEvents.Event='Viewed' AND OfferEvents.UserId = Users.UserId AND Users.FbGender='female'"
+
+	  var tempQueryString3 = " ) Female"
+
+	  var queryString= tempQueryString +maleQueryString +tempQueryString2 +femaleQueryString +tempQueryString3
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
+
+exports.offerReportTotalRedemptions = function offerReportTotalRedemptions(clientId,offerId,callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var queryString="Select COUNT(*) as totalRedemptions from OfferEvents where ClientId=" +clientId +" and OfferId=" +offerId +" and Event='Presented'"
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
+exports.offerReportTotalRedemptionsUnique = function offerReportTotalRedemptionsUnique(clientId,offerId,callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var queryString="Select COUNT(distinct UserId) as totalRedemptionsUnique from OfferEvents where ClientId=" +clientId +" and OfferId=" +offerId +" and Event='Presented'"
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
+exports.offerReportTotalRedemptionsByGender = function offerReportTotalRedemptionsByGender(clientId,offerId,callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var tempQueryString = "Select Male.totalRedemptionsByMale,Female.totalRedemptionsByFemale FROM ("
+
+	  var maleQueryString = "SELECT COUNT(OfferEvents.UserId) as totalRedemptionsByMale FROM OfferEvents,Users WHERE OfferEvents.ClientId=" +clientId +" AND OfferEvents.OfferId=" +offerId +" AND OfferEvents.Event='Presented' AND OfferEvents.UserId = Users.UserId AND Users.FbGender='male'"
+	  
+	  var tempQueryString2 = " ) Male JOIN ( "
+
+	  var femaleQueryString = "SELECT COUNT(OfferEvents.UserId) as totalRedemptionsByFemale FROM OfferEvents,Users WHERE OfferEvents.ClientId=" +clientId +" AND OfferEvents.OfferId=" +offerId +" AND OfferEvents.Event='Presented' AND OfferEvents.UserId = Users.UserId AND Users.FbGender='female'"
+
+	  var tempQueryString3 = " ) Female"
+
+	  var queryString= tempQueryString +maleQueryString +tempQueryString2 +femaleQueryString +tempQueryString3
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
+
+exports.offerReportTotalRedemptionsByGenderUnique = function offerReportTotalRedemptionsByGenderUnique(clientId,offerId,callback){
+
+	var connection = mysql.createConnection({
+	  host     : '192.168.0.16',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var tempQueryString = "Select Male.totalRedemptionsByMaleUnique,Female.totalRedemptionsByFemaleUnique FROM ("
+
+	  var maleQueryString = "SELECT COUNT(distinct OfferEvents.UserId) as totalRedemptionsByMaleUnique FROM OfferEvents,Users WHERE OfferEvents.ClientId=" +clientId +" AND OfferEvents.OfferId=" +offerId +" AND OfferEvents.Event='Presented' AND OfferEvents.UserId = Users.UserId AND Users.FbGender='male'"
+	  
+	  var tempQueryString2 = " ) Male JOIN ( "
+
+	  var femaleQueryString = "SELECT COUNT(distinct OfferEvents.UserId) as totalRedemptionsByFemaleUnique FROM OfferEvents,Users WHERE OfferEvents.ClientId=" +clientId +" AND OfferEvents.OfferId=" +offerId +" AND OfferEvents.Event='Presented' AND OfferEvents.UserId = Users.UserId AND Users.FbGender='female'"
+
+	  var tempQueryString3 = " ) Female"
+
+	  var queryString= tempQueryString +maleQueryString +tempQueryString2 +femaleQueryString +tempQueryString3
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
 

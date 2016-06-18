@@ -5,6 +5,8 @@ var dbReports = require('./libs/dbReports')
 app.set('views', __dirname + '/views')
 app.set('view engine', 'pug')
 app.use(express.logger('dev'))
+app.set('port', 3000);
+
 
 app.get('/', function (req, res) {
   res.render('index')
@@ -407,4 +409,123 @@ app.get('/clientReport/:clientId/offerReport/:offerId/totalViewsUnique', functio
   })
 })
 
-app.listen(3000)
+app.get('/clientReport/:clientId/offerReport/:offerId/totalViewsByGender', function (req, res) {
+
+  var clientId = req.params.clientId
+  var offerId = req.params.offerId
+
+  dbReports.offerReportTotalViewsByGender(clientId,offerId,function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var totalViewsByMale = rows[0].totalViewsByMale
+      var totalViewsByFemale = rows[0].totalViewsByFemale
+      res.render('offerReportTotalViewsByGender', { reportTotalViewsByGenderMale : totalViewsByMale, 
+          reportTotalViewsByGenderFemale : totalViewsByFemale })      
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/offerReport/:offerId/totalViewsByGenderUnique', function (req, res) {
+
+  var clientId = req.params.clientId
+  var offerId = req.params.offerId
+
+  dbReports.offerReportTotalViewsByGenderUnique(clientId,offerId,function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var totalViewsByMaleUnique = rows[0].totalViewsByMaleUnique
+      var totalViewsByFemaleUnique = rows[0].totalViewsByFemaleUnique
+      res.render('offerReportTotalViewsByGenderUnique', { reportTotalViewsByGenderMaleUnique : totalViewsByMaleUnique, 
+          reportTotalViewsByGenderFemaleUnique : totalViewsByFemaleUnique })      
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/offerReport/:offerId/totalRedemptions', function (req, res) {
+
+  var clientId = req.params.clientId
+  var offerId = req.params.offerId
+
+  dbReports.offerReportTotalRedemptions(clientId, offerId, function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var totalRedemptions = rows[0].totalRedemptions
+      res.render('offerReportTotalRedemptions', {reportTotalRedemptions: totalRedemptions})      
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/offerReport/:offerId/totalRedemptionsUnique', function (req, res) {
+
+  var clientId = req.params.clientId
+  var offerId = req.params.offerId
+
+  dbReports.offerReportTotalRedemptionsUnique(clientId, offerId, function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var totalRedemptionsUnique = rows[0].totalRedemptionsUnique
+      res.render('offerReportTotalRedemptionsUnique', {reportTotalRedemptionsUnique: totalRedemptionsUnique})      
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/offerReport/:offerId/totalRedemptionsByGender', function (req, res) {
+
+  var clientId = req.params.clientId
+  var offerId = req.params.offerId
+
+  dbReports.offerReportTotalRedemptionsByGender(clientId,offerId,function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var totalRedemptionsByMale = rows[0].totalRedemptionsByMale
+      var totalRedemptionsByFemale = rows[0].totalRedemptionsByFemale
+      res.render('offerReportTotalRedemptionsByGender', { reportTotalRedemptionsByGenderMale : totalRedemptionsByMale, 
+          reportTotalRedemptionsByGenderFemale : totalRedemptionsByFemale })      
+    }
+  })
+})
+
+app.get('/clientReport/:clientId/offerReport/:offerId/totalRedemptionsByGenderUnique', function (req, res) {
+
+  var clientId = req.params.clientId
+  var offerId = req.params.offerId
+
+  dbReports.offerReportTotalRedemptionsByGenderUnique(clientId,offerId,function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var totalRedemptionsByMaleUnique = rows[0].totalRedemptionsByMaleUnique
+      var totalRedemptionsByFemaleUnique = rows[0].totalRedemptionsByFemaleUnique
+      res.render('offerReportTotalRedemptionsByGenderUnique', { reportTotalRedemptionsByGenderMaleUnique : totalRedemptionsByMaleUnique, 
+          reportTotalRedemptionsByGenderFemaleUnique : totalRedemptionsByFemaleUnique })      
+    }
+  })
+})
+
+app.listen(app.get('port'));
+
+console.log("Report Server - Listening Port: " +app.get('port'));
+
