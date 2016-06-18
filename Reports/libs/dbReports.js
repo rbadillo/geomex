@@ -6,7 +6,7 @@ var moment = require('moment');
 exports.totalUsers = function totalUsers(callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -37,7 +37,7 @@ exports.totalUsers = function totalUsers(callback){
 exports.totalUsersByGender = function totalUsersByGender(callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -78,7 +78,7 @@ exports.totalUsersByGender = function totalUsersByGender(callback){
 exports.totalUsersAppOpen = function totalUsersAppOpen(callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -126,7 +126,7 @@ exports.totalUsersAppOpen = function totalUsersAppOpen(callback){
 exports.totalUsersAppOpenUnique = function totalUsersAppOpenUnique(callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -174,7 +174,7 @@ exports.totalUsersAppOpenUnique = function totalUsersAppOpenUnique(callback){
 exports.totalUsersAppOpenByGender = function totalUsersAppOpenByGender(callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -235,7 +235,7 @@ exports.totalUsersAppOpenByGender = function totalUsersAppOpenByGender(callback)
 exports.totalUsersAppOpenByGenderUnique = function totalUsersAppOpenByGenderUnique(callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -296,7 +296,7 @@ exports.totalUsersAppOpenByGenderUnique = function totalUsersAppOpenByGenderUniq
 exports.clientReports = function clientReports(callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -328,7 +328,7 @@ exports.clientReports = function clientReports(callback){
 exports.clientReportTotalClicks = function clientReportTotalClicks(clientId, callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -377,7 +377,7 @@ exports.clientReportTotalClicks = function clientReportTotalClicks(clientId, cal
 exports.clientReportTotalClicksUnique = function clientReportTotalClicksUnique(clientId, callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -425,7 +425,7 @@ exports.clientReportTotalClicksUnique = function clientReportTotalClicksUnique(c
 exports.clientReportTotalClicksByGender = function clientReportTotalClicksByGender(clientId, callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -487,7 +487,7 @@ exports.clientReportTotalClicksByGender = function clientReportTotalClicksByGend
 exports.clientReportTotalClicksByGenderUnique = function clientReportTotalClicksByGenderUnique(clientId, callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -550,7 +550,7 @@ exports.clientReportTotalClicksByGenderUnique = function clientReportTotalClicks
 exports.clientOffers = function clientOffers(clientId, callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -581,7 +581,7 @@ exports.clientOffers = function clientOffers(clientId, callback){
 exports.offerReportTotalViews = function offerReportTotalViews(clientId,offerId,callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -613,7 +613,7 @@ exports.offerReportTotalViews = function offerReportTotalViews(clientId,offerId,
 exports.offerReportTotalViewsUnique = function offerReportTotalViewsUnique(clientId,offerId,callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -644,7 +644,7 @@ exports.offerReportTotalViewsUnique = function offerReportTotalViewsUnique(clien
 exports.offerReportTotalViewsByGender = function offerReportTotalViewsByGender(clientId,offerId,callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -685,7 +685,7 @@ exports.offerReportTotalViewsByGender = function offerReportTotalViewsByGender(c
 exports.offerReportTotalViewsByGenderUnique = function offerReportTotalViewsByGenderUnique(clientId,offerId,callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -727,7 +727,7 @@ exports.offerReportTotalViewsByGenderUnique = function offerReportTotalViewsByGe
 exports.offerReportTotalRedemptions = function offerReportTotalRedemptions(clientId,offerId,callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -758,7 +758,7 @@ exports.offerReportTotalRedemptions = function offerReportTotalRedemptions(clien
 exports.offerReportTotalRedemptionsUnique = function offerReportTotalRedemptionsUnique(clientId,offerId,callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -789,7 +789,7 @@ exports.offerReportTotalRedemptionsUnique = function offerReportTotalRedemptions
 exports.offerReportTotalRedemptionsByGender = function offerReportTotalRedemptionsByGender(clientId,offerId,callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
@@ -831,7 +831,7 @@ exports.offerReportTotalRedemptionsByGender = function offerReportTotalRedemptio
 exports.offerReportTotalRedemptionsByGenderUnique = function offerReportTotalRedemptionsByGenderUnique(clientId,offerId,callback){
 
 	var connection = mysql.createConnection({
-	  host     : '192.168.0.16',
+	  host     : 'localhost',
 	  user     : 'root',
 	  password : 'EstaTrivialDb!',
 	  database : 'geomex'
