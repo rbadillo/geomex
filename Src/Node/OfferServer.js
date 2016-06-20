@@ -9,7 +9,7 @@ app.configure(function(){
   app.set('port', 5000);
   app.use(express.bodyParser());
   app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time'));
-  app.use(orm.express("mysql://root:EstaTrivialDb!@localhost/geomex",
+  app.use(orm.express("mysql://root:EstaTrivialDb!@localhost/geomex?pool=true",
 	{
 	    define: function(db, models){
 	        db.load('./Models', function(err){
