@@ -1,6 +1,7 @@
 module.exports = function (db, cb) {
     
     db.define('Clients', {
+        ClientId : {type: 'serial', key: true},
         Name : String,
         Logo : String,
         IsActive : Number,
@@ -12,6 +13,7 @@ module.exports = function (db, cb) {
     });
 
     db.define('Locations', {
+        LocationId : {type: 'serial', key: true},
         Name: String,
         ClientId : Number,
         IsActive : Number,
@@ -28,6 +30,7 @@ module.exports = function (db, cb) {
     });
 
     db.define('Messages', {
+        MessageId : {type: 'serial', key: true},
         Message : String,
         OfferId : Number,
         ClientId : Number,
@@ -38,7 +41,8 @@ module.exports = function (db, cb) {
     });
 
     db.define('SentMessages', {
-        UserId : {type:"number",unsigned: true, size:8, rational: false},
+        Id : {type: 'serial', key: true},
+        UserId : {type:'integer',unsigned: true, size:8},
         MessageId : Number,
         MessageRead : Number,
         TimeSent : Date
@@ -47,7 +51,7 @@ module.exports = function (db, cb) {
     });
 
     db.define('Users', {
-        UserId: {type:"number",unsigned: true, size:8, rational: false},
+        UserId: {type:'integer',unsigned: true, size:8, key:true},
         DeviceToken : String,
         PhoneType : String,
         Timezone: String,
@@ -67,7 +71,8 @@ module.exports = function (db, cb) {
     });
 
     db.define('LocationEvents', {
-        UserId : {type:"number",unsigned: true, size:8, rational: false},
+        Id : {type: 'serial', key: true},
+        UserId: {type:'integer',unsigned: true, size:8},
         ClientId: Number,
         LocationId : Number,
         LocationName: String,
@@ -80,6 +85,7 @@ module.exports = function (db, cb) {
     });
 
     db.define('Offers', {
+        OfferId : {type: 'serial', key: true},
         ClientId: Number,
         Name: String,
         Title: String,
@@ -104,8 +110,9 @@ module.exports = function (db, cb) {
     });
 
     db.define('UserPrivateOffers', {
+        Id : {type: 'serial', key: true},
         ClientId: Number,
-        UserId: {type:"number",unsigned: true, size:8, rational: false},
+        UserId: {type:'integer',unsigned: true, size:8},
         OfferId: Number,
         StartDate: Date,
         EndDate: Date,
@@ -115,8 +122,9 @@ module.exports = function (db, cb) {
     });
 
     db.define('OfferRedemption', {
+        Id : {type: 'serial', key: true},
         ClientId: Number,
-        UserId: {type:"number",unsigned: true, size:8, rational: false},
+        UserId: {type:'integer',unsigned: true, size:8},
         OfferId: Number,
         TimeCreated : Date
     },{
@@ -124,8 +132,9 @@ module.exports = function (db, cb) {
     });
 
     db.define('OfferEvents', {
+        Id : {type: 'serial', key: true},
         ClientId: Number,
-        UserId: {type:"number",unsigned: true, size:8, rational: false},
+        UserId: {type:'integer',unsigned: true, size:8},
         OfferId: Number,
         Event: String,
         Latitude: Number,
@@ -136,7 +145,8 @@ module.exports = function (db, cb) {
     });
 
     db.define('AppEvents', {
-        UserId: {type:"number",unsigned: true, size:8,  rational: false},
+        Id : {type: 'serial', key: true},
+        UserId: {type:'integer',unsigned: true, size:8},
         ClientId: Number,
         Event: String,
         Latitude: Number,

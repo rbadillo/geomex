@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo npm install orm@2.1.0
+sudo npm install orm@3.1.0
 sudo npm install mocha@1.12.0
 sudo npm install redis@0.8.4
 sudo npm install hiredis@0.1.15
