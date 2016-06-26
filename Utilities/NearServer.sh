@@ -11,6 +11,8 @@ echo "Initiating FeatureServer"
 forever start -a -l /home/geomex/Logs/FeatureServer.log /home/geomex/Near/current/Src/Node/FeatureServer.js
 echo "Initiating OfferServer"
 forever start -a -l /home/geomex/Logs/OfferServer.log /home/geomex/Near/current/Src/Node/OfferServer.js
+echo "Initiating ReportServer"
+forever start -a -l /home/geomex/Logs/ReportServer.log /home/geomex/Near/current/Reports/ReportServer.js
 echo "Initiating Prometheus Monitoring Server"
 cd /home/geomex/Prometheus/server/prometheus-0.17.0.linux-amd64
 nohup ./prometheus > /home/geomex/Logs/prometheus.log 2>&1 &
