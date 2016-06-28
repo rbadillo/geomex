@@ -11,7 +11,7 @@ html
 
         for(var i=0;i<clientOffers.length;i++)
         {
-            var url = "http://reports.descubrenear.com:3000/clientReport/"+clientId+"/offerReport/" +clientOffers[i];
+            var url = "http://reports.descubrenear.com:2000/clientReport/"+clientId+"/offerReport/" +clientOffers[i];
             var displayText = "OfferId: " +clientOffers[i] +" - " +clientOffersTitle[i] +": " +clientOffersSubtitle[i]
             var html = "<p><a href=" +url +">" +displayText +"</a></p>";
             document.write(html);
