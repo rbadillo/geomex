@@ -93,8 +93,8 @@ exports.totalUsersAppOpen = function totalUsersAppOpen(callback){
 
 	  var dateRange = []
 
-	  // Last 14 days
-	  for(var i=0;i<14;i++)
+	  // Last 31 days
+	  for(var i=0;i<31;i++)
 	  {
 	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
 	  }
@@ -141,8 +141,8 @@ exports.totalUsersAppOpenUnique = function totalUsersAppOpenUnique(callback){
 
 	  var dateRange = []
 
-	  // Last 14 days
-	  for(var i=0;i<14;i++)
+	  // Last 31 days
+	  for(var i=0;i<31;i++)
 	  {
 	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
 	  }
@@ -189,8 +189,8 @@ exports.totalUsersAppOpenByGender = function totalUsersAppOpenByGender(callback)
 
 	  var dateRange = []
 
-	  // Last 14 days
-	  for(var i=0;i<14;i++)
+	  // Last 31 days
+	  for(var i=0;i<31;i++)
 	  {
 	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
 	  }
@@ -250,8 +250,8 @@ exports.totalUsersAppOpenByGenderUnique = function totalUsersAppOpenByGenderUniq
 
 	  var dateRange = []
 
-	  // Last 14 days
-	  for(var i=0;i<14;i++)
+	  // Last 31 days
+	  for(var i=0;i<31;i++)
 	  {
 	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
 	  }
@@ -343,8 +343,8 @@ exports.clientReportTotalClicks = function clientReportTotalClicks(clientId, cal
 
 	  var dateRange = []
 
-	  // Last 14 days
-	  for(var i=0;i<14;i++)
+	  // Last 31 days
+	  for(var i=0;i<31;i++)
 	  {
 	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
 	  }
@@ -392,8 +392,8 @@ exports.clientReportTotalClicksUnique = function clientReportTotalClicksUnique(c
 
 	  var dateRange = []
 
-	  // Last 14 days
-	  for(var i=0;i<14;i++)
+	  // Last 31 days
+	  for(var i=0;i<31;i++)
 	  {
 	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
 	  }
@@ -440,8 +440,8 @@ exports.clientReportTotalClicksByGender = function clientReportTotalClicksByGend
 
 	  var dateRange = []
 
-	  // Last 14 days
-	  for(var i=0;i<14;i++)
+	  // Last 31 days
+	  for(var i=0;i<31;i++)
 	  {
 	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
 	  }
@@ -502,8 +502,8 @@ exports.clientReportTotalClicksByGenderUnique = function clientReportTotalClicks
 
 	  var dateRange = []
 
-	  // Last 14 days
-	  for(var i=0;i<14;i++)
+	  // Last 31 days
+	  for(var i=0;i<31;i++)
 	  {
 	  	dateRange.push(moment().subtract('days',i).format('YYYY-MM-DD'))
 	  }

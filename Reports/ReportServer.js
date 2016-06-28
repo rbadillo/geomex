@@ -6,7 +6,7 @@ var dbReports = require('./libs/dbReports')
 app.set('views', __dirname + '/views')
 app.set('view engine', 'pug')
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time'));
-app.set('port', 3000);
+app.set('port', 2000);
 
 app.get('/', function (req, res) {
   res.render('index')
