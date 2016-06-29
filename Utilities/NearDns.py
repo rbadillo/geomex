@@ -27,24 +27,29 @@ try:
 			response=json.loads(r.text)[0]
 			responseDomainName = response.get('domain').get('name')
 			if(responseDomainName == nearDomain):
-				recordDomainUrl = baseUrl+'/'+str(responseDomainName)+'/records?name=api'
 
-				r = requests.get(recordDomainUrl, headers=headers)
+				subDomains=['api','db','monitoring','reports']
 
-				if(r.status_code == 200):
-					response = 	json.loads(r.text)[0]
-					responseRecordId = response.get('record').get('id')
+				for sub in subDomains:
 
-					payload = {'record': {'content': str(serverPublicIp), 'ttl':'60'}}
-					updateRecordUrl = baseUrl+'/'+str(responseDomainName)+'/records/'+str(responseRecordId)
-					r = requests.put(updateRecordUrl, headers=headers,data=json.dumps(payload))
+					recordDomainUrl = baseUrl+'/'+str(responseDomainName)+'/records?name='+str(sub)
+
+					r = requests.get(recordDomainUrl, headers=headers)
 
 					if(r.status_code == 200):
-						print "DNS Simple Was Updated Successfully"
+						response = 	json.loads(r.text)[0]
+						responseRecordId = response.get('record').get('id')
+
+						payload = {'record': {'content': str(serverPublicIp), 'ttl':'60'}}
+						updateRecordUrl = baseUrl+'/'+str(responseDomainName)+'/records/'+str(responseRecordId)
+						r = requests.put(updateRecordUrl, headers=headers,data=json.dumps(payload))
+
+						if(r.status_code == 200):
+							print "DNS Simple " +"("+str(sub)+")" +" Was Updated Successfully"
+						else:
+							print "Error Updating A Record " +"("+str(sub)+")" +" in DNS Simple"
 					else:
-						print "Error Updating A Record in DNS Simple"
-				else:
-					print "Error Requestion A Records For Domain in DNS Simple"
+						print "Error Requestion A Records " +"("+str(sub)+")"  +" For Domain in DNS Simple"
 			else:
 				print "Error - Domain in DNS Simple does not match descubrenear.com"
 		else:
