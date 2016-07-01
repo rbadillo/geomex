@@ -61,6 +61,10 @@ namespace :geomex do
   task :InstallingCrontab do
     run "cd #{current_path}/Utilities && crontab -u geomex crontab.txt" 
   end
+    desc "Configurando Haproxy"
+  task :ConfiguringHaproxy do
+    run "cd #{current_path}/Deployment/haproxy && echo 'EstaTrivialBox!' | sudo -S cp haproxy.cfg /etc/haproxy/ && echo 'EstaTrivialBox!' | sudo -S service haproxy restart" 
+  end
  end
 
 after "deploy" ,
@@ -68,7 +72,7 @@ after "deploy" ,
  "geomex:RabbitMQDependencies",
  "geomex:StopForever",
  "geomex:StopForeverRoot",
- "geomex:RouterServer",
  "geomex:RegisterServer" , "geomex:MessagingServer" , "geomex:MsgDispatcher",
- "geomex:FeatureServer" , "geomex:OfferServer" , "geomex:ReportServer" , "geomex:InstallingCrontab"
+ "geomex:FeatureServer" , "geomex:OfferServer" , "geomex:ReportServer" , "geomex:InstallingCrontab",
+ "geomex:ConfiguringHaproxy"
 
