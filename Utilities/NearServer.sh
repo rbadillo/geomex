@@ -1,6 +1,6 @@
 echo ""
-echo "Initiating RouterServer"
-echo 'EstaTrivialBox!' | sudo -S forever start -a -l /home/geomex/Logs/RouterServer.log /home/geomex/Near/current/Src/Node/RouterServer.js
+#echo "Initiating RouterServer"
+#echo 'EstaTrivialBox!' | sudo -S forever start -a -l /home/geomex/Logs/RouterServer.log /home/geomex/Near/current/Src/Node/RouterServer.js
 echo "Initiating RegisterServer"
 forever start -a -l /home/geomex/Logs/RegisterServer.log /home/geomex/Near/current/Src/Node/RegisterServer.js
 echo "Initiating MessagingServer"
