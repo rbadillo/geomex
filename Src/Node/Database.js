@@ -1263,7 +1263,6 @@ exports.ReadMessage = function ReadMessage(db,UserId,MessageId,callback){
     }
     else
     {
-      db.close();
       msj[0].State=1;
       return callback(JSON.stringify(msj))
     }
