@@ -1,0 +1,11 @@
+/home/geomex/Logs/*.log {
+  daily
+  rotate 7
+  missingok 
+  notifempty
+  compress 
+  sharedscripts
+  copytruncate 
+  dateext
+  dateformat %Y-%m-%d.
+}
