@@ -15,9 +15,10 @@ exports.SendMessage = function SendMessage(req,res){
   var ClientName=req.body.client_name
   var ClientLogo=req.body.client_logo
   var UserQuery=req.body.user_query
+  var AddMessageOnly=req.body.add_message_only.toLowerCase()
   var SendMessageOnly=req.body.send_message_only.toLowerCase()
 
-  DAL.GetUsersDeviceToken(req.db,UserQuery,OfferId,ClientId,SendMessageOnly,function(err,ActiveUsers){
+  DAL.GetUsersDeviceToken(req.db,UserQuery,OfferId,ClientId,AddMessageOnly,SendMessageOnly,function(err,ActiveUsers){
     if(err)
     {
         res.statusCode=406
@@ -33,18 +34,38 @@ exports.SendMessage = function SendMessage(req,res){
         }
         else
         {
-          //Sending Message to RabbitMQ
-          MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,function(err){
-              if(err)
-              {
-                  res.statusCode=406
-                  return res.end("ERROR - " +err)
-              }
-              else
-              {
+          if(AddMessageOnly=="true")
+          {
+            var Devices = []
+            if(ActiveUsers.hasOwnProperty('iOS'))
+            {
+              Devices.push.apply(Devices,ActiveUsers['iOS'])
+            }
+
+            if(ActiveUsers.hasOwnProperty('Android'))
+            {
+              Devices.push.apply(Devices,ActiveUsers['Android'])
+            }
+
+            DAL.UpdateSentMessageRecursive(req.db,Devices,0,MessageSubtitle,"Add",function(){
                 return res.end("Success")
-              }
-          });
+            })
+          }
+          else
+          {
+            //Sending Message to RabbitMQ
+            MQ.PublishMessage("PushMessages",OfferId,ActiveUsers,MessageTitle,MessageSubtitle,ClientId,ClientName,ClientLogo,SendMessageOnly,function(err){
+                if(err)
+                {
+                    res.statusCode=406
+                    return res.end("ERROR - " +err)
+                }
+                else
+                {
+                  return res.end("Success")
+                }
+            });
+          }
         }
       });
     }

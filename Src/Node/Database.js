@@ -1270,7 +1270,7 @@ exports.ReadMessage = function ReadMessage(db,UserId,MessageId,callback){
   })
 }
 
-exports.GetUsersDeviceToken = function GetUsersDeviceToken(db,UserQuery,OfferId,ClientId,SendMessageOnly,callback){
+exports.GetUsersDeviceToken = function GetUsersDeviceToken(db,UserQuery,OfferId,ClientId,AddMessageOnly,SendMessageOnly,callback){
 
   query=UserQuery
 
@@ -1307,13 +1307,7 @@ exports.GetUsersDeviceToken = function GetUsersDeviceToken(db,UserQuery,OfferId,
           UserIds.push(users[i].UserId)
         }
 
-          //if(SendMessageOnly=="false"){
-            //for(var i=0;i<users.length;i++){
-              //AddPrivateOfferToUser(users[i].UserId,OfferId,ClientId)
-           //}
-          //}
-
-          if(SendMessageOnly=="false")
+          if(SendMessageOnly=="false" || AddMessageOnly == "true")
           {
               AddPrivateOfferRecursive(db,UserIds,0,OfferId,ClientId,function(err)
               {
