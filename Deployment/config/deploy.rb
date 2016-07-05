@@ -65,6 +65,10 @@ namespace :geomex do
   task :ConfiguringHaproxy do
     run "cd #{current_path}/Deployment/haproxy && echo 'EstaTrivialBox!' | sudo -S cp haproxy.cfg /etc/haproxy/ && echo 'EstaTrivialBox!' | sudo -S service haproxy restart" 
   end
+      desc "Configurando Haproxy Syslog"
+  task :ConfiguringRsyslog do
+    run "cd /etc/ && echo 'EstaTrivialBox!' | sudo -S sed -i '/$ModLoad imudp/s/^#//g' rsyslog.conf && echo 'EstaTrivialBox!' | sudo -S sed -i '/$UDPServerRun 514/s/^#//g' rsyslog.conf && echo 'EstaTrivialBox!' | sudo -S service rsyslog restart" 
+  end
     desc "Configurando Logrotate"
   task :ConfiguringLogrotate do
     run "cd #{current_path}/Deployment/logrotate && echo 'EstaTrivialBox!' | sudo -S cp near /etc/logrotate.d/" 
@@ -78,5 +82,5 @@ after "deploy" ,
  "geomex:StopForeverRoot",
  "geomex:RegisterServer" , "geomex:MessagingServer" , "geomex:MsgDispatcher",
  "geomex:FeatureServer" , "geomex:OfferServer" , "geomex:ReportServer" , "geomex:InstallingCrontab",
- "geomex:ConfiguringHaproxy", "geomex:ConfiguringLogrotate"
+ "geomex:ConfiguringHaproxy", "geomex:ConfiguringRsyslog" ,"geomex:ConfiguringLogrotate"
 
