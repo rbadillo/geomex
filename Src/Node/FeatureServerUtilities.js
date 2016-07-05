@@ -493,11 +493,13 @@ exports.ReadMessage= function ReadMessage(req,res){
       else
       {
         DAL.ReadMessage(req.db,UserId,MessageId,function(output){
+
+          var tmp= JSON.parse(output)
+
           console.log("");
           console.log("ReadMessage - UserId: " +UserId +" - MessageId: " +MessageId +" - Status: " +tmp[0].State)
           console.log("");
 
-          var tmp= JSON.parse(output)
           if( tmp.length==0 || tmp[0].hasOwnProperty("State") && tmp[0].State=="Error")
           {
             res.statusCode=406
