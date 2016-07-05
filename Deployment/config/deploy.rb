@@ -65,6 +65,10 @@ namespace :geomex do
   task :ConfiguringHaproxy do
     run "cd #{current_path}/Deployment/haproxy && echo 'EstaTrivialBox!' | sudo -S cp haproxy.cfg /etc/haproxy/ && echo 'EstaTrivialBox!' | sudo -S service haproxy restart" 
   end
+    desc "Configurando Logrotate"
+  task :ConfiguringLogrotate do
+    run "cd #{current_path}/Deployment/logrotate && echo 'EstaTrivialBox!' | sudo -S cp near /etc/logrotate.d/" 
+  end
  end
 
 after "deploy" ,
@@ -74,5 +78,5 @@ after "deploy" ,
  "geomex:StopForeverRoot",
  "geomex:RegisterServer" , "geomex:MessagingServer" , "geomex:MsgDispatcher",
  "geomex:FeatureServer" , "geomex:OfferServer" , "geomex:ReportServer" , "geomex:InstallingCrontab",
- "geomex:ConfiguringHaproxy"
+ "geomex:ConfiguringHaproxy", "geomex:ConfiguringLogrotate"
 
