@@ -655,6 +655,8 @@ exports.RedeemSingleOffer = function RedeemSingleOffer(db,UserId,OfferId,Latitud
 
             if(successFlag)
             {
+              // Adding Actual Redemption Number To Redemption Code
+              offer[0].Code = offer[0].Code + offer[0].ActualRedemption
               return callback(JSON.stringify(offer));
             }
             else
