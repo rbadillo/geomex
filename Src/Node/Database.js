@@ -834,7 +834,7 @@ exports.GetClosestLocations = function GetClosestLocations(db,Latitude,Longitude
        AND Locations.ClientId=Clients.ClientId \
        AND Clients.IsActive=1 \
      ORDER BY DistanceInKm \
-     LIMIT 15"
+     LIMIT 100"
 
     db.driver.execQuery(query,function(err, locations){ 
       if(err)
