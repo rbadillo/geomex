@@ -2,10 +2,9 @@
   daily
   rotate 7
   missingok 
-  notifempty
-  compress 
+  notifempty 
   sharedscripts
   copytruncate 
   dateext
-  dateformat %Y-%m-%d.
+  dateformat -%Y-%m-%d
 }
