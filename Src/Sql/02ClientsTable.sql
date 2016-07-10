@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `geomex`.`Clients` (
   `ClientHexColor` VARCHAR(10) NOT NULL ,
   `IsActive` TINYINT NOT NULL DEFAULT 1,
   `IsGold` TINYINT NOT NULL DEFAULT 0,
-  `Priority` INT DEFAULT NULL,
+  `Priority` INT NOT NULL DEFAULT 0,
   `ActiveOffers` INT NOT NULL DEFAULT 0,
   `OfferClosestExpiration` DATETIME NOT NULL ,
   `_Created` DATETIME NOT NULL ,
