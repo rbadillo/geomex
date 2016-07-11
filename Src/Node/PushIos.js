@@ -2,7 +2,7 @@ var apn = require ('apn');
 var DAL= require('./Database');
 
 // Create a connection to the service using mostly default parameters.
-var service = new apn.connection({ gateway:'gateway.push.apple.com' });
+var service = new apn.connection({ production: true});
 
 // If you plan on sending identical paylods to many devices you can do something like this.
 exports.PushMessage=function PushMessage(db,Message,Devices,ClientName,SendMessageOnly){
