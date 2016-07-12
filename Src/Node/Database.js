@@ -1056,7 +1056,7 @@ exports.GetFriends = function GetFriends(db,FriendList,callback){
         query="SELECT distinct Users.UserId,Users.FbName,Users.FbLastName,Users.FbPhoto, \
          Users.LastRegister from Users \
          where Users.UserId in  (" +FriendList +") \
-         order by Users.LastRegister Desc LIMIT 20"
+         order by Users.LastRegister Desc LIMIT 50"
 
         db.driver.execQuery(query, function (err, friends) { 
 
