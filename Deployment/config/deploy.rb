@@ -11,7 +11,7 @@ set :user, "geomex"  # The server's user for deploys
 set :password, "EstaTrivialBox!"  # The server's user for deploys
 set :deploy_to, "/home/geomex/Near"
 set :use_sudo, false
-role :geomex_server, "192.168.0.16", :primary => true
+role :geomex_server, "api.descubrenear.com", :primary => true
 
 namespace :geomex do
   desc "Instalando Nodejs Dependencies"
