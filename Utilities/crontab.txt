@@ -3,6 +3,7 @@
 */1 * * * * python /home/geomex/Near/current/Utilities/ClientUtility.py >> /home/geomex/Logs/ClientUtility.log
 0 3 * * * bash /home/geomex/Near/current/Utilities/BackupDB.sh >> /home/geomex/Logs/BackupDB.log
 0 9,17 * * * python /home/geomex/Near/current/Utilities/EmailMonitor.py >> /home/geomex/Logs/EmailMonitor.log
+0 6 * * * python /home/geomex/Near/current/Utilities/RandomizeClients.py >> /home/geomex/Logs/RandomizeClients.log
 */1 * * * * python /home/geomex/Near/current/Utilities/CPUMonitor.py >> /home/geomex/Logs/CPUMonitor.log
 */1 * * * * python /home/geomex/Near/current/Utilities/DiskMonitor.py >> /home/geomex/Logs/DiskMonitor.log
 */1 * * * * python /home/geomex/Near/current/Utilities/HealthCheck.py >> /home/geomex/Logs/HealthCheck.log
