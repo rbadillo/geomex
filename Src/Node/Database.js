@@ -1044,7 +1044,7 @@ exports.IsLocationActive= function IsLocationActive(db,LocationId,callback){
   })
 }
 
-// LAST 20 Friend Activities
+// LAST 100 Friend Activities
 exports.GetFriends = function GetFriends(db,FriendList,callback){
 
     if(FriendList==undefined || FriendList.length==0)
@@ -1056,7 +1056,7 @@ exports.GetFriends = function GetFriends(db,FriendList,callback){
         query="SELECT distinct Users.UserId,Users.FbName,Users.FbLastName,Users.FbPhoto, \
          Users.LastRegister from Users \
          where Users.UserId in  (" +FriendList +") \
-         order by Users.LastRegister Desc LIMIT 50"
+         order by Users.LastRegister Desc LIMIT 100"
 
         db.driver.execQuery(query, function (err, friends) { 
 
