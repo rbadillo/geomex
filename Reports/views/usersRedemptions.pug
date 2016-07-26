@@ -1,0 +1,26 @@
+doctype
+html
+  head
+    title Near
+  body
+    table
+        thead
+            tr
+                th #
+                th Client
+                th Offer Title
+                th Offer Subtitle
+                th Date Redeemed
+                th Name
+                th Photo
+        tbody
+            each user, i in reportUsersRedemptions
+                tr
+                    td= i+1
+                    td= user.ClientName
+                    td= user.Title
+                    td= user.Subtitle
+                    td= user._Created
+                    td= user.Name
+                    td
+                        img(src=user.FbPhoto)

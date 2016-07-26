@@ -365,6 +365,51 @@ exports.usersDetails = function usersDetails(callback){
 	});
 }
 
+exports.usersRedemptions = function usersRedemptions(callback){
+
+	var connection = mysql.createConnection({
+	  host     : 'localhost',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var queryString="SELECT \
+		    Offers.Name as ClientName, \
+		    Offers.Title, \
+		    Offers.Subtitle, \
+		    OfferRedemption._Created, \
+			Concat(Users.FbName,' ',Users.FbLastName) as Name, \
+		    Users.FbPhoto \
+		FROM \
+		    OfferRedemption, \
+		    Users, \
+		    Offers \
+		WHERE \
+		    OfferRedemption.UserId = Users.UserId \
+		        AND OfferRedemption.OfferId = Offers.OfferId \
+		        Order by OfferRedemption._Created"
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
 exports.clientReports = function clientReports(callback){
 
 	var connection = mysql.createConnection({

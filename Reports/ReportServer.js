@@ -195,8 +195,23 @@ app.get('/usersDetails', function (req, res) {
     }
     else
     {
-      var userDetails = rows
-      res.render('userDetails', { reportUserDetails : userDetails})      
+      var usersDetails = rows
+      res.render('usersDetails', { reportUsersDetails : usersDetails})      
+    }
+  })
+})
+
+app.get('/usersRedemptions', function (req, res) {
+
+  dbReports.usersRedemptions(function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var usersRedemptions = rows
+      res.render('usersRedemptions', { reportUsersRedemptions : usersRedemptions})      
     }
   })
 })
