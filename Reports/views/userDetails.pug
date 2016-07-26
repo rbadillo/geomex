@@ -6,6 +6,7 @@ html
     table
         thead
             tr
+                th #
                 th UserId
                 th PhoneType
                 th Name
@@ -14,6 +15,7 @@ html
         tbody
             each user, i in reportUserDetails
                 tr
+                    td= i+1
                     td= user.UserId
                     td= user.PhoneType
                     td= user.Name
