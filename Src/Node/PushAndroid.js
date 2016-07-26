@@ -24,14 +24,14 @@ exports.PushMessage=function PushMessage(db,MessageTitle,MessageSubtitle,Devices
     if(SendMessageOnly=="false")
     {
         DAL.UpdateSentMessageRecursive(db,Devices,0,MessageSubtitle,"Add",function(){
-            SendGCMPush(db,Devices,0,message,function(){
+            SendGCMPush(db,Devices,0,message,SendMessageOnly,function(){
                 console.log()
             })
         })
     }
     else
     {
-        SendGCMPush(db,Devices,0,message,function(){
+        SendGCMPush(db,Devices,0,message,SendMessageOnly,function(){
             console.log()
         })
     }    
@@ -49,7 +49,7 @@ function CreateCollapseKey()
 }
 
 
-function SendGCMPush(db,Devices,Index,message,callback){
+function SendGCMPush(db,Devices,Index,Message,SendMessageOnly,callback){
 
     if(Index >= Devices.length)
     {
@@ -59,31 +59,37 @@ function SendGCMPush(db,Devices,Index,message,callback){
     else
     {
         // Auxiliary Array
-        var aux=[];
-        aux.push(Devices[Index]);
+        var tempDevice=[];
+        tempDevice.push(Devices[Index]);
 
-        sender.sendNoRetry(message, aux, function (err, result) {
+        sender.sendNoRetry(Message, tempDevice, function (err, result) {
             if(err)
             {
                 console.log("Error:" +err);
-                DAL.UpdateSentMessage(db,aux[0],Message,"Delete");
+                if(SendMessageOnly=="false")
+                {
+                    DAL.UpdateSentMessage(db,tempDevice[0],Message.data.message_subtitle,"Delete");
+                }
                 Index=Index+1
-                SendGCMPush(db,Devices,Index,message,callback)
+                SendGCMPush(db,Devices,Index,Message,SendMessageOnly,callback)
             }
             else
             {
                 if(result.failure==1)
                 {
-                    console.log("Failure Sending Message To Device: " +aux[0])
-                    DAL.UpdateSentMessage(db,aux[0],Message,"Delete");
+                    console.log("Failure Sending Message To Device: " +tempDevice[0])
+                    if(SendMessageOnly=="false")
+                    {
+                        DAL.UpdateSentMessage(db,tempDevice[0],Message.data.message_subtitle,"Delete");
+                    }
                     Index=Index+1
-                    SendGCMPush(db,Devices,Index,message,callback)
+                    SendGCMPush(db,Devices,Index,Message,SendMessageOnly,callback)
                 }
                 else
                 {
-                    console.log("Notification Transmitted Successfully To Device: " +aux[0]);
+                    console.log("Notification Transmitted Successfully To Device: " +tempDevice[0]);
                     Index=Index+1
-                    SendGCMPush(db,Devices,Index,message,callback)
+                    SendGCMPush(db,Devices,Index,Message,SendMessageOnly,callback)
                 }
             }
         });

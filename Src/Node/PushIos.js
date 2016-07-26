@@ -22,7 +22,10 @@ exports.PushMessage=function PushMessage(db,Message,Devices,ClientName,SendMessa
         // We are removing the Customer Name from the Message - Starbucks: Hello World
         var message=auxMessage[1].trim()
         var deviceToken= "" +device
-        DAL.UpdateSentMessage(db,deviceToken,message,"Delete");
+        if(SendMessageOnly=="false")
+        {
+            DAL.UpdateSentMessage(db,deviceToken,message,"Delete");
+        }
     });
 
     service.on('timeout', function () {

@@ -5,7 +5,7 @@ set :scm, "git"
 set :scm_username, "rbadillo" # Git User 
 set :scm_passphrase, "b3t0SaTuRn01"  # Git User password
 set :repository, "https://rbadillo:b3t0SaTuRn01@github.com/rbadillo/geomex.git"  # Your clone URL
-set :branch, "2.0.0"
+set :branch, "master"
 
 set :user, "geomex"  # The server's user for deploys
 set :password, "EstaTrivialBox!"  # The server's user for deploys
