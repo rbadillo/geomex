@@ -1,0 +1,22 @@
+doctype
+html
+  head
+    title Near
+  body
+    table
+        thead
+            tr
+                th UserId
+                th PhoneType
+                th Name
+                th Age
+                th Photo
+        tbody
+            each user, i in reportUserDetails
+                tr
+                    td= user.UserId
+                    td= user.PhoneType
+                    td= user.Name
+                    td= user.FbAge
+                    td
+                        img(src=user.FbPhoto)

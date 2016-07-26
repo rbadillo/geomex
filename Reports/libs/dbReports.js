@@ -75,6 +75,47 @@ exports.totalUsersByGender = function totalUsersByGender(callback){
 	});
 }
 
+exports.totalUsersByDevice = function totalUsersByDevice(callback){
+
+	var connection = mysql.createConnection({
+	  host     : 'localhost',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var queryString="Select Ios.totalUsersIos,Android.totalUsersAndroid \
+	  		FROM \
+			( \
+			Select count(distinct UserId) as totalUsersIos FROM Users \
+			Where PhoneType='iOS' \
+			) Ios \
+			JOIN \
+			( \
+			Select count(distinct UserId) as totalUsersAndroid FROM Users \
+			Where PhoneType='Android' \
+			) Android";
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
+		});
+	});
+}
+
 exports.totalUsersAppOpen = function totalUsersAppOpen(callback){
 
 	var connection = mysql.createConnection({
@@ -289,6 +330,37 @@ exports.totalUsersAppOpenByGenderUnique = function totalUsersAppOpenByGenderUniq
 		  }
 		  connection.end();
 		  return callback(null,rows,dateRange)
+		});
+	});
+}
+
+exports.usersDetails = function usersDetails(callback){
+
+	var connection = mysql.createConnection({
+	  host     : 'localhost',
+	  user     : 'root',
+	  password : 'EstaTrivialDb!',
+	  database : 'geomex'
+	});
+
+	connection.connect(function(err) {
+	  if(err)
+	  {
+	    console.log('Error connecting to Mysql Database: ' +err);
+	    return callback(err);
+	  }
+
+	  var queryString="Select UserId,PhoneType,Concat(FbName,' ',FbLastName) as Name,FbAge,FbPhoto From Users order by _Created"
+
+	  connection.query(queryString, function(err, rows, fields) {
+		  if(err)
+		  {
+		  	console.log('Error executing Total Users Query: ' +err);
+		  	connection.end();
+		  	return callback(err);
+		  }
+		  connection.end();
+		  return callback(null,rows)
 		});
 	});
 }

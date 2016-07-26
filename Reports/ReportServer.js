@@ -48,6 +48,23 @@ app.get('/totalUsersByGender', function (req, res) {
   })
 })
 
+app.get('/totalUsersByDevice', function (req, res) {
+
+  dbReports.totalUsersByDevice(function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var totalUsersIos = rows[0].totalUsersIos
+      var totalUsersandroid= rows[0].totalUsersAndroid
+      res.render('totalUsersByDevice', { reportTotalUsersByDeviceIos : totalUsersIos, 
+          reportTotalUsersByDeviceAndroid : totalUsersandroid })      
+    }
+  })
+})
+
 app.get('/totalUsersAppOpen', function (req, res) {
 
   dbReports.totalUsersAppOpen(function(err,rows,dateRange){
@@ -165,6 +182,21 @@ app.get('/totalUsersAppOpenByGenderUnique', function (req, res) {
       res.render('totalUsersAppOpenByGenderUnique', { reportDateRange : dateRangeTemp, 
           reportTotalUsersAppOpenByMaleUnique : totalUsersAppOpenByMaleUnique,
           reportTotalUsersAppOpenByFemaleUnique : totalUsersAppOpenByFemaleUnique })        
+    }
+  })
+})
+
+app.get('/usersDetails', function (req, res) {
+
+  dbReports.usersDetails(function(err,rows){
+    if(err)
+    {
+      res.render('error') 
+    }
+    else
+    {
+      var userDetails = rows
+      res.render('userDetails', { reportUserDetails : userDetails})      
     }
   })
 })
