@@ -385,17 +385,18 @@ exports.usersRedemptions = function usersRedemptions(callback){
 		    Offers.Name as ClientName, \
 		    Offers.Title, \
 		    Offers.Subtitle, \
-		    OfferRedemption._Created, \
+		    OfferEvents._Created, \
 			Concat(Users.FbName,' ',Users.FbLastName) as Name, \
 		    Users.FbPhoto \
 		FROM \
-		    OfferRedemption, \
+		    OfferEvents, \
 		    Users, \
 		    Offers \
 		WHERE \
-		    OfferRedemption.UserId = Users.UserId \
-		        AND OfferRedemption.OfferId = Offers.OfferId \
-		        Order by OfferRedemption._Created"
+		    OfferEvents.UserId = Users.UserId \
+		    	AND OfferEvents.Event='Presented' \
+		        AND OfferEvents.OfferId = Offers.OfferId \
+		        Order by OfferEvents._Created"
 
 	  connection.query(queryString, function(err, rows, fields) {
 		  if(err)
